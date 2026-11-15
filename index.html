@@ -1,17 +1,921 @@
 <!doctype html>
 <html lang="nl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="description" content="Eén eindige editie per dag. Lees, leer en leg je telefoon weg." />
-    <meta name="theme-color" content="#f6f1e7" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#16150f" media="(prefers-color-scheme: dark)" />
-    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <title>Kennis — je dagelijkse editie</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Eén eindige editie per dag. Lees, leer en leg je telefoon weg.">
+<meta name="theme-color" content="#f6f1e7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16150f" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<title>Kennis — je dagelijkse editie</title>
+<style>
+:root {
+  color-scheme: light dark;
+  --bg: #f6f1e7;
+  --surface: #fffdf8;
+  --ink: #1d1c17;
+  --muted: #6a665a;
+  --line: #e2dccd;
+  --accent: #1f4d3f;
+  --on-accent: #fffdf8;
+  --good: #1f6b45;
+  --good-bg: #dcefe2;
+  --bad: #a3322a;
+  --bad-bg: #f6dedb;
+  --serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+  --sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16150f;
+    --surface: #211f18;
+    --ink: #ece7d9;
+    --muted: #a39d8c;
+    --line: #37342a;
+    --accent: #8fcdb4;
+    --on-accent: #10231c;
+    --good: #8fd6ac;
+    --good-bg: #1d3a2a;
+    --bad: #f0a59e;
+    --bad-bg: #44211e;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  line-height: 1.55;
+  -webkit-text-size-adjust: 100%;
+}
+
+.app {
+  max-width: 38rem;
+  margin: 0 auto;
+  min-height: 100dvh;
+  padding: max(1rem, env(safe-area-inset-top)) 1rem max(1.5rem, env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Kop */
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.top h1 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  line-height: 1.1;
+}
+.top__date {
+  margin: 0.15rem 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.top__right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.streak {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Voortgang */
+.steps {
+  display: flex;
+  gap: 0.3rem;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+}
+.steps li {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--line);
+}
+.steps li.is-done {
+  background: var(--accent);
+}
+.steps li.is-current {
+  background: var(--accent);
+  opacity: 0.55;
+}
+
+.notice {
+  margin: 0 0 1rem;
+  padding: 0.6rem 0.8rem;
+  border: 1px dashed var(--line);
+  border-radius: 0.6rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.loading {
+  color: var(--muted);
+}
+
+/* Kaart */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  padding: 1.25rem;
+}
+.card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  min-height: 2rem;
+  margin-bottom: 0.75rem;
+}
+.card__kicker {
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.card__year {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 2.6rem;
+  line-height: 1;
+  color: var(--accent);
+}
+.card__title {
+  margin: 0.3rem 0 0.8rem;
+  font-family: var(--serif);
+  font-size: 1.55rem;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+.card--history .card__title {
+  font-size: 1.3rem;
+  line-height: 1.3;
+  text-wrap: pretty;
+}
+.card__body {
+  margin: 0 0 0.9rem;
+  font-size: 1.05rem;
+}
+.card--deepdive .card__body {
+  font-family: var(--serif);
+  font-size: 1.12rem;
+  line-height: 1.65;
+}
+.card__foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+.card__foot:empty {
+  display: none;
+}
+.card__foot a {
+  color: inherit;
+}
+
+/* Knoppen */
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+button:disabled {
+  cursor: default;
+}
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.btn {
+  min-height: 2.75rem;
+  padding: 0.55rem 1.2rem;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 600;
+}
+.btn:disabled {
+  opacity: 0.4;
+}
+.btn--ghost {
+  background: transparent;
+  border-color: var(--line);
+  color: var(--ink);
+}
+.btn--small {
+  min-height: 2.25rem;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.save {
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+.save[aria-pressed='true'] {
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.pager {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-top: auto;
+  padding-top: 1.25rem;
+}
+.pager__count {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Quiz */
+.question {
+  border: 0;
+  padding: 0;
+  margin: 1.25rem 0 0;
+  min-width: 0;
+}
+.question legend {
+  padding: 0;
+  margin-bottom: 0.6rem;
+  font-weight: 600;
+}
+.options {
+  display: grid;
+  gap: 0.45rem;
+}
+.option {
+  min-height: 2.75rem;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 0.7rem;
+  background: transparent;
+  text-align: left;
+}
+.option.is-correct {
+  border-color: var(--good);
+  background: var(--good-bg);
+  color: var(--good);
+  font-weight: 600;
+}
+.option.is-wrong {
+  border-color: var(--bad);
+  background: var(--bad-bg);
+  color: var(--bad);
+}
+.option:disabled:not(.is-correct):not(.is-wrong) {
+  opacity: 0.55;
+}
+.question__explain {
+  margin: 0.5rem 0 0;
+  min-height: 1.5em;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+/* Klaar */
+.done {
+  margin: auto 0;
+  padding: 2rem 0;
+  text-align: center;
+}
+.done__mark {
+  width: 4rem;
+  height: 4rem;
+  margin: 0 auto 1rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 2rem;
+  line-height: 1;
+}
+.done h2 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 2rem;
+}
+.done__lead {
+  margin: 0.5rem 0 1.5rem;
+  color: var(--muted);
+}
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin: 0 0 1.5rem;
+}
+.stats div {
+  padding: 0.8rem 0.4rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+}
+.stats dt {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+.stats dd {
+  margin: 0.15rem 0 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.done__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+/* Bewaard */
+.saved-list {
+  display: grid;
+  gap: 1rem;
+}
+.empty {
+  margin: auto 0;
+  text-align: center;
+  color: var(--muted);
+}
+.empty h2 {
+  font-family: var(--serif);
+  color: var(--ink);
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div>
+      <h1>Kennis</h1>
+      <p class="top__date" id="date"></p>
+    </div>
+    <div class="top__right">
+      <span class="streak" title="Dagreeks"><span aria-hidden="true">🔥</span> <span id="streak">0</span><span class="sr-only" id="streak-label"></span></span>
+      <button type="button" class="btn btn--ghost btn--small" id="toggle-saved"></button>
+    </div>
+  </header>
+  <main id="main"><p class="loading">Editie laden…</p></main>
+  <noscript><p class="notice">Deze pagina heeft JavaScript nodig.</p></noscript>
+</div>
+
+<script type="module">
+// Kennis — dagelijkse editie. Eén bestand, geen bouwstap: GitHub Pages toont dit direct.
+// Weetjes en verdiepingen staan in de map content/, het nieuws in news.json.
+import { facts } from './content/facts.js'
+import { deepdives } from './content/deepdives.js'
+
+// ---------- Datum ----------
+// Lokale 'YYYY-MM-DD': een editie hoort bij jouw kalenderdag, niet bij UTC.
+function dayKey(date = new Date()) {
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
+}
+function toDate(key) {
+  const [y, m, d] = key.split('-').map(Number)
+  return new Date(y, m - 1, d)
+}
+function previousDayKey(key) {
+  const date = toDate(key)
+  date.setDate(date.getDate() - 1)
+  return dayKey(date)
+}
+function formatLongDate(key) {
+  return new Intl.DateTimeFormat('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' }).format(toDate(key))
+}
+function dayNumber(key) {
+  const [y, m, d] = key.split('-').map(Number)
+  return Math.round(Date.UTC(y, m - 1, d) / 86_400_000)
+}
+
+// ---------- Opslag (alleen in deze browser; geen account, geen server) ----------
+const STATE_KEY = 'kennis:v1'
+const EDITION_KEY = 'kennis:edition:v4'
+const NO_PROGRESS = { index: 0, answers: [], completed: false }
+
+function readJson(key) {
+  try {
+    return JSON.parse(localStorage.getItem(key))
+  } catch {
+    return null
+  }
+}
+function writeJson(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value))
+  } catch {
+    // Opslag vol of geblokkeerd (privémodus): de app werkt door, maar onthoudt niets.
+  }
+}
+function loadState() {
+  const saved = readJson(STATE_KEY) ?? {}
+  return {
+    streak: { count: 0, best: 0, lastCompleted: null, ...saved.streak },
+    progress: saved.progress ?? {},
+    saved: Array.isArray(saved.saved) ? saved.saved : [],
+  }
+}
+
+// De reeks telt alleen als je vandaag of gisteren een editie hebt afgerond.
+function currentStreak(streak, today) {
+  const ok = streak.lastCompleted === today || streak.lastCompleted === previousDayKey(today)
+  return ok ? streak.count : 0
+}
+function completeDay(streak, today) {
+  if (streak.lastCompleted === today) return streak
+  const count = streak.lastCompleted === previousDayKey(today) ? streak.count + 1 : 1
+  return { count, best: Math.max(streak.best, count), lastCompleted: today }
+}
+
+// ---------- Bronnen ----------
+// Inhoud van buiten is niet te vertrouwen: alleen gewone https-links doorlaten.
+function safeUrl(value) {
+  try {
+    const url = new URL(value)
+    return url.protocol === 'https:' ? url.href : null
+  } catch {
+    return null
+  }
+}
+
+// Nieuws: news.json wordt dagelijks ververst door een GitHub Action (scripts/fetch-news.mjs),
+// omdat nieuwsfeeds niet rechtstreeks vanuit een browser opgehaald mogen worden.
+const NEWS_MAX_AGE_HOURS = 36
+async function fetchNews() {
+  const res = await fetch('news.json', { cache: 'no-cache' })
+  if (!res.ok) throw new Error(`news.json gaf status ${res.status}`)
+  const { generatedAt, items } = await res.json()
+  if (!Array.isArray(items) || items.length === 0) throw new Error('news.json is leeg')
+  const age = (Date.now() - new Date(generatedAt).getTime()) / 3_600_000
+  return {
+    stale: !(age < NEWS_MAX_AGE_HOURS) ? new Date(generatedAt) : null,
+    cards: items.slice(0, 3).map((item) => ({
+      id: `news-${item.id}`,
+      type: 'news',
+      lang: item.lang,
+      title: String(item.title),
+      body: item.summary ? [String(item.summary)] : [],
+      source: { name: String(item.source), url: safeUrl(item.url) },
+    })),
+  }
+}
+
+// Geschiedenis: Wikipedia 'On this day'. Die feed bestaat niet in het Nederlands, wel in het Engels.
+async function fetchHistory(day) {
+  const [year, month, date] = day.split('-')
+  const res = await fetch(`https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday/selected/${month}/${date}`)
+  if (!res.ok) throw new Error(`Wikipedia gaf status ${res.status}`)
+  const events = ((await res.json()).selected ?? []).filter(
+    (e) => Number.isInteger(e.year) && typeof e.text === 'string',
+  )
+  if (events.length === 0) throw new Error('Geen gebeurtenissen gevonden')
+
+  // Vaste keuze per dag (elk jaar een andere), zodat de editie niet verspringt.
+  const pick = Number(year) % events.length
+  const event = events[pick]
+  const page = event.pages?.[0]
+  const text = event.text.replace(/\s*\((?:[^()]*\s)?pictured\)/g, '').trim()
+  const formatYear = (y) => (y < 0 ? `${-y} v.Chr.` : String(y))
+
+  const card = {
+    id: `history-${day}`,
+    type: 'history',
+    lang: 'en',
+    year: formatYear(event.year),
+    title: text,
+    body: page?.extract ? [String(page.extract)] : [],
+    source: {
+      name: page ? `Wikipedia (EN): ${page.titles?.normalized ?? page.title}` : 'Wikipedia (EN)',
+      url: safeUrl(page?.content_urls?.desktop?.page),
+    },
+  }
+
+  // Quizvraag "in welk jaar?", met de twee dichtstbijzijnde jaren van dezelfde datum als afleiders.
+  let question = null
+  const others = [...new Set(events.map((e) => e.year))].filter((y) => y !== event.year)
+  if (others.length >= 2) {
+    others.sort((a, b) => Math.abs(a - event.year) - Math.abs(b - event.year))
+    const years = [event.year, others[0], others[1]].sort((a, b) => a - b)
+    question = {
+      q: `In welk jaar gebeurde dit? “${text}”`,
+      lang: 'en',
+      options: years.map(formatYear),
+      answer: years.indexOf(event.year),
+      explain: `Het was ${formatYear(event.year)}.`,
+    }
+  }
+  return { card, question }
+}
+
+// Terugval als een bron onbereikbaar is.
+const FALLBACK_NEWS = [1, 2, 3].map((n) => ({
+  id: `news-fallback-${n}`,
+  type: 'news',
+  title: `Nieuwspunt ${n} kon niet worden geladen`,
+  body: ['Het nieuws is op dit moment niet bereikbaar. De rest van de editie is wel compleet.'],
+}))
+const FALLBACK_HISTORY = {
+  card: {
+    id: 'history-fallback',
+    type: 'history',
+    title: 'Vandaag in de geschiedenis kon niet worden geladen',
+    body: ['Wikipedia is op dit moment niet bereikbaar. Open de app later opnieuw om deze kaart alsnog te zien.'],
+  },
+  question: null,
+}
+
+// ---------- Editie samenstellen ----------
+const pickForDay = (list, day) => list[dayNumber(day) % list.length]
+
+// Zet quizantwoorden in een volgorde die per dag vaststaat, zodat het goede antwoord
+// niet steeds op dezelfde plek staat.
+function shuffleQuestion(question, day, salt) {
+  let seed = (dayNumber(day) * 31 + salt * 7919 + 1) >>> 0
+  const random = () => {
+    seed = (seed + 0x6d2b79f5) >>> 0
+    let t = seed
+    t = Math.imul(t ^ (t >>> 15), t | 1)
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+  const order = question.options.map((_, i) => i)
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1))
+    ;[order[i], order[j]] = [order[j], order[i]]
+  }
+  return { ...question, options: order.map((i) => question.options[i]), answer: order.indexOf(question.answer) }
+}
+
+async function getEdition(day) {
+  const cached = readJson(EDITION_KEY)
+  if (cached?.day === day) return cached
+
+  const [newsResult, historyResult] = await Promise.allSettled([fetchNews(), fetchHistory(day)])
+  const notes = []
+  let news = FALLBACK_NEWS
+  if (newsResult.status === 'fulfilled') {
+    news = newsResult.value.cards
+    if (newsResult.value.stale) {
+      const when = new Intl.DateTimeFormat('nl-NL', { day: 'numeric', month: 'long' }).format(newsResult.value.stale)
+      notes.push(`Het nieuws is niet van vandaag, maar van ${when}.`)
+    }
+  } else {
+    notes.push('Het nieuws kon niet worden geladen.')
+  }
+  let history = FALLBACK_HISTORY
+  if (historyResult.status === 'fulfilled') history = historyResult.value
+  else notes.push('Vandaag in de geschiedenis kon niet worden geladen.')
+
+  const fact = pickForDay(facts, day)
+  const deepdive = pickForDay(deepdives, day)
+  const toCard = ({ question, ...item }, type) => ({ ...item, id: `${type}-${item.id}`, type })
+
+  const edition = {
+    day,
+    notes,
+    cards: [
+      ...news,
+      history.card,
+      toCard(fact, 'fact'),
+      toCard(deepdive, 'deepdive'),
+      {
+        id: `quiz-${day}`,
+        type: 'quiz',
+        title: 'Vragen over vandaag',
+        // De jaartallen bij de geschiedenisvraag blijven op volgorde staan.
+        questions: [
+          shuffleQuestion(fact.question, day, 1),
+          history.question,
+          shuffleQuestion(deepdive.question, day, 2),
+        ].filter(Boolean),
+      },
+    ],
+  }
+  // Alleen een complete editie vastleggen; anders proberen we het de volgende keer opnieuw.
+  if (notes.length === 0) writeJson(EDITION_KEY, edition)
+  return edition
+}
+
+// ---------- Scherm ----------
+const LABELS = {
+  news: 'Nieuws',
+  history: 'Vandaag in de geschiedenis',
+  fact: 'Weetje',
+  deepdive: 'Verdieping',
+  quiz: 'Mini-quiz',
+}
+
+// Bouwt een element. Tekst gaat er altijd als tekst in (nooit als HTML), dus inhoud
+// van buiten kan geen code uitvoeren.
+function el(tag, props = {}, ...children) {
+  const node = document.createElement(tag)
+  for (const [name, value] of Object.entries(props)) {
+    if (value === null || value === undefined || value === false) continue
+    if (name === 'class') node.className = value
+    else if (name === 'onclick') node.addEventListener('click', value)
+    else if (name === 'disabled') node.disabled = true
+    else node.setAttribute(name, value)
+  }
+  for (const child of children.flat()) {
+    if (child === null || child === undefined || child === false) continue
+    node.append(child)
+  }
+  return node
+}
+
+const today = dayKey()
+let state = loadState()
+let edition = null
+let view = 'edition' // 'edition' | 'saved'
+
+const main = document.getElementById('main')
+document.getElementById('date').textContent = formatLongDate(today)
+document.getElementById('toggle-saved').addEventListener('click', () => {
+  view = view === 'saved' ? 'edition' : 'saved'
+  render(true)
+})
+
+function progress() {
+  return state.progress[today] ?? NO_PROGRESS
+}
+function update(change, toTop = false) {
+  state = change(state)
+  writeJson(STATE_KEY, state)
+  render(toTop)
+}
+function setProgress(patch, toTop = false) {
+  // Alleen de voortgang van vandaag bewaren, zodat de opslag niet eindeloos groeit.
+  update((s) => ({ ...s, progress: { [today]: { ...(s.progress[today] ?? NO_PROGRESS), ...patch } } }), toTop)
+}
+function isSaved(card, day = today) {
+  return state.saved.some((item) => item.key === `${day}:${card.id}`)
+}
+function toggleSave(card, day = today) {
+  const key = `${day}:${card.id}`
+  update((s) => ({
+    ...s,
+    saved: s.saved.some((item) => item.key === key)
+      ? s.saved.filter((item) => item.key !== key)
+      : [{ key, day, card }, ...s.saved], // volledige kopie: blijft bestaan na de editie
+  }))
+}
+function finish() {
+  update(
+    (s) => ({
+      ...s,
+      streak: completeDay(s.streak, today),
+      progress: { [today]: { ...(s.progress[today] ?? NO_PROGRESS), index: edition.cards.length, completed: true } },
+    }),
+    true,
+  )
+}
+
+function cardView(card, { day = today, savedOn = null } = {}) {
+  const saved = isSaved(card, day)
+  const source =
+    card.source &&
+    (card.source.url
+      ? el('a', { href: card.source.url, target: '_blank', rel: 'noopener noreferrer' }, `Bron: ${card.source.name} ↗`)
+      : el('span', {}, `Bron: ${card.source.name}`))
+  return el(
+    'article',
+    { class: `card card--${card.type}` },
+    el(
+      'header',
+      { class: 'card__head' },
+      el('span', { class: 'card__kicker' }, LABELS[card.type]),
+      el(
+        'button',
+        { type: 'button', class: 'save', 'aria-pressed': String(saved), onclick: () => toggleSave(card, day) },
+        saved ? '★ Bewaard' : '☆ Bewaar',
+      ),
+    ),
+    // lang: zodat schermlezers en afbreking de taal van de bron volgen
+    el(
+      'div',
+      { lang: card.lang },
+      card.year && el('p', { class: 'card__year' }, card.year),
+      el('h2', { class: 'card__title' }, card.title),
+      card.body.map((text) => el('p', { class: 'card__body' }, text)),
+    ),
+    el('footer', { class: 'card__foot' }, source, savedOn && el('span', {}, `Bewaard op ${savedOn}`)),
+  )
+}
+
+function quizView(card, answers) {
+  return el(
+    'article',
+    { class: 'card card--quiz' },
+    el('header', { class: 'card__head' }, el('span', { class: 'card__kicker' }, LABELS.quiz)),
+    el('h2', { class: 'card__title' }, card.title),
+    card.questions.map((question, qi) => {
+      const chosen = answers[qi]
+      const answered = Number.isInteger(chosen)
+      return el(
+        'fieldset',
+        { class: 'question' },
+        el('legend', { lang: question.lang }, `${qi + 1}. ${question.q}`),
+        el(
+          'div',
+          { class: 'options' },
+          question.options.map((option, oi) => {
+            const result = !answered ? '' : oi === question.answer ? 'is-correct' : oi === chosen ? 'is-wrong' : ''
+            const mark = result === 'is-correct' ? ' ✓' : result === 'is-wrong' ? ' ✗' : ''
+            return el(
+              'button',
+              {
+                type: 'button',
+                class: `option ${result}`,
+                disabled: answered,
+                'aria-pressed': String(chosen === oi),
+                // Een antwoord staat vast zodra je het kiest.
+                onclick: () => {
+                  const next = [...answers]
+                  next[qi] = oi
+                  setProgress({ answers: next })
+                },
+              },
+              option + mark,
+            )
+          }),
+        ),
+        el(
+          'p',
+          { class: 'question__explain' },
+          answered && `${chosen === question.answer ? 'Goed.' : 'Niet goed.'} ${question.explain}`,
+        ),
+      )
+    }),
+  )
+}
+
+function doneView(quiz, answers) {
+  const streak = currentStreak(state.streak, today)
+  const score = quiz.questions.filter((q, i) => answers[i] === q.answer).length
+  const stat = (label, value) => el('div', {}, el('dt', {}, label), el('dd', {}, value))
+  return el(
+    'section',
+    { class: 'done' },
+    el('p', { class: 'done__mark', 'aria-hidden': 'true' }, '✓'),
+    el('h2', {}, 'Klaar voor vandaag'),
+    el('p', { class: 'done__lead' }, 'Je bent bij. Morgen staat er een nieuwe editie klaar.'),
+    el(
+      'dl',
+      { class: 'stats' },
+      stat('Dagreeks', `${streak} ${streak === 1 ? 'dag' : 'dagen'}`),
+      stat('Quiz', `${score} van ${quiz.questions.length}`),
+      stat('Langste reeks', String(state.streak.best)),
+    ),
+    el(
+      'div',
+      { class: 'done__actions' },
+      el('button', { type: 'button', class: 'btn btn--ghost', onclick: () => setProgress({ index: 0 }, true) }, 'Editie teruglezen'),
+      state.saved.length > 0 &&
+        el(
+          'button',
+          {
+            type: 'button',
+            class: 'btn btn--ghost',
+            onclick: () => {
+              view = 'saved'
+              render(true)
+            },
+          },
+          `Bewaard (${state.saved.length})`,
+        ),
+    ),
+  )
+}
+
+function savedView() {
+  if (state.saved.length === 0) {
+    return el(
+      'section',
+      { class: 'empty' },
+      el('h2', {}, 'Nog niets bewaard'),
+      el('p', {}, 'Tik op “☆ Bewaar” bij een kaart om hem hier terug te vinden.'),
+    )
+  }
+  return el(
+    'section',
+    { class: 'saved-list' },
+    state.saved.map((item) => cardView(item.card, { day: item.day, savedOn: formatLongDate(item.day) })),
+  )
+}
+
+function editionView() {
+  const cards = edition.cards
+  const total = cards.length
+  const { answers } = progress()
+  const index = Math.min(progress().index, total)
+  const quiz = cards.find((card) => card.type === 'quiz')
+  if (index >= total) return [doneView(quiz, answers)]
+
+  const card = cards[index]
+  const isLast = index === total - 1
+  const quizDone = card.type !== 'quiz' || card.questions.every((_, i) => Number.isInteger(answers[i]))
+  return [
+    el(
+      'ol',
+      { class: 'steps', 'aria-label': `Kaart ${index + 1} van ${total}` },
+      cards.map((_, i) => el('li', { class: i < index ? 'is-done' : i === index ? 'is-current' : '' })),
+    ),
+    index === 0 && edition.notes.map((note) => el('p', { class: 'notice' }, note)),
+    card.type === 'quiz' ? quizView(card, answers) : cardView(card),
+    el(
+      'nav',
+      { class: 'pager' },
+      el(
+        'button',
+        { type: 'button', class: 'btn btn--ghost', disabled: index === 0, onclick: () => setProgress({ index: index - 1 }, true) },
+        'Vorige',
+      ),
+      el('span', { class: 'pager__count' }, `${index + 1} / ${total}`),
+      el(
+        'button',
+        {
+          type: 'button',
+          class: 'btn',
+          disabled: !quizDone,
+          onclick: () => (isLast ? finish() : setProgress({ index: index + 1 }, true)),
+        },
+        isLast ? 'Afronden' : 'Volgende',
+      ),
+    ),
+  ]
+}
+
+function render(toTop = false) {
+  const streak = currentStreak(state.streak, today)
+  document.getElementById('streak').textContent = streak
+  document.getElementById('streak-label').textContent = ` ${streak === 1 ? 'dag' : 'dagen'} op rij`
+  document.getElementById('toggle-saved').textContent = view === 'saved' ? '← Editie' : `Bewaard (${state.saved.length})`
+
+  let content
+  if (view === 'saved') content = [savedView()]
+  else if (!edition) content = [el('p', { class: 'loading' }, 'Editie laden…')]
+  else content = editionView()
+  main.replaceChildren(...content.flat().filter(Boolean))
+  if (toTop) window.scrollTo(0, 0)
+}
+
+render()
+getEdition(today).then((result) => {
+  edition = result
+  render()
+})
+
+// Service worker: maakt de app installeerbaar en bruikbaar zonder verbinding.
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {})
+}
+</script>
+</body>
 </html>

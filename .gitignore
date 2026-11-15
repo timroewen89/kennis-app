@@ -1,8 +1,4 @@
 node_modules
-dist
-dev-dist
 .env
 .env.*
 !.env.example
-*.local
-public/news.json

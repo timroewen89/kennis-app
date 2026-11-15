@@ -1,0 +1,35 @@
+# Ververst elke ochtend news.json met het nieuws van de dag.
+# Geplande runs werken alleen vanaf de standaard-branch (main).
+name: Nieuws verversen
+
+on:
+  schedule:
+    - cron: '0 4 * * *' # 04:00 UTC = 05:00 (winter) of 06:00 (zomer) in Nederland
+  workflow_dispatch: # ook handmatig te starten via het tabblad Actions
+
+permissions:
+  contents: write # nodig om news.json te kunnen committen
+
+concurrency:
+  group: nieuws
+  cancel-in-progress: true
+
+jobs:
+  nieuws:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Nieuws ophalen
+        run: node scripts/fetch-news.mjs
+      - name: news.json committen
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add news.json
+          git diff --cached --quiet && echo "Geen wijzigingen" && exit 0
+          git commit -m "Nieuws van $(date -u +%Y-%m-%d)"
+          git push
