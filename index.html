@@ -327,6 +327,59 @@ button:disabled {
   font-weight: 400;
 }
 
+/* Onderwerpen kiezen. */
+.topics h2 {
+  margin: 0 0 0.4rem;
+  font-family: var(--serif);
+  font-size: 1.55rem;
+}
+.topics p {
+  margin: 0 0 1rem;
+  color: var(--muted);
+}
+.topics__list {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+.topic {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  min-height: 3.25rem;
+  padding: 0.6rem 0.9rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  cursor: pointer;
+}
+.topic input {
+  flex: none;
+  width: 1.3rem;
+  height: 1.3rem;
+  accent-color: var(--accent);
+}
+.topic__name {
+  display: block;
+  font-weight: 600;
+}
+.topic__count {
+  display: block;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.topic:has(input:checked) {
+  border-color: var(--accent);
+}
+.icon-btn {
+  min-width: 2.25rem;
+  padding: 0.3rem 0.5rem;
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
 /* Tijdlijn: drie gebeurtenissen op volgorde zetten. */
 .timeline__intro {
   margin: 0 0 1rem;
@@ -579,6 +632,7 @@ main {
     <div class="top__right">
       <span class="streak" title="Dagreeks"><span aria-hidden="true">🔥</span> <span id="streak">0</span><span class="sr-only" id="streak-label"></span></span>
       <button type="button" class="btn btn--ghost btn--small" id="toggle-saved"></button>
+      <button type="button" class="btn btn--ghost btn--small icon-btn" id="toggle-topics" aria-label="Onderwerpen kiezen" title="Onderwerpen kiezen">⚙</button>
     </div>
   </header>
   <main id="main"><p class="loading">Editie laden…</p></main>
@@ -590,6 +644,7 @@ main {
 // Weetjes en verdiepingen staan in de map content/, het nieuws in news.json.
 import { facts } from './content/facts.js'
 import { deepdives } from './content/deepdives.js'
+import { TOPICS } from './content/topics.js'
 
 // ---------- Datum ----------
 // Lokale 'YYYY-MM-DD': een editie hoort bij jouw kalenderdag, niet bij UTC.
@@ -619,11 +674,12 @@ function dayNumber(key) {
 
 // ---------- Opslag (alleen in deze browser; geen account, geen server) ----------
 const STATE_KEY = 'kennis:v1'
-const EDITION_KEY = 'kennis:edition:v7'
+const EDITION_KEY = 'kennis:edition:v8'
 const TRANSLATION_KEY = 'kennis:vertaling:v1'
 // Voortgang van vandaag. guesses: je gok per kaart (-1 = 'Geen idee'); answers: je quizantwoorden;
-// reviews: de herhalingsvragen die voor vandaag gekozen zijn (null = nog niet gekozen).
-const NO_PROGRESS = { v: 2, index: 0, guesses: {}, answers: [], reviews: null, completed: false }
+// reviews: de herhalingsvragen die voor vandaag gekozen zijn (null = nog niet gekozen);
+// picks: welk weetje en welke verdieping vandaag aan de beurt zijn (null = nog niet gekozen).
+const NO_PROGRESS = { v: 2, index: 0, guesses: {}, answers: [], reviews: null, picks: null, completed: false }
 
 function readJson(key) {
   try {
@@ -647,6 +703,8 @@ function loadState() {
     saved: Array.isArray(saved.saved) ? saved.saved : [],
     // Vragen uit edities die je hebt afgerond; hieruit komt de herhaling in de quiz.
     log: Array.isArray(saved.log) ? saved.log : [],
+    // De gekozen thema's (lijst van id's), of null als alle thema's aan staan.
+    topics: Array.isArray(saved.topics) ? saved.topics : null,
   }
 }
 
@@ -930,35 +988,77 @@ function pickReviews(log, day) {
   return picked.slice(0, REVIEW_COUNT).map(({ id, day, type, question }) => ({ id, day, type, question }))
 }
 
-async function getEdition(day) {
-  const cached = readJson(EDITION_KEY)
-  if (cached?.day === day) return cached
+// Wat van buiten komt (nieuws, geschiedenis, tijdlijn) wordt één keer per dag opgehaald en vastgelegd.
+async function getSources(day) {
+  const stored = readJson(EDITION_KEY)
+  const cached = stored?.day === day ? stored : null
+  // Compleet en van vandaag: niet opnieuw ophalen, zodat de editie niet verspringt.
+  if (cached?.complete) return cached
 
   const [newsResult, historyResult] = await Promise.allSettled([fetchNews(), fetchHistory(day)])
-  const notes = []
+
+  // Per onderdeel: het verse resultaat, anders wat vandaag al eerder is opgehaald (bijvoorbeeld
+  // als je nu geen verbinding hebt), en pas als laatste de terugvalkaart.
   let news = FALLBACK_NEWS
+  let newsNote = 'Het nieuws kon niet worden geladen.'
   if (newsResult.status === 'fulfilled') {
     news = newsResult.value.cards
+    newsNote = null
     if (newsResult.value.stale) {
       const when = new Intl.DateTimeFormat('nl-NL', { day: 'numeric', month: 'long' }).format(newsResult.value.stale)
-      notes.push(`Het nieuws is niet van vandaag, maar van ${when}.`)
+      newsNote = `Het nieuws is niet van vandaag, maar van ${when}.`
     }
-  } else {
-    notes.push('Het nieuws kon niet worden geladen.')
+  } else if (cached?.newsOk) {
+    news = cached.news
+    newsNote = cached.newsNote
   }
+
   let history = FALLBACK_HISTORY
-  if (historyResult.status === 'fulfilled') history = historyResult.value
-  else notes.push('Vandaag in de geschiedenis kon niet worden geladen.')
-
-  if ([...news, history.card, history.timeline].some((card) => card?.untranslated)) {
-    notes.push('Vertalen lukte niet voor alle kaarten; een deel staat in het Engels.')
+  let historyNote = 'Vandaag in de geschiedenis kon niet worden geladen.'
+  if (historyResult.status === 'fulfilled') {
+    history = historyResult.value
+    historyNote = null
+  } else if (cached?.historyOk) {
+    history = cached.history
+    historyNote = null
   }
 
-  const fact = pickForDay(facts, day)
-  const deepdive = pickForDay(deepdives, day)
-  const toCard = ({ question, ...item }, type) => ({ ...item, id: `${type}-${item.id}`, type })
+  const translateNote = [...news, history.card, history.timeline].some((card) => card?.untranslated)
+    ? 'Vertalen lukte niet voor alle kaarten; een deel staat in het Engels.'
+    : null
 
-  const edition = {
+  const notes = [newsNote, historyNote, translateNote].filter(Boolean)
+  const sources = {
+    day,
+    notes,
+    news,
+    history,
+    newsNote,
+    newsOk: news !== FALLBACK_NEWS,
+    historyOk: history !== FALLBACK_HISTORY,
+    // Niet compleet (bron onbereikbaar, nieuws verouderd, vertaling mislukt): volgende keer opnieuw proberen.
+    complete: notes.length === 0,
+  }
+  writeJson(EDITION_KEY, sources)
+  return sources
+}
+
+// Welk weetje en welke verdieping vandaag aan de beurt zijn, binnen de gekozen thema's.
+// Past geen enkel item bij de keuze, dan telt de hele lijst mee.
+function pickContent(day, topics) {
+  const allowed = (list) => {
+    const filtered = topics ? list.filter((item) => topics.includes(item.topic)) : list
+    return filtered.length > 0 ? filtered : list
+  }
+  return { fact: pickForDay(allowed(facts), day).id, deepdive: pickForDay(allowed(deepdives), day).id }
+}
+
+// Stelt de editie samen uit de bronnen van vandaag en de gekozen eigen inhoud.
+function assembleEdition({ day, notes, news, history }, picks) {
+  const fact = facts.find((item) => item.id === picks?.fact) ?? pickForDay(facts, day)
+  const deepdive = deepdives.find((item) => item.id === picks?.deepdive) ?? pickForDay(deepdives, day)
+  const toCard = ({ question, ...item }, type) => ({ ...item, id: `${type}-${item.id}`, type })
+  return {
     day,
     notes,
     cards: [
@@ -974,9 +1074,6 @@ async function getEdition(day) {
     // later uit samengesteld (zie quizQuestions), samen met de herhaling.
     questions: { fact: fact.question, history: history.question, deepdive: deepdive.question },
   }
-  // Alleen een complete editie vastleggen; anders proberen we het de volgende keer opnieuw.
-  if (notes.length === 0) writeJson(EDITION_KEY, edition)
-  return edition
 }
 
 // ---------- Scherm ----------
@@ -998,7 +1095,9 @@ function el(tag, props = {}, ...children) {
     if (value === null || value === undefined || value === false) continue
     if (name === 'class') node.className = value
     else if (name === 'onclick') node.addEventListener('click', value)
+    else if (name === 'onchange') node.addEventListener('change', value)
     else if (name === 'disabled') node.disabled = true
+    else if (name === 'checked') node.checked = true
     else node.setAttribute(name, value)
   }
   for (const child of children.flat()) {
@@ -1011,7 +1110,8 @@ function el(tag, props = {}, ...children) {
 const today = dayKey()
 let state = loadState()
 let edition = null
-let view = 'edition' // 'edition' | 'saved'
+let sources = null // nieuws, geschiedenis en tijdlijn van vandaag
+let view = 'edition' // 'edition' | 'saved' | 'topics'
 let navigate = {} // wat 'vorige' en 'volgende' op dit moment doen (voor de pijltjestoetsen)
 let flipped = null // id van de kaart die net is omgedraaid (voor de animatie)
 let timelinePick = { id: null, order: [] } // welke gebeurtenissen je al hebt aangetikt, in volgorde
@@ -1019,7 +1119,11 @@ let timelinePick = { id: null, order: [] } // welke gebeurtenissen je al hebt aa
 const main = document.getElementById('main')
 document.getElementById('date').textContent = formatLongDate(today)
 document.getElementById('toggle-saved').addEventListener('click', () => {
-  view = view === 'saved' ? 'edition' : 'saved'
+  view = view === 'edition' ? 'saved' : 'edition'
+  render(true)
+})
+document.getElementById('toggle-topics').addEventListener('click', () => {
+  view = view === 'topics' ? 'edition' : 'topics'
   render(true)
 })
 
@@ -1396,6 +1500,71 @@ function savedView() {
   )
 }
 
+// Legt de gekozen thema's vast. Zolang de editie van vandaag niet is afgerond, worden het
+// weetje en de verdieping van vandaag meteen opnieuw gekozen.
+function setTopics(ids) {
+  const topics = ids.length === TOPICS.length ? null : ids
+  const current = progress()
+  const applyNow = sources && !current.completed
+  state = {
+    ...state,
+    topics,
+    progress: applyNow ? { [today]: { ...current, picks: pickContent(today, topics) } } : state.progress,
+  }
+  writeJson(STATE_KEY, state)
+  if (applyNow) edition = assembleEdition(sources, progress().picks)
+  render()
+}
+
+function topicsView() {
+  const selected = state.topics ?? TOPICS.map((topic) => topic.id)
+  const count = (list, id) => list.filter((item) => item.topic === id).length
+  return el(
+    'section',
+    { class: 'topics' },
+    el('h2', {}, 'Onderwerpen'),
+    el('p', {}, 'Kies waarover je weetjes en verdiepingen wilt krijgen. Het nieuws, de geschiedeniskaart en de tijdlijn blijven zoals ze zijn.'),
+    el(
+      'ul',
+      { class: 'topics__list' },
+      TOPICS.map((topic) => {
+        const checked = selected.includes(topic.id)
+        return el(
+          'li',
+          {},
+          el(
+            'label',
+            { class: 'topic' },
+            el('input', {
+              type: 'checkbox',
+              checked,
+              // Er moet altijd minstens één thema aan blijven staan.
+              disabled: checked && selected.length === 1,
+              onchange: () =>
+                setTopics(TOPICS.map((t) => t.id).filter((id) => (id === topic.id ? !checked : selected.includes(id)))),
+            }),
+            el(
+              'span',
+              {},
+              el('span', { class: 'topic__name' }, topic.name),
+              el('span', { class: 'topic__count' }, `${count(facts, topic.id)} weetjes · ${count(deepdives, topic.id)} verdiepingen`),
+            ),
+          ),
+        )
+      }),
+    ),
+    el(
+      'p',
+      { role: 'status' },
+      selected.length === 1 ? 'Er blijft altijd minstens één onderwerp aan. ' : '',
+      progress().completed
+        ? 'Je hebt de editie van vandaag al afgerond; een wijziging geldt vanaf morgen.'
+        : 'Een wijziging geldt meteen voor de editie van vandaag.',
+    ),
+    el('button', { type: 'button', class: 'btn', onclick: () => ((view = 'edition'), render(true)) }, 'Terug naar de editie'),
+  )
+}
+
 // Maakt een kaart veegbaar: naar links = volgende, naar rechts = vorige.
 // onNext/onPrev zijn null als die richting (nog) niet mag; de kaart veert dan terug.
 function makeSwipeable(node, { onNext, onPrev }) {
@@ -1535,11 +1704,13 @@ function render(toTop = false) {
   const streak = currentStreak(state.streak, today)
   document.getElementById('streak').textContent = streak
   document.getElementById('streak-label').textContent = ` ${streak === 1 ? 'dag' : 'dagen'} op rij`
-  document.getElementById('toggle-saved').textContent = view === 'saved' ? '← Editie' : `Bewaard (${state.saved.length})`
+  document.getElementById('toggle-saved').textContent = view === 'edition' ? `Bewaard (${state.saved.length})` : '← Editie'
+  document.getElementById('toggle-topics').setAttribute('aria-pressed', String(view === 'topics'))
 
   navigate = {}
   let content
   if (view === 'saved') content = [savedView()]
+  else if (view === 'topics') content = [topicsView()]
   else if (!edition) content = [el('p', { class: 'loading' }, 'Editie laden…')]
   else content = editionView()
   main.replaceChildren(...content.flat().filter(Boolean))
@@ -1547,12 +1718,19 @@ function render(toTop = false) {
 }
 
 render()
-getEdition(today).then((result) => {
-  edition = result
-  // De herhalingsvragen voor vandaag één keer kiezen en vastleggen, zodat de quiz gelijk
-  // blijft als je de app opnieuw opent of de editie terugleest.
-  if (progress().reviews === null) setProgress({ reviews: pickReviews(state.log, today) })
-  else render()
+getSources(today).then((result) => {
+  sources = result
+  // Eén keer per dag kiezen en vastleggen welke herhalingsvragen, welk weetje en welke
+  // verdieping aan de beurt zijn, zodat de editie gelijk blijft als je de app opnieuw opent.
+  const patch = {}
+  if (progress().reviews === null) patch.reviews = pickReviews(state.log, today)
+  if (!progress().picks) patch.picks = pickContent(today, state.topics)
+  if (Object.keys(patch).length > 0) {
+    state = { ...state, progress: { [today]: { ...progress(), ...patch } } }
+    writeJson(STATE_KEY, state)
+  }
+  edition = assembleEdition(sources, progress().picks)
+  render()
 })
 
 // Pijltjestoetsen: links = vorige, rechts = volgende.

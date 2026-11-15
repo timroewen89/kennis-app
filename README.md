@@ -20,11 +20,16 @@ edities die je eerder hebt afgerond.
 - Heb je een vraag twee keer achter elkaar goed, of is hij ouder dan 45 dagen, dan verdwijnt hij uit de herhaling.
 - De eerste dagen valt er nog niets te herhalen; dan vullen de vragen van vandaag de quiz aan.
 
+Via het tandwiel rechtsboven kies je je **onderwerpen**: Nederland, Wereldgeschiedenis, Wetenschap &
+techniek, Natuur & aarde en Taal & cultuur. De keuze bepaalt welk weetje en welke verdieping je
+krijgt. Een wijziging geldt meteen als je de editie van vandaag nog niet hebt afgerond, anders vanaf
+morgen.
+
 Bladeren doe je door te vegen: naar links voor de volgende kaart, naar rechts voor de vorige.
 Op een computer zijn er knoppen en werken de pijltjestoetsen.
 
 De app is één `index.html` zonder bouwstap. Geen account, geen betaalde diensten;
-dagreeks, bewaarde kaarten en de vragen voor de herhaling staan lokaal in je browser.
+dagreeks, bewaarde kaarten, gekozen onderwerpen en de vragen voor de herhaling staan lokaal in je browser.
 
 ## Bekijken via GitHub Pages
 
@@ -49,8 +54,8 @@ bestand elke ochtend rond 05:00 en zet het terug in de repo; Pages publiceert he
 | --- | --- | --- |
 | Nieuws | NOS, RTV Drenthe, BBC News (vertaald), The Guardian (vertaald) | `scripts/fetch-news.mjs` schrijft `news.json`; de feeds staan geen directe browser-aanroep toe |
 | Geschiedenis en tijdlijn | Engelse Wikipedia, On this day (vertaald) | Rechtstreeks vanuit de app; de Nederlandse variant van deze API bestaat niet |
-| Weetje | `content/facts.js` (nl) | Elke dag het volgende uit de lijst |
-| Verdieping | `content/deepdives.js` (nl) | Elke dag de volgende uit de lijst |
+| Weetje | `content/facts.js` (nl) | Elke dag het volgende uit de lijst, binnen je gekozen onderwerpen |
+| Verdieping | `content/deepdives.js` (nl) | Elke dag de volgende uit de lijst, binnen je gekozen onderwerpen |
 | Mini-quiz | De kaarten van vandaag en van eerdere dagen | Eén vraag over de verdieping, twee herhalingsvragen |
 
 Is een bron onbereikbaar, dan meldt de app dat en is de rest van de editie gewoon compleet.
@@ -74,13 +79,15 @@ Kaarten uit Engelse bronnen worden in de app naar het Nederlands vertaald en kri
 
 Weetjes en verdiepingen staan als gewone lijsten in `content/facts.js` en `content/deepdives.js`.
 Dat kan rechtstreeks op GitHub (potloodje bij het bestand). Kopieer een bestaand blok, plak het
-onderaan en pas het aan:
+erbij en pas het aan:
 
 ```js
 {
   id: 'korte-unieke-naam',
+  topic: 'natuur', // nederland, wereld, wetenschap, natuur of cultuur (zie content/topics.js)
   title: 'De kop van de kaart',
   body: ['Eerste alinea.', 'Tweede alinea.'],
+  source: wiki('Titel_van_het_Wikipedia-artikel'),
   question: {
     q: 'De quizvraag?',
     options: ['Antwoord A', 'Antwoord B', 'Antwoord C'],
@@ -90,18 +97,19 @@ onderaan en pas het aan:
 },
 ```
 
-De lijsten lopen rond (nu 15 weetjes en 8 verdiepingen); de app husselt de antwoorden per dag.
-Voeg je een item toe, dan schuift de volgorde voor de dagen erna op.
+De lijsten lopen rond (nu 45 weetjes en 24 verdiepingen) en wisselen de thema's af; de app husselt
+de antwoorden per dag. Voeg je een item toe, dan schuift de volgorde voor de dagen erna op.
 
 Wie Node heeft, kan de inhoud laten controleren met `node scripts/check-content.mjs`: dat meldt
-vormfouten en laat zien wat er de komende week aan de beurt is.
+vormfouten en laat zien hoeveel items elk thema heeft.
 
 ## Bestanden
 
 | Bestand | Wat het doet |
 | --- | --- |
-| `index.html` | De hele app: opmaak, schermen, raden, herhaling, dagreeks, bewaren, quiz |
-| `content/facts.js`, `content/deepdives.js` | Eigen weetjes en verdiepingen, met quizvraag |
+| `index.html` | De hele app: opmaak, schermen, raden, tijdlijn, herhaling, onderwerpen, dagreeks, bewaren, quiz |
+| `content/facts.js`, `content/deepdives.js` | Eigen weetjes en verdiepingen, met thema, bron en quizvraag |
+| `content/topics.js` | De thema's waaruit je kunt kiezen |
 | `news.json` | De nieuwspunten van vandaag (automatisch ververst) |
 | `scripts/fetch-news.mjs` | Haalt de RSS-feeds op; de lijst met feeds staat bovenin |
 | `scripts/check-content.mjs` | Controleert de eigen inhoud |

@@ -1,11 +1,14 @@
 // Verdiepingen: een serieus onderwerp van vroeger, in een paar alinea's.
 // Elke dag komt de volgende aan de beurt; na de laatste begint de lijst opnieuw.
+// De volgorde wisselt de thema's af. 'topic' is een thema uit content/topics.js.
 // 'answer' is de positie van het goede antwoord in 'options', geteld vanaf 0.
-const wiki = (title) => ({ name: 'Wikipedia', url: `https://nl.wikipedia.org/wiki/${title}` })
+import { wiki } from './topics.js'
 
 export const deepdives = [
+  // ---------- ronde 1 ----------
   {
     id: 'watersnood-1953',
+    topic: 'nederland',
     title: 'De Watersnoodramp van 1953',
     body: [
       'In de nacht van 31 januari op 1 februari 1953 viel een zware noordwesterstorm samen met springtij. Het water in de Noordzee werd opgestuwd tot ver boven de hoogte waarop de dijken berekend waren. In Zeeland, op de Zuid-Hollandse eilanden en in West-Brabant braken ze op honderden plaatsen door.',
@@ -23,6 +26,7 @@ export const deepdives = [
   },
   {
     id: 'zwarte-dood',
+    topic: 'wereld',
     title: 'De Zwarte Dood',
     body: [
       'In 1347 bereikte de pest Europa via handelsschepen uit het Zwarte Zeegebied. Binnen vier jaar trok de ziekte over vrijwel het hele continent. Schattingen lopen uiteen, maar een derde tot de helft van de Europese bevolking overleefde het niet.',
@@ -39,7 +43,26 @@ export const deepdives = [
     },
   },
   {
+    id: 'krakatau-1883',
+    topic: 'natuur',
+    title: 'De uitbarsting van de Krakatau',
+    body: [
+      'Op 26 en 27 augustus 1883 barstte de vulkaan Krakatau uit, op een eiland in de Straat Soenda tussen Java en Sumatra, in het toenmalige Nederlands-Indië. Een reeks enorme explosies op de ochtend van de 27e blies het grootste deel van het eiland weg.',
+      'De knal was te horen tot op het eiland Rodrigues bij Mauritius, bijna 4.800 kilometer verderop. Het geldt als het hardste geluid uit de geschreven geschiedenis. De drukgolf ging meerdere keren de aarde rond en werd overal ter wereld door barometers geregistreerd.',
+      'De meeste slachtoffers vielen niet door de uitbarsting zelf, maar door de tsunami’s die erop volgden. Golven van tientallen meters hoog verwoestten de kustdorpen van Java en Sumatra. Het koloniale bestuur telde 36.417 doden.',
+      'As en zwaveldeeltjes kwamen hoog in de atmosfeer terecht. De gemiddelde temperatuur op aarde daalde het jaar erna, en over de hele wereld kleurden de zonsondergangen maandenlang felrood. Dankzij de telegraaf was het nieuws binnen enkele dagen wereldwijd bekend: een van de eerste rampen die de hele wereld vrijwel direct kon volgen.',
+    ],
+    source: wiki('Krakatau'),
+    question: {
+      q: 'Waardoor vielen bij de uitbarsting van de Krakatau de meeste slachtoffers?',
+      options: ['Door tsunami’s', 'Door lavastromen', 'Door de aswolk'],
+      answer: 0,
+      explain: 'Vloedgolven verwoestten de kusten van Java en Sumatra.',
+    },
+  },
+  {
     id: 'boekdrukkunst',
+    topic: 'wetenschap',
     title: 'Gutenberg en de boekdrukkunst',
     body: [
       'Rond 1450 ontwikkelde Johannes Gutenberg in Mainz een manier om te drukken met losse metalen letters. Die konden snel worden gegoten, gezet en hergebruikt. Zijn Bijbel, voltooid rond 1455, verscheen in ongeveer 180 exemplaren, een aantal waar kopiisten jaren over gedaan zouden hebben.',
@@ -56,7 +79,27 @@ export const deepdives = [
     },
   },
   {
+    id: 'bibliotheek-alexandrie',
+    topic: 'cultuur',
+    title: 'De bibliotheek van Alexandrië',
+    body: [
+      'In de derde eeuw voor Christus stichtten de Ptolemaeën, de Griekse koningen van Egypte, in Alexandrië een bibliotheek. Ze hoorde bij het Mouseion, een instelling waar geleerden op kosten van de koning onderzoek deden. Het doel was niets minder dan alle kennis van de wereld verzamelen. Schepen in de haven werden doorzocht op boekrollen, die werden overgeschreven.',
+      'Hoeveel rollen er lagen, weet niemand: schattingen lopen uiteen van tienduizenden tot honderdduizenden. Wel zeker is wat er gebeurde. Eratosthenes, die de bibliotheek leidde, berekende er de omtrek van de aarde en kwam opvallend dicht bij de werkelijke waarde.',
+      'Het bekende verhaal van één grote brand klopt waarschijnlijk niet. In 48 voor Christus ging bij gevechten rond Julius Caesar een deel van de collectie verloren, maar de bibliotheek bestond daarna gewoon door. Onder Romeins bestuur kreeg ze minder geld en aanzien, en in de derde eeuw na Christus werd de wijk waarin ze stond bij gevechten verwoest. Het verhaal dat Arabische veroveraars de boeken verbrandden, is pas eeuwen later opgeschreven en geldt als legende.',
+      'De ondergang laat zien dat kennis zelden in één klap verdwijnt. Papyrus vergaat en moest steeds opnieuw worden overgeschreven; toen dat ophield, verdween de collectie vanzelf. In 2002 opende in Alexandrië een nieuwe bibliotheek, de Bibliotheca Alexandrina.',
+    ],
+    source: wiki('Bibliotheek_van_Alexandrië'),
+    question: {
+      q: 'Hoe ging de bibliotheek van Alexandrië volgens historici ten onder?',
+      options: ['Geleidelijk, door verval en verwaarlozing', 'In één grote brand', 'Door een aardbeving'],
+      answer: 0,
+      explain: 'Er was niet één ramp: de bibliotheek raakte over eeuwen in verval.',
+    },
+  },
+  // ---------- ronde 2 ----------
+  {
     id: 'tachtigjarige-oorlog',
+    topic: 'nederland',
     title: 'De Tachtigjarige Oorlog',
     body: [
       'In de zestiende eeuw hoorden de Nederlanden bij het rijk van de Spaanse koning Filips II. Onvrede over hoge belastingen, de vervolging van protestanten en het inperken van oude rechten kwam in 1566 tot uitbarsting in de Beeldenstorm. Filips stuurde de hertog van Alva om de orde te herstellen.',
@@ -73,45 +116,8 @@ export const deepdives = [
     },
   },
   {
-    id: 'hongerwinter',
-    title: 'De Hongerwinter',
-    body: [
-      'In september 1944 was het zuiden van Nederland bevrijd, maar het westen niet. Na de spoorwegstaking die de regering in Londen had afgekondigd, blokkeerde de bezetter wekenlang de aanvoer van voedsel naar de grote steden. Toen de blokkade werd versoepeld, lagen de vaarwegen dichtgevroren.',
-      'De rantsoenen daalden in de eerste maanden van 1945 tot minder dan 500 kilocalorieën per dag, een kwart van wat een volwassene nodig heeft. Mensen aten tulpenbollen en suikerbieten en trokken op hongertochten naar het platteland om spullen te ruilen voor eten. Zeker 20.000 mensen stierven.',
-      'Hulp kwam laat. Vanaf eind april 1945 wierpen geallieerde bommenwerpers voedselpakketten af boven West-Nederland, kort voor de bevrijding op 5 mei.',
-      'De Hongerwinter heeft ook de geneeskunde iets geleerd. Kinderen die in die maanden in de baarmoeder zaten, bleken decennia later vaker hart- en vaatziekten en diabetes te hebben. Het is een van de duidelijkste aanwijzingen dat omstandigheden vóór de geboorte een leven lang doorwerken.',
-    ],
-    source: wiki('Hongerwinter'),
-    question: {
-      q: 'Wat bleek later uit onderzoek naar kinderen die tijdens de Hongerwinter werden verwacht?',
-      options: [
-        'Ze werden gemiddeld langer',
-        'Ze hadden later vaker hart- en vaatziekten en diabetes',
-        'Er was geen verschil met andere kinderen',
-      ],
-      answer: 1,
-      explain: 'Ondervoeding vóór de geboorte bleek tientallen jaren later nog door te werken.',
-    },
-  },
-  {
-    id: 'afschaffing-slavernij',
-    title: 'De afschaffing van de slavernij in Suriname en op de Antillen',
-    body: [
-      'Op 1 juli 1863 schafte Nederland de slavernij af in Suriname en op de Nederlandse Antillen. Ongeveer 34.000 mensen in Suriname en 12.000 op de eilanden werden die dag voor de wet vrij. Nederland was laat: Groot-Brittannië had die stap dertig jaar eerder gezet, Frankrijk in 1848.',
-      'De schadeloosstelling ging naar de eigenaren, niet naar de mensen die tot slaaf waren gemaakt. De staat betaalde in Suriname 300 gulden per vrijgemaakte persoon aan de plantagehouders.',
-      'In Suriname was de vrijheid bovendien niet meteen volledig. Wie op een plantage had gewerkt, moest onder staatstoezicht nog tien jaar tegen loon arbeid blijven verrichten. Pas in 1873 kwam daar een einde aan.',
-      'De afschaffing wordt elk jaar op 1 juli herdacht en gevierd met Keti Koti, wat ‘verbroken ketenen’ betekent. In 2022 bood de Nederlandse regering excuses aan voor het slavernijverleden.',
-    ],
-    source: wiki('Geschiedenis_van_de_Nederlandse_slavernij'),
-    question: {
-      q: 'Wie kreeg in 1863 een schadeloosstelling van de Nederlandse staat?',
-      options: ['De vrijgemaakte mensen', 'De eigenaren', 'Niemand'],
-      answer: 1,
-      explain: 'De eigenaren kregen in Suriname 300 gulden per vrijgemaakte persoon.',
-    },
-  },
-  {
     id: 'spaanse-griep',
+    topic: 'wereld',
     title: 'De Spaanse griep',
     body: [
       'Tussen 1918 en 1920 trok een griepvirus in enkele golven over de wereld. Naar schatting raakte een derde van de wereldbevolking besmet. Het aantal doden wordt meestal op 20 tot 50 miljoen geschat, meer dan er in de Eerste Wereldoorlog sneuvelden.',
@@ -132,7 +138,85 @@ export const deepdives = [
     },
   },
   {
+    id: 'jaar-zonder-zomer',
+    topic: 'natuur',
+    title: 'Het jaar zonder zomer',
+    body: [
+      'In april 1815 barstte de vulkaan Tambora uit, op het eiland Soembawa in het huidige Indonesië. Het was de krachtigste vulkaanuitbarsting uit de geschreven geschiedenis. Op Soembawa en het naburige Lombok stierven tienduizenden mensen, door de uitbarsting zelf en door de hongersnood die volgde.',
+      'De vulkaan blies enorme hoeveelheden zwavel hoog de atmosfeer in. Die vormden een sluier die zonlicht tegenhield. Het jaar erna, 1816, bleef de zomer op het noordelijk halfrond uit. In het noordoosten van de Verenigde Staten sneeuwde het in juni; in West-Europa regende het maandenlang en bleef het koud.',
+      'Oogsten mislukten en de voedselprijzen schoten omhoog. In onder meer Zwitserland, Duitsland en Ierland heerste honger, en op veel plaatsen braken voedselrellen uit. Niemand legde toen het verband met een vulkaan aan de andere kant van de wereld; dat gebeurde pas in de twintigste eeuw.',
+      'De sombere zomer liet ook andere sporen na. Aan het Meer van Genève zat een gezelschap schrijvers door het slechte weer binnen opgesloten. Ze daagden elkaar uit een griezelverhaal te schrijven, en de achttienjarige Mary Shelley begon daar aan Frankenstein.',
+    ],
+    source: wiki('Jaar_zonder_zomer'),
+    question: {
+      q: 'Wat veroorzaakte het jaar zonder zomer van 1816?',
+      options: ['De uitbarsting van de Tambora', 'Een inslag van een komeet', 'Een verandering in de golfstroom'],
+      answer: 0,
+      explain: 'Zwavel van de Tambora hield wereldwijd zonlicht tegen.',
+    },
+  },
+  {
+    id: 'pokken',
+    topic: 'wetenschap',
+    title: 'Hoe de pokken werden uitgeroeid',
+    body: [
+      'Pokken waren eeuwenlang een van de meest gevreesde ziekten. Het virus veroorzaakte hoge koorts en blaren over het hele lichaam; ongeveer drie op de tien zieken stierven, en wie het overleefde hield vaak littekens over of werd blind. Alleen al in de twintigste eeuw stierven er naar schatting 300 miljoen mensen aan.',
+      'In 1796 deed de Engelse arts Edward Jenner een proef. Het was hem opgevallen dat melkmeisjes die de onschuldige koepokken hadden gehad, geen pokken kregen. Hij bracht materiaal uit een koepokblaar aan bij de achtjarige James Phipps, die daarna immuun bleek. Het woord vaccin komt van vacca, het Latijnse woord voor koe.',
+      'De inenting verspreidde zich snel, maar in arme landen bleef de ziekte bestaan. In 1967 begon de Wereldgezondheidsorganisatie een campagne om de pokken overal uit te roeien. De sleutel was niet iedereen inenten, maar elk ziektegeval opsporen en alle mensen eromheen vaccineren.',
+      'Het laatste natuurlijke geval deed zich voor in 1977, in Somalië. In 1980 verklaarde de WHO de pokken officieel uitgeroeid. Het is tot nu toe de enige ziekte bij mensen waarbij dat is gelukt. Het virus bestaat nog in twee laboratoria, in de Verenigde Staten en in Rusland.',
+    ],
+    source: wiki('Pokken'),
+    question: {
+      q: 'Waar komt het woord vaccin vandaan?',
+      options: ['Van het Latijnse woord voor koe', 'Van de naam van een arts', 'Van het Griekse woord voor naald'],
+      answer: 0,
+      explain: 'Van vacca, koe: de eerste inenting gebruikte koepokken.',
+    },
+  },
+  {
+    id: 'steen-van-rosette',
+    topic: 'cultuur',
+    title: 'De Steen van Rosette',
+    body: [
+      'In 1799 vonden Franse soldaten van Napoleons expeditie naar Egypte bij de stad Rosette, in de Nijldelta, een donkere steen vol inscripties. Hij was verwerkt in een oude muur waar ze een fort verstevigden.',
+      'Op de steen staat een besluit van Egyptische priesters uit 196 voor Christus, ter ere van koning Ptolemaeus V. Het bijzondere is dat dezelfde tekst er drie keer op staat: in hiërogliefen, in het demotisch, een Egyptisch schrift voor dagelijks gebruik, en in het Grieks. Grieks konden geleerden lezen, en daarmee hadden ze een sleutel.',
+      'Na de Franse nederlaag kwam de steen in Britse handen; sinds 1802 staat hij in het British Museum. De Brit Thomas Young ontdekte dat de ovale kaders in de tekst koningsnamen bevatten. De Fransman Jean-François Champollion toonde in 1822 aan dat hiërogliefen niet alleen begrippen maar ook klanken weergeven.',
+      'De kennis van de hiërogliefen was toen al ruim 1.400 jaar verloren: de laatste bekende inscriptie dateert uit 394 na Christus. Door de ontcijfering werd drieduizend jaar Egyptische geschiedenis weer leesbaar. Egypte vraagt al jaren om teruggave van de steen.',
+    ],
+    source: wiki('Steen_van_Rosetta'),
+    question: {
+      q: 'Waarom was de Steen van Rosette de sleutel tot de hiërogliefen?',
+      options: ['Dezelfde tekst staat er ook in het Grieks op', 'Er staat een woordenlijst op', 'Het is de oudste tekst ter wereld'],
+      answer: 0,
+      explain: 'Het Grieks konden geleerden lezen en naast de hiërogliefen leggen.',
+    },
+  },
+  // ---------- ronde 3 ----------
+  {
+    id: 'hongerwinter',
+    topic: 'nederland',
+    title: 'De Hongerwinter',
+    body: [
+      'In september 1944 was het zuiden van Nederland bevrijd, maar het westen niet. Na de spoorwegstaking die de regering in Londen had afgekondigd, blokkeerde de bezetter wekenlang de aanvoer van voedsel naar de grote steden. Toen de blokkade werd versoepeld, lagen de vaarwegen dichtgevroren.',
+      'De rantsoenen daalden in de eerste maanden van 1945 tot minder dan 500 kilocalorieën per dag, een kwart van wat een volwassene nodig heeft. Mensen aten tulpenbollen en suikerbieten en trokken op hongertochten naar het platteland om spullen te ruilen voor eten. Zeker 20.000 mensen stierven.',
+      'Hulp kwam laat. Vanaf eind april 1945 wierpen geallieerde bommenwerpers voedselpakketten af boven West-Nederland, kort voor de bevrijding op 5 mei.',
+      'De Hongerwinter heeft ook de geneeskunde iets geleerd. Kinderen die in die maanden in de baarmoeder zaten, bleken decennia later vaker hart- en vaatziekten en diabetes te hebben. Het is een van de duidelijkste aanwijzingen dat omstandigheden vóór de geboorte een leven lang doorwerken.',
+    ],
+    source: wiki('Hongerwinter'),
+    question: {
+      q: 'Wat bleek later uit onderzoek naar kinderen die tijdens de Hongerwinter werden verwacht?',
+      options: [
+        'Ze werden gemiddeld langer',
+        'Ze hadden later vaker hart- en vaatziekten en diabetes',
+        'Er was geen verschil met andere kinderen',
+      ],
+      answer: 1,
+      explain: 'Ondervoeding vóór de geboorte bleek tientallen jaren later nog door te werken.',
+    },
+  },
+  {
     id: 'berlijnse-muur',
+    topic: 'wereld',
     title: 'De Berlijnse Muur',
     body: [
       'Na de Tweede Wereldoorlog was Duitsland verdeeld in een westelijk en een oostelijk deel, en Berlijn ook. Via West-Berlijn verlieten miljoenen Oost-Duitsers hun land. In de nacht van 12 op 13 augustus 1961 sloot de DDR de grens af, eerst met prikkeldraad, daarna met beton.',
@@ -146,6 +230,224 @@ export const deepdives = [
       options: ['1961', '1989', '1991'],
       answer: 1,
       explain: 'Op 9 november 1989; in 1961 werd hij gebouwd.',
+    },
+  },
+  {
+    id: 'dodo',
+    topic: 'natuur',
+    title: 'Het uitsterven van de dodo',
+    body: [
+      'De dodo was een loopvogel van ongeveer een meter hoog, verwant aan de duiven, die alleen op het eiland Mauritius voorkwam. Omdat er geen roofdieren leefden, had hij het vliegen verleerd en broedde hij op de grond.',
+      'In 1598 gingen Nederlandse zeelieden op het eiland aan land. Ze noemden het Mauritius, naar prins Maurits, en beschreven de vreemde vogel als eersten. In de jaren daarna deden schepen het eiland regelmatig aan om vers voedsel in te slaan.',
+      'De dodo werd bejaagd, maar de grootste schade kwam van de dieren die met de schepen meereisden. Ratten, varkens en apen vraten de eieren en kuikens op, en het bos waarin de vogel leefde werd gekapt. De laatste algemeen aanvaarde waarneming is van 1662. Binnen een eeuw na de ontdekking was de soort verdwenen.',
+      'Lange tijd werd zelfs betwijfeld of het dier echt had bestaan. In de negentiende eeuw, mede door zijn rol in Alice in Wonderland, werd de dodo het symbool van uitsterven door toedoen van de mens. Een compleet opgezet exemplaar bestaat niet; wat we weten komt uit botten, tekeningen en reisverslagen.',
+    ],
+    source: wiki('Dodo'),
+    question: {
+      q: 'Wat speelde, naast de jacht, een grote rol bij het uitsterven van de dodo?',
+      options: ['Meegebrachte dieren die eieren en kuikens opvraten', 'Een vulkaanuitbarsting', 'Een besmettelijke ziekte'],
+      answer: 0,
+      explain: 'Ratten, varkens en apen plunderden de nesten op de grond.',
+    },
+  },
+  {
+    id: 'maanlanding',
+    topic: 'wetenschap',
+    title: 'De eerste mensen op de maan',
+    body: [
+      'Eind jaren vijftig lag de Sovjet-Unie voor in de ruimtevaart: in 1957 lanceerde ze de eerste satelliet, Spoetnik, en in 1961 was Joeri Gagarin de eerste mens in de ruimte. De Amerikaanse president Kennedy stelde daarop in mei 1961 een doel: vóór het einde van het decennium een mens op de maan zetten en veilig terugbrengen.',
+      'Het Apolloprogramma dat volgde, hield op het hoogtepunt ongeveer 400.000 mensen aan het werk. Het begon met een ramp: in januari 1967 kwamen drie astronauten om bij een brand tijdens een test op de grond. In december 1968 vloog Apollo 8 als eerste bemande missie om de maan.',
+      'Op 16 juli 1969 vertrok Apollo 11 met Neil Armstrong, Buzz Aldrin en Michael Collins. Vier dagen later, op 20 juli, landden Armstrong en Aldrin met de maanlander Eagle in de Zee van de Rust, terwijl Collins in een baan om de maan bleef. Naar schatting 600 miljoen mensen keken mee toen Armstrong zijn eerste stap zette.',
+      'Tot december 1972 volgden nog vijf geslaagde landingen. In totaal hebben twaalf mensen op de maan gelopen. Daarna werd het programma stopgezet: de wedloop was gewonnen en de kosten waren hoog.',
+    ],
+    source: wiki('Apollo_11'),
+    question: {
+      q: 'Hoeveel mensen hebben er op de maan gelopen?',
+      options: ['Twee', 'Twaalf', 'Vierentwintig'],
+      answer: 1,
+      explain: 'Twaalf, bij zes landingen tussen 1969 en 1972.',
+    },
+  },
+  {
+    id: 'statenvertaling',
+    topic: 'cultuur',
+    title: 'De Statenvertaling',
+    body: [
+      'Aan het begin van de zeventiende eeuw lazen Nederlandse protestanten bijbels die waren vertaald uit andere vertalingen. De Synode van Dordrecht, de grote kerkvergadering van 1618 en 1619, besloot dat er een nieuwe moest komen, rechtstreeks uit het Hebreeuws, Aramees en Grieks.',
+      'De Staten-Generaal betaalden het werk, en daaraan dankt de vertaling haar naam. De vertalers gingen in Leiden aan de slag. In 1637 was de Statenvertaling klaar.',
+      'Voor de taal was het een bijzonder moment. Een standaardnederlands bestond nog niet: elke streek sprak en schreef anders. De vertalers en hun controleurs kwamen daarom met opzet uit verschillende gewesten, en kozen woorden en vormen die overal te begrijpen waren.',
+      'De vertaling lag eeuwenlang in vrijwel elk protestants gezin op tafel en werd dagelijks voorgelezen. Daardoor heeft ze het Nederlands sterk gevormd. Uitdrukkingen als ‘een doorn in het oog’ en ‘de eerste steen werpen’ komen uit de Bijbel en zijn mede door deze vertaling gewoon Nederlands geworden.',
+    ],
+    source: wiki('Statenvertaling'),
+    question: {
+      q: 'Waaraan dankt de Statenvertaling haar naam?',
+      options: ['De Staten-Generaal betaalden de vertaling', 'Ze werd in de Statenzaal gedrukt', 'De eerste drukker heette Staten'],
+      answer: 0,
+      explain: 'De Staten-Generaal gaven de opdracht en betaalden het werk.',
+    },
+  },
+  // ---------- ronde 4 ----------
+  {
+    id: 'afschaffing-slavernij',
+    topic: 'nederland',
+    title: 'De afschaffing van de slavernij in Suriname en op de Antillen',
+    body: [
+      'Op 1 juli 1863 schafte Nederland de slavernij af in Suriname en op de Nederlandse Antillen. Ongeveer 34.000 mensen in Suriname en 12.000 op de eilanden werden die dag voor de wet vrij. Nederland was laat: Groot-Brittannië had die stap dertig jaar eerder gezet, Frankrijk in 1848.',
+      'De schadeloosstelling ging naar de eigenaren, niet naar de mensen die tot slaaf waren gemaakt. De staat betaalde in Suriname 300 gulden per vrijgemaakte persoon aan de plantagehouders.',
+      'In Suriname was de vrijheid bovendien niet meteen volledig. Wie op een plantage had gewerkt, moest onder staatstoezicht nog tien jaar tegen loon arbeid blijven verrichten. Pas in 1873 kwam daar een einde aan.',
+      'De afschaffing wordt elk jaar op 1 juli herdacht en gevierd met Keti Koti, wat ‘verbroken ketenen’ betekent. In 2022 bood de Nederlandse regering excuses aan voor het slavernijverleden.',
+    ],
+    source: wiki('Geschiedenis_van_de_Nederlandse_slavernij'),
+    question: {
+      q: 'Wie kreeg in 1863 een schadeloosstelling van de Nederlandse staat?',
+      options: ['De vrijgemaakte mensen', 'De eigenaren', 'Niemand'],
+      answer: 1,
+      explain: 'De eigenaren kregen in Suriname 300 gulden per vrijgemaakte persoon.',
+    },
+  },
+  {
+    id: 'franse-revolutie',
+    topic: 'wereld',
+    title: 'De Franse Revolutie',
+    body: [
+      'In 1789 stond Frankrijk aan de rand van een bankroet. Koning Lodewijk XVI riep de Staten-Generaal bijeen, voor het eerst sinds 1614, om nieuwe belastingen te regelen. De vertegenwoordigers van de burgerij namen daar geen genoegen mee en riepen zichzelf uit tot Nationale Vergadering.',
+      'Op 14 juli bestormde een menigte in Parijs de Bastille, een gevangenis die symbool stond voor de willekeur van de koning. In augustus schafte de vergadering de voorrechten van adel en geestelijkheid af en nam ze de Verklaring van de rechten van de mens en de burger aan: mensen worden vrij en met gelijke rechten geboren.',
+      'De revolutie werd daarna steeds radicaler. In 1792 werd de republiek uitgeroepen, en in januari 1793 stierf de koning onder de guillotine. Tijdens de Terreur van 1793 en 1794 werden duizenden mensen als vijand van de revolutie terechtgesteld.',
+      'In 1799 greep generaal Napoleon Bonaparte de macht. Maar de ideeën bleven: gelijkheid voor de wet en een volk dat zichzelf bestuurt. Ze verspreidden zich over Europa, ook naar Nederland, waar in 1795 de Bataafse Republiek ontstond.',
+    ],
+    source: wiki('Franse_Revolutie'),
+    question: {
+      q: 'Welke gebeurtenis op 14 juli 1789 geldt als het begin van de Franse Revolutie?',
+      options: ['De bestorming van de Bastille', 'De terechtstelling van de koning', 'De kroning van Napoleon'],
+      answer: 0,
+      explain: '14 juli is nog altijd de Franse nationale feestdag.',
+    },
+  },
+  {
+    id: 'aardbeving-lissabon',
+    topic: 'natuur',
+    title: 'De aardbeving van Lissabon',
+    body: [
+      'Op 1 november 1755, de ochtend van Allerheiligen, trof een zware aardbeving Lissabon terwijl de kerken vol zaten. Wie naar de open kade vluchtte, werd kort daarna overvallen door een tsunami. In de dagen erna legden branden de rest van de stad in de as.',
+      'Tienduizenden mensen kwamen om en het grootste deel van de stad was verwoest, met het koninklijk paleis en de bibliotheek. De vloedgolf trof ook de kusten van Zuid-Spanje en Marokko, en de schokken werden in een groot deel van Europa gevoeld.',
+      'De markies van Pombal, de eerste minister, leidde de wederopbouw. Hij liet een vragenlijst rondsturen naar alle parochies: hoe lang duurde de beving, hoeveel naschokken waren er, wat gebeurde er met het water in de putten? Dat geldt als het begin van de wetenschappelijke studie van aardbevingen. De nieuwe binnenstad kreeg rechte straten en gebouwen met een houten skelet dat schokken kon opvangen.',
+      'De ramp schudde ook het denken in Europa wakker. Waarom zou God een vrome stad treffen op een heilige dag? De Franse schrijver Voltaire gebruikte Lissabon om het idee aan te vallen dat we in de beste van alle mogelijke werelden leven. Steeds meer mensen gingen de oorzaak van rampen in de natuur zoeken.',
+    ],
+    source: wiki('Aardbeving_Lissabon_1755'),
+    question: {
+      q: 'Waarom geldt de aardbeving van Lissabon als het begin van de aardbevingskunde?',
+      options: ['Er werden voor het eerst systematisch gegevens verzameld', 'De eerste seismograaf werd er gebruikt', 'De beving was vooraf voorspeld'],
+      answer: 0,
+      explain: 'Pombal liet in het hele land vragenlijsten over de beving invullen.',
+    },
+  },
+  {
+    id: 'tsjernobyl',
+    topic: 'wetenschap',
+    title: 'De kernramp van Tsjernobyl',
+    body: [
+      'In de nacht van 25 op 26 april 1986 voerden technici een veiligheidstest uit in reactor 4 van de kerncentrale van Tsjernobyl, in Oekraïne, toen deel van de Sovjet-Unie. Door een combinatie van ontwerpfouten en bedieningsfouten schoot het vermogen omhoog. Explosies bliezen het dak van de reactor en het grafiet in de kern brandde dagenlang.',
+      'Een radioactieve wolk trok over een groot deel van Europa. De Sovjetautoriteiten zwegen, tot meetapparatuur bij een Zweedse kerncentrale op 28 april alarm sloeg. De nabijgelegen stad Pripjat, met bijna 50.000 inwoners, werd pas ruim een dag na de ramp ontruimd. De bewoners dachten voor een paar dagen te vertrekken en keerden nooit terug.',
+      'Twee medewerkers stierven bij de explosie en in de maanden erna overleden nog eens 28 brandweerlieden en medewerkers aan stralingsziekte. Hoeveel mensen later door de straling kanker kregen, is omstreden: de schattingen lopen uiteen van enkele duizenden tot veel meer. Honderdduizenden mensen werden ingezet om het gebied schoon te maken.',
+      'Een zone van dertig kilometer rond de centrale is nog altijd grotendeels onbewoond. Over de reactor kwam eerst een betonnen omhulsel, en in 2016 is daar een nieuwe stalen overkapping overheen geschoven. In Nederland gold in mei 1986 korte tijd een verbod op de verkoop van verse spinazie.',
+    ],
+    source: wiki('Kernramp_van_Tsjernobyl'),
+    question: {
+      q: 'Hoe kwam de ramp in Tsjernobyl internationaal aan het licht?',
+      options: ['Een Zweedse kerncentrale mat verhoogde straling', 'De Sovjet-Unie gaf direct een persconferentie', 'Een journalist was ter plaatse'],
+      answer: 0,
+      explain: 'Pas na het alarm in Zweden gaf de Sovjet-Unie het ongeluk toe.',
+    },
+  },
+  {
+    id: 'spijkerschrift',
+    topic: 'cultuur',
+    title: 'Het ontstaan van het schrift',
+    body: [
+      'Ruim vijfduizend jaar geleden begonnen beheerders van tempels in Uruk, een stad in het zuiden van het huidige Irak, tekens in kleitabletten te krassen. Ze hielden ermee bij hoeveel graan, vee en bier er binnenkwam en werd uitgedeeld. Het oudste schrift begon dus als boekhouding, niet als literatuur.',
+      'De eerste tekens waren kleine tekeningen. Omdat krassen in natte klei lastig gaat, ging men ze indrukken met een afgesneden rietstengel. Dat gaf wigvormige putjes, en daaraan dankt het spijkerschrift zijn naam. Later gingen tekens ook klanken weergeven, waardoor namen en hele zinnen konden worden opgeschreven.',
+      'Het spijkerschrift bleef ongeveer drieduizend jaar in gebruik, voor heel verschillende talen. Er werden wetten in vastgelegd, zoals die van de Babylonische koning Hammurabi, maar ook brieven, wiskundige berekeningen, waarnemingen van de sterren en het Gilgamesj-epos.',
+      'Daarna raakte het vergeten. Pas in de negentiende eeuw lukte het geleerden het weer te lezen, met hulp van een rotsinscriptie in Iran waarop dezelfde tekst in drie talen staat. Omdat klei goed bewaard blijft, zijn er honderdduizenden tabletten teruggevonden.',
+    ],
+    source: wiki('Spijkerschrift'),
+    question: {
+      q: 'Waarvoor werd het oudste schrift in eerste instantie gebruikt?',
+      options: ['Voor boekhouding', 'Voor gebeden', 'Voor verhalen'],
+      answer: 0,
+      explain: 'Om voorraden graan, vee en bier bij te houden.',
+    },
+  },
+  // ---------- ronde 5 ----------
+  {
+    id: 'rampjaar-1672',
+    topic: 'nederland',
+    title: 'Het Rampjaar 1672',
+    body: [
+      'In 1672 werd de Republiek der Zeven Verenigde Nederlanden van vier kanten tegelijk aangevallen: door Frankrijk, Engeland en de bisschoppen van Münster en Keulen. Het Franse leger van Lodewijk XIV trok in juni vrijwel ongehinderd het land binnen, en de stad Utrecht gaf zich zonder strijd over.',
+      'Tijdgenoten vatten de toestand samen in drie woorden: het volk was redeloos, de regering radeloos en het land reddeloos. Holland werd gered door de Hollandse Waterlinie, een strook land die onder water werd gezet: te diep om doorheen te waden, te ondiep om te bevaren. Op zee hield Michiel de Ruyter de Engelse en Franse vloot tegen.',
+      'De woede van de bevolking richtte zich op raadpensionaris Johan de Witt, die het land twintig jaar zonder stadhouder had geleid. De jonge prins Willem III werd tot stadhouder benoemd. Op 20 augustus werden Johan de Witt en zijn broer Cornelis in Den Haag door een menigte vermoord.',
+      'In het noorden liep de aanval van de bisschop van Münster vast voor de stad Groningen, en eind december werd de vesting Coevorden heroverd. De Republiek overleefde: in 1674 sloten Engeland, Münster en Keulen vrede, en in 1678 volgde Frankrijk. Toch geldt het Rampjaar als het einde van de grootste bloei van de Gouden Eeuw.',
+    ],
+    source: wiki('Rampjaar'),
+    question: {
+      q: 'Wat hield het Franse leger in 1672 tegen bij de grens van Holland?',
+      options: ['De Hollandse Waterlinie', 'Een strenge winter', 'Een opstand in Frankrijk'],
+      answer: 0,
+      explain: 'Een brede strook land werd onder water gezet.',
+    },
+  },
+  {
+    id: 'eerste-wereldoorlog',
+    topic: 'wereld',
+    title: 'Het begin van de Eerste Wereldoorlog',
+    body: [
+      'Op 28 juni 1914 schoot de Bosnisch-Servische student Gavrilo Princip in Sarajevo de Oostenrijkse troonopvolger Frans Ferdinand en diens vrouw Sophie dood. Oostenrijk-Hongarije gaf Servië de schuld, stelde een ultimatum en verklaarde een maand later de oorlog.',
+      'Door een web van bondgenootschappen sleepte dat conflict de rest van Europa mee. Rusland steunde Servië, Duitsland steunde Oostenrijk-Hongarije en verklaarde de oorlog aan Rusland en Frankrijk. Toen Duitse troepen het neutrale België binnenvielen, deed ook Groot-Brittannië mee. Binnen een week was vrijwel heel Europa in oorlog.',
+      'Bijna iedereen verwachtte een korte strijd. In plaats daarvan liep het front in het westen vast in loopgraven, van de Noordzee tot aan Zwitserland. Mitrailleurs, artillerie en gifgas maakten elke aanval tot een slachting. Bij veldslagen als Verdun en de Somme vielen honderdduizenden doden voor een paar kilometer terreinwinst.',
+      'Op 11 november 1918 zwegen de wapens. Naar schatting negen tot tien miljoen militairen waren gesneuveld, en vier keizerrijken waren ingestort. Nederland bleef neutraal, maar hield zijn leger vier jaar gemobiliseerd en ving in 1914 ongeveer een miljoen Belgische vluchtelingen op.',
+    ],
+    source: wiki('Eerste_Wereldoorlog'),
+    question: {
+      q: 'Welk van deze landen bleef in de Eerste Wereldoorlog neutraal?',
+      options: ['Nederland', 'België', 'Italië'],
+      answer: 0,
+      explain: 'België werd binnengevallen en Italië ging in 1915 meevechten.',
+    },
+  },
+  {
+    id: 'februaristaking',
+    topic: 'nederland',
+    title: 'De Februaristaking',
+    body: [
+      'Op 22 en 23 februari 1941 hield de Duitse bezetter in Amsterdam de eerste razzia’s. Op en rond het Jonas Daniël Meijerplein werden 427 Joodse mannen opgepakt en afgevoerd. Vrijwel geen van hen heeft de concentratiekampen overleefd.',
+      'De verboden Communistische Partij riep op tot staking. Op 25 februari legden trambestuurders, havenarbeiders, metaalbewerkers en ambtenaren in Amsterdam het werk neer. Een dag later sloeg de staking over naar onder meer de Zaanstreek, Haarlem en Utrecht.',
+      'De bezetter sloeg hard terug. Er werd op stakers geschoten, waarbij negen doden vielen, en honderden mensen werden gearresteerd. Na twee dagen was de staking gebroken. In maart werden drie stakers gefusilleerd, samen met vijftien leden van een verzetsgroep.',
+      'De staking heeft de vervolging niet tegengehouden. Toch is ze bijzonder: het was een van de weinige keren in bezet Europa dat een bevolking massaal en openlijk in verzet kwam tegen de Jodenvervolging. Elk jaar op 25 februari wordt ze in Amsterdam herdacht bij het beeld De Dokwerker.',
+    ],
+    source: wiki('Februaristaking'),
+    question: {
+      q: 'Waartegen was de Februaristaking van 1941 gericht?',
+      options: ['De Jodenvervolging', 'De voedselrantsoenen', 'Gedwongen arbeid in Duitsland'],
+      answer: 0,
+      explain: 'De staking volgde op de eerste razzia’s in Amsterdam.',
+    },
+  },
+  {
+    id: 'apartheid',
+    topic: 'wereld',
+    title: 'Apartheid in Zuid-Afrika',
+    body: [
+      'In 1948 won de Nationale Partij de verkiezingen in Zuid-Afrika, waaraan vrijwel alleen witte inwoners mochten meedoen. De partij voerde een beleid in dat ze apartheid noemde, een Afrikaans woord dat ‘gescheidenheid’ betekent.',
+      'Een reeks wetten deelde elke inwoner in bij een ‘ras’ en bepaalde op grond daarvan waar iemand mocht wonen, werken en naar school gaan. Huwelijken tussen wit en zwart werden verboden. Zwarte Zuid-Afrikanen moesten altijd een pasje bij zich hebben, en miljoenen mensen werden gedwongen te verhuizen naar afgelegen ‘thuislanden’.',
+      'Het verzet werd geleid door het Afrikaans Nationaal Congres, het ANC. Op 21 maart 1960 schoot de politie in Sharpeville op mensen die tegen de pasjeswetten demonstreerden; er vielen 69 doden. Het ANC werd verboden. Nelson Mandela, een van de leiders, werd in 1962 opgepakt en bleef 27 jaar gevangen, grotendeels op Robbeneiland.',
+      'Internationale boycots en aanhoudend verzet in het land zelf maakten het systeem onhoudbaar. In 1990 hief president De Klerk het verbod op het ANC op en kwam Mandela vrij. In april 1994 mochten voor het eerst alle Zuid-Afrikanen stemmen, en werd Mandela president.',
+    ],
+    source: wiki('Apartheid'),
+    question: {
+      q: 'Hoe lang zat Nelson Mandela gevangen?',
+      options: ['7 jaar', '17 jaar', '27 jaar'],
+      answer: 2,
+      explain: 'Van 1962 tot 1990, grotendeels op Robbeneiland.',
     },
   },
 ]

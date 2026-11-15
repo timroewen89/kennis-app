@@ -1,13 +1,10 @@
 // Controleert de eigen inhoud op vormfouten. Draai met: node scripts/check-content.mjs
 import { deepdives } from '../content/deepdives.js'
 import { facts } from '../content/facts.js'
+import { TOPICS } from '../content/topics.js'
 
-// Zelfde keuze als in index.html: elke dag het volgende item uit de lijst.
-function pickForDay(list, day) {
-  const [y, m, d] = day.split('-').map(Number)
-  return list[Math.round(Date.UTC(y, m - 1, d) / 86_400_000) % list.length]
-}
-
+const MIN_PER_TOPIC = 3 // zodat een thema niet na een paar dagen in herhaling valt
+const topicIds = new Set(TOPICS.map((topic) => topic.id))
 const problems = []
 
 function check(list, name, minParagraphs) {
@@ -18,13 +15,14 @@ function check(list, name, minParagraphs) {
     if (!item.id) fail('heeft geen id')
     if (seen.has(item.id)) fail('id komt twee keer voor')
     seen.add(item.id)
+    if (!topicIds.has(item.topic)) fail(`onbekend thema "${item.topic}" (kies uit: ${[...topicIds].join(', ')})`)
     if (!item.title?.trim()) fail('heeft geen titel')
     if (!Array.isArray(item.body) || item.body.length < minParagraphs) {
       fail(`heeft minder dan ${minParagraphs} alinea('s)`)
     } else if (item.body.some((p) => typeof p !== 'string' || !p.trim())) {
       fail('heeft een lege alinea')
     }
-    if (item.source && !/^https:\/\//.test(item.source.url ?? '')) fail('bron-url is geen https-link')
+    if (!item.source?.name || !/^https:\/\//.test(item.source?.url ?? '')) fail('heeft geen bron met https-link')
     const q = item.question
     if (!q?.q?.trim()) fail('heeft geen quizvraag')
     else {
@@ -33,6 +31,10 @@ function check(list, name, minParagraphs) {
       if (!Number.isInteger(q.answer) || q.answer < 0 || q.answer > 2) fail('answer moet 0, 1 of 2 zijn')
       if (!q.explain?.trim()) fail('quizvraag heeft geen uitleg')
     }
+  }
+  for (const topic of TOPICS) {
+    const count = list.filter((item) => item.topic === topic.id).length
+    if (count < MIN_PER_TOPIC) problems.push(`${name}: thema "${topic.name}" heeft maar ${count} items (minimaal ${MIN_PER_TOPIC})`)
   }
 }
 
@@ -44,12 +46,9 @@ if (problems.length > 0) {
   process.exit(1)
 }
 
-console.log(`✓ ${facts.length} weetjes en ${deepdives.length} verdiepingen in orde`)
-const pad = (n) => String(n).padStart(2, '0')
-console.log('\nKomende week:')
-for (let i = 0; i < 7; i++) {
-  const date = new Date()
-  date.setDate(date.getDate() + i)
-  const day = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
-  console.log(`  ${day}  ${pickForDay(facts, day).title}  |  ${pickForDay(deepdives, day).title}`)
+console.log(`✓ ${facts.length} weetjes en ${deepdives.length} verdiepingen in orde\n`)
+console.log('Per thema (weetjes / verdiepingen):')
+for (const topic of TOPICS) {
+  const count = (list) => list.filter((item) => item.topic === topic.id).length
+  console.log(`  ${topic.name.padEnd(22)} ${String(count(facts)).padStart(2)} / ${count(deepdives)}`)
 }
