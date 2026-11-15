@@ -268,6 +268,57 @@ button:disabled {
   margin-top: auto;
   padding-top: 1.25rem;
 }
+/* Vegen: de kaart volgt je vinger; verticaal scrollen blijft gewoon werken. */
+main {
+  overflow-x: clip; /* een wegschuivende kaart mag de pagina niet breder maken */
+}
+.swipe {
+  touch-action: pan-y;
+  will-change: transform;
+}
+.swipe.is-settling {
+  transition: transform 0.18s ease-out, opacity 0.18s ease-out;
+}
+.swipe.enter-right {
+  animation: enter-right 0.2s ease-out;
+}
+.swipe.enter-left {
+  animation: enter-left 0.2s ease-out;
+}
+@keyframes enter-right {
+  from { transform: translateX(40%); opacity: 0; }
+}
+@keyframes enter-left {
+  from { transform: translateX(-40%); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .swipe.is-settling { transition: none; }
+  .swipe.enter-right, .swipe.enter-left { animation: none; }
+}
+.pager__hint {
+  display: none;
+}
+/* Op aanraakschermen veeg je; de knoppen blijven bestaan voor schermlezers. */
+@media (pointer: coarse) {
+  .pager {
+    justify-content: center;
+  }
+  .pager .nav-btn {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .pager__hint {
+    display: inline;
+  }
+  .pager .btn--finish {
+    margin-left: auto;
+  }
+}
 .pager__count {
   color: var(--muted);
   font-size: 0.9rem;
@@ -674,6 +725,7 @@ const today = dayKey()
 let state = loadState()
 let edition = null
 let view = 'edition' // 'edition' | 'saved'
+let navigate = {} // wat 'vorige' en 'volgende' op dit moment doen (voor de pijltjestoetsen)
 
 const main = document.getElementById('main')
 document.getElementById('date').textContent = formatLongDate(today)
@@ -850,6 +902,78 @@ function savedView() {
   )
 }
 
+// Maakt een kaart veegbaar: naar links = volgende, naar rechts = vorige.
+// onNext/onPrev zijn null als die richting (nog) niet mag; de kaart veert dan terug.
+function makeSwipeable(node, { onNext, onPrev }) {
+  let start = null
+  let dragging = false
+  let dx = 0
+  let suppressClick = false
+
+  const settle = (transform, opacity, after) => {
+    node.classList.add('is-settling')
+    node.style.transform = transform
+    node.style.opacity = opacity
+    if (after) setTimeout(after, 180)
+  }
+
+  node.classList.add('swipe')
+  node.addEventListener('pointerdown', (event) => {
+    // Met de muis blijft slepen tekst selecteren; daar zijn de knoppen en pijltjestoetsen voor.
+    if (event.pointerType === 'mouse' || !event.isPrimary) return
+    start = { x: event.clientX, y: event.clientY, time: event.timeStamp }
+    dragging = false
+    dx = 0
+  })
+  node.addEventListener('pointermove', (event) => {
+    if (!start) return
+    dx = event.clientX - start.x
+    const dy = event.clientY - start.y
+    if (!dragging) {
+      if (Math.abs(dy) > 10 && Math.abs(dy) >= Math.abs(dx)) start = null // verticaal: scrollen
+      else if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+        dragging = true
+        node.classList.remove('is-settling', 'enter-left', 'enter-right')
+        node.setPointerCapture(event.pointerId)
+      }
+      if (!dragging) return
+    }
+    const allowed = dx < 0 ? onNext : onPrev
+    const shown = allowed ? dx : dx * 0.2 // weerstand als deze kant niet kan
+    node.style.transform = `translateX(${shown}px) rotate(${shown / 60}deg)`
+  })
+  const end = (event) => {
+    if (!start) return
+    const wasDragging = dragging
+    const speed = Math.abs(dx) / Math.max(event.timeStamp - start.time, 1) // pixels per ms
+    start = null
+    dragging = false
+    if (!wasDragging) return
+    suppressClick = true
+    setTimeout(() => (suppressClick = false), 50)
+    const action = dx < 0 ? onNext : onPrev
+    const far = Math.abs(dx) > Math.min(110, node.offsetWidth * 0.3)
+    const flick = Math.abs(dx) > 40 && speed > 0.5
+    if (event.type === 'pointerup' && action && (far || flick)) {
+      settle(`translateX(${dx < 0 ? -110 : 110}%)`, '0', action)
+    } else {
+      settle('', '')
+    }
+  }
+  node.addEventListener('pointerup', end)
+  node.addEventListener('pointercancel', end)
+  // Na een veeg mag de knop onder je vinger niet ook nog afgaan.
+  node.addEventListener('click', (event) => suppressClick && (event.stopPropagation(), event.preventDefault()), true)
+  return node
+}
+
+// Vanaf welke kant de volgende kaart het beeld in schuift ('left', 'right' of null).
+let enterFrom = null
+function go(index, from) {
+  enterFrom = from
+  setProgress({ index }, true)
+}
+
 function editionView() {
   const cards = edition.cards
   const total = cards.length
@@ -861,6 +985,14 @@ function editionView() {
   const card = cards[index]
   const isLast = index === total - 1
   const quizDone = card.type !== 'quiz' || card.questions.every((_, i) => Number.isInteger(answers[i]))
+  const onPrev = index > 0 ? () => go(index - 1, 'left') : null
+  const onNext = !quizDone ? null : isLast ? finish : () => go(index + 1, 'right')
+  navigate = { onPrev, onNext }
+
+  const cardNode = makeSwipeable(card.type === 'quiz' ? quizView(card, answers) : cardView(card), { onNext, onPrev })
+  if (enterFrom) cardNode.classList.add(`enter-${enterFrom}`)
+  enterFrom = null
+
   return [
     el(
       'ol',
@@ -868,24 +1000,21 @@ function editionView() {
       cards.map((_, i) => el('li', { class: i < index ? 'is-done' : i === index ? 'is-current' : '' })),
     ),
     index === 0 && edition.notes.map((note) => el('p', { class: 'notice' }, note)),
-    card.type === 'quiz' ? quizView(card, answers) : cardView(card),
+    cardNode,
     el(
       'nav',
       { class: 'pager' },
+      el('button', { type: 'button', class: 'btn btn--ghost nav-btn', disabled: !onPrev, onclick: onPrev }, 'Vorige'),
       el(
-        'button',
-        { type: 'button', class: 'btn btn--ghost', disabled: index === 0, onclick: () => setProgress({ index: index - 1 }, true) },
-        'Vorige',
+        'span',
+        { class: 'pager__count' },
+        `${index + 1} / ${total}`,
+        index === 0 && el('span', { class: 'pager__hint' }, ' · veeg naar links voor de volgende'),
       ),
-      el('span', { class: 'pager__count' }, `${index + 1} / ${total}`),
+      // 'Afronden' blijft altijd een zichtbare knop; bladeren doe je op een aanraakscherm met vegen.
       el(
         'button',
-        {
-          type: 'button',
-          class: 'btn',
-          disabled: !quizDone,
-          onclick: () => (isLast ? finish() : setProgress({ index: index + 1 }, true)),
-        },
+        { type: 'button', class: isLast ? 'btn btn--finish' : 'btn nav-btn', disabled: !onNext, onclick: onNext },
         isLast ? 'Afronden' : 'Volgende',
       ),
     ),
@@ -898,6 +1027,7 @@ function render(toTop = false) {
   document.getElementById('streak-label').textContent = ` ${streak === 1 ? 'dag' : 'dagen'} op rij`
   document.getElementById('toggle-saved').textContent = view === 'saved' ? '← Editie' : `Bewaard (${state.saved.length})`
 
+  navigate = {}
   let content
   if (view === 'saved') content = [savedView()]
   else if (!edition) content = [el('p', { class: 'loading' }, 'Editie laden…')]
@@ -910,6 +1040,13 @@ render()
 getEdition(today).then((result) => {
   edition = result
   render()
+})
+
+// Pijltjestoetsen: links = vorige, rechts = volgende.
+document.addEventListener('keydown', (event) => {
+  if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return
+  if (event.key === 'ArrowLeft') navigate.onPrev?.()
+  else if (event.key === 'ArrowRight' && edition && progress().index < edition.cards.length - 1) navigate.onNext?.()
 })
 
 // Service worker: maakt de app installeerbaar en bruikbaar zonder verbinding.

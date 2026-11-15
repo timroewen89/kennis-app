@@ -4,6 +4,9 @@ Een dagelijkse kennisfeed tegen doomscrollen. Elke dag één eindige editie van 
 3 nieuwspunten, 1 "vandaag in de geschiedenis", 1 weetje, 1 verdieping en een mini-quiz.
 Daarna: klaar voor vandaag.
 
+Bladeren doe je door te vegen: naar links voor de volgende kaart, naar rechts voor de vorige.
+Op een computer zijn er knoppen en werken de pijltjestoetsen.
+
 De app is één `index.html` zonder bouwstap. Geen account, geen betaalde diensten;
 dagreeks en bewaarde kaarten staan lokaal in je browser.
 
