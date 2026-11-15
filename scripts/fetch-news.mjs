@@ -1,26 +1,53 @@
-// Haalt de bovenste berichten van de nieuwsfeeds op en schrijft 3 nieuwspunten naar public/news.json.
-// Draai met: npm run news  (later dagelijks en automatisch, bij het publiceren)
+// Haalt de bovenste berichten van de nieuwsfeeds op en schrijft 3 nieuwspunten naar news.json.
+// Heeft alleen Node nodig, geen pakketten. Draai met: node scripts/fetch-news.mjs
+// Op GitHub draait dit elke dag vanzelf (zie .github/workflows/nieuws.yml).
 import { writeFile } from 'node:fs/promises'
-import { XMLParser } from 'fast-xml-parser'
-import { NEWS_FEEDS } from '../src/data/sources.js'
 
-const OUT = new URL('../public/news.json', import.meta.url)
+// Uit elke feed komt het bovenste bericht in de editie. Valt een feed uit, dan vullen de andere aan.
+const NEWS_FEEDS = [
+  { id: 'nos', name: 'NOS', lang: 'nl', url: 'https://feeds.nos.nl/nosnieuwsalgemeen' },
+  { id: 'bbc', name: 'BBC News', lang: 'en', url: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
+  { id: 'guardian', name: 'The Guardian', lang: 'en', url: 'https://www.theguardian.com/world/rss' },
+]
+
+const OUT = new URL('../news.json', import.meta.url)
 const TOTAL = 3
 const MAX_SUMMARY = 280
-const parser = new XMLParser({ ignoreAttributes: true, processEntities: true })
+
+// Leest de <item>-blokken uit een RSS-feed. Bewust eenvoudig: we hebben alleen titel,
+// link, beschrijving en datum nodig, en alles wordt daarna nog opgeschoond en gecontroleerd.
+function parseItems(xml) {
+  const field = (block, tag) => {
+    const match = block.match(new RegExp(`<${tag}(?:\\s[^>]*)?>([\\s\\S]*?)</${tag}>`))
+    if (!match) return ''
+    return match[1].replace(/^\s*<!\[CDATA\[([\s\S]*?)\]\]>\s*$/, '$1').trim()
+  }
+  return [...xml.matchAll(/<item(?:\s[^>]*)?>([\s\S]*?)<\/item>/g)].map(([, block]) => ({
+    title: field(block, 'title'),
+    link: field(block, 'link'),
+    description: field(block, 'description'),
+    pubDate: field(block, 'pubDate'),
+  }))
+}
 
 const ENTITIES = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' }
 
+function decodeEntities(text) {
+  return text.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, code) => {
+    if (code[0] !== '#') return ENTITIES[code.toLowerCase()] ?? match
+    const point = code[1].toLowerCase() === 'x' ? parseInt(code.slice(2), 16) : Number(code.slice(1))
+    return point > 0 && point <= 0x10ffff ? String.fromCodePoint(point) : match
+  })
+}
+
+// Maakt van een stukje feed-inhoud gewone tekst. Sommige feeds leveren HTML, andere
+// HTML die nog eens gecodeerd is; daarom eerst decoderen, dan tags weghalen, dan nog eens decoderen.
 function plainText(value) {
-  return String(value ?? '')
-    .replace(/<\/p>\s*<p[^>]*>/gi, '\n') // alinea-grenzen bewaren
-    .replace(/<[^>]*>/g, '')
-    .replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, code) => {
-      if (code[0] !== '#') return ENTITIES[code.toLowerCase()] ?? match
-      const point = code[1].toLowerCase() === 'x' ? parseInt(code.slice(2), 16) : Number(code.slice(1))
-      return point > 0 && point <= 0x10ffff ? String.fromCodePoint(point) : match
-    })
-    .trim()
+  return decodeEntities(
+    decodeEntities(String(value ?? ''))
+      .replace(/<\/p>\s*<p[^>]*>/gi, '\n') // alinea-grenzen bewaren
+      .replace(/<[^>]*>/g, ''),
+  ).trim()
 }
 
 // Eerste alinea, en als die te lang is: afkappen op een zinseinde.
@@ -34,7 +61,7 @@ function summarize(description) {
 
 function httpsUrl(value) {
   try {
-    const url = new URL(String(value).trim())
+    const url = new URL(decodeEntities(String(value)).trim())
     return url.protocol === 'https:' ? url.href : null
   } catch {
     return null
@@ -47,7 +74,7 @@ async function topItems(feed) {
     signal: AbortSignal.timeout(20_000),
   })
   if (!res.ok) throw new Error(`status ${res.status}`)
-  const items = [parser.parse(await res.text())?.rss?.channel?.item ?? []].flat()
+  const items = parseItems(await res.text())
   const usable = items.filter((i) => i?.title && httpsUrl(i.link)).slice(0, TOTAL)
   if (usable.length === 0) throw new Error('geen bruikbaar bericht')
   return usable.map((item, n) => {

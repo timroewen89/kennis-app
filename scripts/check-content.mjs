@@ -1,7 +1,12 @@
-// Controleert de eigen inhoud op vormfouten. Draai met: npm run check
-import { deepdives } from '../src/data/deepdives.js'
-import { facts } from '../src/data/facts.js'
-import { pickForDay } from '../src/lib/rotation.js'
+// Controleert de eigen inhoud op vormfouten. Draai met: node scripts/check-content.mjs
+import { deepdives } from '../content/deepdives.js'
+import { facts } from '../content/facts.js'
+
+// Zelfde keuze als in index.html: elke dag het volgende item uit de lijst.
+function pickForDay(list, day) {
+  const [y, m, d] = day.split('-').map(Number)
+  return list[Math.round(Date.UTC(y, m - 1, d) / 86_400_000) % list.length]
+}
 
 const problems = []
 
