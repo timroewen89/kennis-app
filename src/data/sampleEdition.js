@@ -1,7 +1,7 @@
-// VOORBEELDINHOUD — alleen bedoeld om het skelet te vullen.
+// Voorbeeldinhoud en terugval. Nieuws en geschiedenis worden vervangen door echte
+// bronnen zodra die bereikbaar zijn (zie src/lib/edition.js).
 // De nieuwskaarten zijn verzonnen plaatshouders; de overige kaarten zijn feitelijk juist.
 export const sampleEdition = {
-  isSample: true,
   cards: [
     {
       id: 'news-1',
@@ -75,6 +75,7 @@ export const sampleEdition = {
           explain: 'Twee voor de kieuwen, één voor de rest van het lichaam.',
         },
         {
+          about: 'history',
           q: 'In welk jaar werd Brazilië een republiek?',
           options: ['1822', '1889', '1930'],
           answer: 1,

@@ -99,8 +99,10 @@ export default function App() {
               <li key={c.id} className={i < index ? 'is-done' : i === index ? 'is-current' : ''} />
             ))}
           </ol>
-          {edition.isSample && index === 0 && (
-            <p className="notice">Dit is voorbeeldinhoud. De echte bronnen sluiten we later aan.</p>
+          {edition.missing.length > 0 && index === 0 && (
+            <p className="notice">
+              Niet alle bronnen waren bereikbaar. Voorbeeldinhoud voor: {edition.missing.join(' en ')}.
+            </p>
           )}
           {card.type === 'quiz' ? (
             <Quiz

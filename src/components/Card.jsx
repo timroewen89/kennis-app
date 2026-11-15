@@ -18,13 +18,16 @@ export default function Card({ card, saved, onToggleSave, savedOn }) {
           </button>
         )}
       </header>
-      {card.year && <p className="card__year">{card.year}</p>}
-      <h2 className="card__title">{card.title}</h2>
-      {card.body.map((p, i) => (
-        <p key={i} className="card__body">
-          {p}
-        </p>
-      ))}
+      {/* lang: zodat schermlezers en afbreking de taal van de bron volgen */}
+      <div lang={card.lang}>
+        {card.year && <p className="card__year">{card.year}</p>}
+        <h2 className="card__title">{card.title}</h2>
+        {card.body.map((p, i) => (
+          <p key={i} className="card__body">
+            {p}
+          </p>
+        ))}
+      </div>
       <footer className="card__foot">
         {card.source &&
           (card.source.url ? (

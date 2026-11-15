@@ -13,7 +13,7 @@ export default function Quiz({ card, answers, onAnswer }) {
         const answered = chosen !== undefined && chosen !== null
         return (
           <fieldset key={qi} className="question">
-            <legend>
+            <legend lang={question.lang}>
               {qi + 1}. {question.q}
             </legend>
             <div className="options">
