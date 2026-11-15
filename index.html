@@ -680,6 +680,7 @@ async function translateCard(card) {
 // Nieuws: news.json wordt dagelijks ververst door een GitHub Action (scripts/fetch-news.mjs),
 // omdat nieuwsfeeds niet rechtstreeks vanuit een browser opgehaald mogen worden.
 const NEWS_MAX_AGE_HOURS = 36
+const NEWS_MAX_ITEMS = 4 // NOS, RTV Drenthe, BBC News, The Guardian
 async function fetchNews() {
   const res = await fetch('news.json', { cache: 'no-cache' })
   if (!res.ok) throw new Error(`news.json gaf status ${res.status}`)
@@ -688,9 +689,10 @@ async function fetchNews() {
   const age = (Date.now() - new Date(generatedAt).getTime()) / 3_600_000
   return {
     stale: !(age < NEWS_MAX_AGE_HOURS) ? new Date(generatedAt) : null,
-    cards: await Promise.all(items.slice(0, 3).map((item) => translateCard({
+    cards: await Promise.all(items.slice(0, NEWS_MAX_ITEMS).map((item) => translateCard({
       id: `news-${item.id}`,
       type: 'news',
+      kicker: item.label ? String(item.label) : null, // bijvoorbeeld 'Nieuws uit Drenthe'
       lang: item.lang,
       title: String(item.title),
       body: item.summary ? [String(item.summary)] : [],
@@ -749,12 +751,14 @@ async function fetchHistory(day) {
 }
 
 // Terugval als een bron onbereikbaar is.
-const FALLBACK_NEWS = [1, 2, 3].map((n) => ({
-  id: `news-fallback-${n}`,
-  type: 'news',
-  title: `Nieuwspunt ${n} kon niet worden geladen`,
-  body: ['Het nieuws is op dit moment niet bereikbaar. De rest van de editie is wel compleet.'],
-}))
+const FALLBACK_NEWS = [
+  {
+    id: 'news-fallback',
+    type: 'news',
+    title: 'Het nieuws kon niet worden geladen',
+    body: ['Het nieuws is op dit moment niet bereikbaar. De rest van de editie is wel compleet.'],
+  },
+]
 const FALLBACK_HISTORY = {
   card: {
     id: 'history-fallback',
@@ -1019,7 +1023,7 @@ function guessView(card) {
     el(
       'header',
       { class: 'card__head' },
-      el('span', { class: 'card__kicker' }, LABELS[card.type]),
+      el('span', { class: 'card__kicker' }, card.kicker ?? LABELS[card.type]),
       el('span', { class: 'card__tag' }, 'Eerst raden'),
     ),
     card.type === 'history'
@@ -1055,7 +1059,7 @@ function cardView(card, { day = today, savedOn = null, choice = null } = {}) {
     el(
       'header',
       { class: 'card__head' },
-      el('span', { class: 'card__kicker' }, LABELS[card.type]),
+      el('span', { class: 'card__kicker' }, card.kicker ?? LABELS[card.type]),
       el(
         'button',
         { type: 'button', class: 'save', 'aria-pressed': String(saved), onclick: () => toggleSave(card, day) },

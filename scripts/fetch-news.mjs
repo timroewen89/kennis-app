@@ -1,4 +1,4 @@
-// Haalt de bovenste berichten van de nieuwsfeeds op en schrijft 3 nieuwspunten naar news.json.
+// Haalt van elke nieuwsfeed het bovenste bericht op en schrijft de nieuwspunten naar news.json.
 // Heeft alleen Node nodig, geen pakketten. Draai met: node scripts/fetch-news.mjs
 // Op GitHub draait dit elke dag vanzelf (zie .github/workflows/nieuws.yml).
 import { writeFile } from 'node:fs/promises'
@@ -6,12 +6,14 @@ import { writeFile } from 'node:fs/promises'
 // Uit elke feed komt het bovenste bericht in de editie. Valt een feed uit, dan vullen de andere aan.
 const NEWS_FEEDS = [
   { id: 'nos', name: 'NOS', lang: 'nl', url: 'https://feeds.nos.nl/nosnieuwsalgemeen' },
+  // 'label' is de kop boven de kaart; zonder label staat er gewoon 'Nieuws'.
+  { id: 'rtvdrenthe', name: 'RTV Drenthe', lang: 'nl', label: 'Nieuws uit Drenthe', url: 'https://www.rtvdrenthe.nl/rss/index.xml' },
   { id: 'bbc', name: 'BBC News', lang: 'en', url: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
   { id: 'guardian', name: 'The Guardian', lang: 'en', url: 'https://www.theguardian.com/world/rss' },
 ]
 
 const OUT = new URL('../news.json', import.meta.url)
-const TOTAL = 3
+const TOTAL = NEWS_FEEDS.length // één nieuwspunt per feed
 const MAX_SUMMARY = 280
 
 // Leest de <item>-blokken uit een RSS-feed. Bewust eenvoudig: we hebben alleen titel,
@@ -83,6 +85,7 @@ async function topItems(feed) {
       id: `${feed.id}-${n + 1}`,
       source: feed.name,
       lang: feed.lang,
+      label: feed.label ?? null,
       title: plainText(item.title).replace(/\s+/g, ' '),
       summary: summarize(item.description),
       url: httpsUrl(item.link),
@@ -98,7 +101,7 @@ results.forEach((result, i) => {
   else console.warn(`! ${NEWS_FEEDS[i].name} overgeslagen: ${result.reason.message}`)
 })
 
-// Om de beurt één bericht per feed, tot er 3 zijn. Valt een feed uit, dan vullen de andere aan.
+// Om de beurt één bericht per feed, tot het aantal compleet is. Valt een feed uit, dan vullen de andere aan.
 const items = []
 for (let round = 0; items.length < TOTAL && perFeed.some((list) => list[round]); round++) {
   for (const list of perFeed) {

@@ -1,21 +1,33 @@
 {
-  "generatedAt": "2026-11-15T20:21:03.016Z",
+  "generatedAt": "2026-11-15T22:31:13.166Z",
   "items": [
     {
       "id": "nos-1",
       "source": "NOS",
       "lang": "nl",
-      "title": "Na twee dagen crisisoverleg nog geen uitkomst, coalitiepartijen praten morgen verder",
-      "summary": "D66, VVD en CDA zijn er nog niet uit en gaan morgen verder praten op het Catshuis. Dat laat de Rijksvoorlichtingsdienst weten. Het waren intensieve maar goede gesprekken, zo luidt de mededeling.",
-      "url": "https://nos.nl/l/2639644",
-      "publishedAt": "2026-11-15T19:56:58.000Z"
+      "label": null,
+      "title": "Veel te weinig hulpgoederen komen Gaza binnen, geeft nu ook het Israëlische leger toe",
+      "summary": "Slechts de helft van de afgesproken hoeveelheid hulpgoederen komt in Gaza terecht. Dat schrijft de Israëlische krant Haaretz op basis van opgevraagde data van het Israëlische leger.",
+      "url": "https://nos.nl/l/2639648",
+      "publishedAt": "2026-11-15T21:32:11.000Z"
+    },
+    {
+      "id": "rtvdrenthe-1",
+      "source": "RTV Drenthe",
+      "lang": "nl",
+      "label": "Nieuws uit Drenthe",
+      "title": "Lodewijk Osse maakte van Assen de grootste Sinterklaasintocht: 'Ik kijk er naar uit'",
+      "summary": "Lodewijk Osse (75) zag 35 jaar geleden de Sinterklaasintocht in Assen en dacht dat moet anders. Op zijn manier blies hij de intocht in Assen nieuw leven in en niet zonder succes. Hij durft wel te stellen dat Assen de grootste intocht heeft.",
+      "url": "https://www.rtvdrenthe.nl/nieuws/18942801/lodewijk-osse-maakte-van-assen-de-grootste-sinterklaasintocht-ik-kijk-er-naar-uit",
+      "publishedAt": "2026-11-15T18:00:01.000Z"
     },
     {
       "id": "bbc-1",
       "source": "BBC News",
       "lang": "en",
+      "label": null,
       "title": "Zelensky urges US and Musk to lift Starlink restrictions and be on 'right side of history'",
-      "summary": "The Ukrainian president says restrictions are still in place and making it difficult to stop Russian attacks.",
+      "summary": "The Ukrainian president says the slowed-down internet is making it difficult to stop Russian attacks.",
       "url": "https://www.bbc.co.uk/news/articles/c6m25zg88k45o?at_medium=RSS&at_campaign=rss",
       "publishedAt": "2026-11-15T19:32:39.000Z"
     },
@@ -23,6 +35,7 @@
       "id": "guardian-1",
       "source": "The Guardian",
       "lang": "en",
+      "label": null,
       "title": "Zimbabwean author Simbarashe Kundizeza cleared of using AI to write prize-winning story",
       "summary": "After a month-long investigation it was concluded that Kundizeza’s story The Blue Fighter, which won the £10,000 Caine prize, was ‘human-written’",
       "url": "https://www.theguardian.com/books/2026/nov/12/zimbabwean-author-simbarashe-kundizeza-cleared-ai-caine-prize-winning-story",
