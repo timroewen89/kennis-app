@@ -11,8 +11,8 @@ export const deepdives = [
     topic: 'nederland',
     title: 'De Watersnoodramp van 1953',
     body: [
-      'In de nacht van 31 januari op 1 februari 1953 viel een zware noordwesterstorm samen met springtij. Het water in de Noordzee werd opgestuwd tot ver boven de hoogte waarop de dijken berekend waren. In Zeeland, op de Zuid-Hollandse eilanden en in West-Brabant braken ze op honderden plaatsen door.',
-      'In Nederland kwamen 1.836 mensen om het leven. Tienduizenden moesten worden geëvacueerd, grote delen van het zuidwesten stonden maandenlang onder water. Waarschuwingen bereikten veel dorpen niet: het was nacht, het was weekend, en telefoon- en radioverbindingen vielen weg.',
+      'In de nacht van 31 januari op 1 februari 1953 viel een zware noordwesterstorm samen met springtij. Het water in de Noordzee werd opgestuwd tot ver boven de hoogte waarop de dijken berekend waren. In Zeeland, op de Zuid-Hollandse eilanden en in West-Brabant braken ze op meer dan 150 plaatsen door.',
+      'In Nederland kwamen 1.836 mensen om het leven. Tienduizenden moesten worden geëvacueerd, grote delen van het zuidwesten stonden maandenlang onder water. Waarschuwingen bereikten veel dorpen niet: het was nacht, het was weekend, de radio zond na middernacht niet meer uit en veel telefooncentrales waren ’s avonds dicht.',
       'Nog geen drie weken later werd de Deltacommissie ingesteld. Haar advies leidde tot de Deltawerken: een stelsel van dammen en keringen dat de kustlijn honderden kilometers korter maakte. De Oosterscheldekering, het bekendste onderdeel, werd in 1986 geopend.',
       'De ramp veranderde hoe Nederland naar water kijkt: niet langer herstellen na een doorbraak, maar vooraf vastleggen hoe klein de kans op een overstroming mag zijn.',
     ],
@@ -52,7 +52,7 @@ export const deepdives = [
       'De meeste slachtoffers vielen niet door de uitbarsting zelf, maar door de tsunami’s die erop volgden. Golven van tientallen meters hoog verwoestten de kustdorpen van Java en Sumatra. Het koloniale bestuur telde 36.417 doden.',
       'As en zwaveldeeltjes kwamen hoog in de atmosfeer terecht. De gemiddelde temperatuur op aarde daalde het jaar erna, en over de hele wereld kleurden de zonsondergangen maandenlang felrood. Dankzij de telegraaf was het nieuws binnen enkele dagen wereldwijd bekend: een van de eerste rampen die de hele wereld vrijwel direct kon volgen.',
     ],
-    source: wiki('Krakatau'),
+    source: wiki('Krakatau_(vulkaan)'),
     question: {
       q: 'Waardoor vielen bij de uitbarsting van de Krakatau de meeste slachtoffers?',
       options: ['Door tsunami’s', 'Door lavastromen', 'Door de aswolk'],
@@ -72,10 +72,10 @@ export const deepdives = [
     ],
     source: wiki('Boekdrukkunst'),
     question: {
-      q: 'Wat was het vernieuwende aan Gutenbergs manier van drukken?',
+      q: 'Waarmee drukte Gutenberg zijn boeken?',
       options: ['Losse, herbruikbare metalen letters', 'Papier in plaats van perkament', 'Drukken in kleur'],
       answer: 0,
-      explain: 'Losse metalen letters konden snel gegoten, gezet en opnieuw gebruikt worden.',
+      explain: 'Met losse metalen letters, die snel gegoten, gezet en opnieuw gebruikt konden worden. Nieuw voor Europa; in Korea bestond het al.',
     },
   },
   {
@@ -102,8 +102,8 @@ export const deepdives = [
     topic: 'nederland',
     title: 'De Tachtigjarige Oorlog',
     body: [
-      'In de zestiende eeuw hoorden de Nederlanden bij het rijk van de Spaanse koning Filips II. Onvrede over hoge belastingen, de vervolging van protestanten en het inperken van oude rechten kwam in 1566 tot uitbarsting in de Beeldenstorm. Filips stuurde de hertog van Alva om de orde te herstellen.',
-      'Alva’s harde optreden werkte averechts. In 1568 begon onder leiding van Willem van Oranje de Opstand. In 1581 verklaarden de opstandige gewesten met het Plakkaat van Verlatinghe dat Filips zijn recht om te regeren had verspeeld: een vorst die zijn onderdanen onderdrukt, hoeft niet gehoorzaamd te worden.',
+      'In de zestiende eeuw hoorden de Nederlanden bij het rijk van de Spaanse koning Filips II. Onvrede over de vervolging van protestanten en het inperken van oude rechten kwam in 1566 tot uitbarsting in de Beeldenstorm. Filips stuurde de hertog van Alva om de orde te herstellen.',
+      'Alva’s harde optreden en zijn nieuwe belastingen werkten averechts. In 1568 begon onder leiding van Willem van Oranje de Opstand. In 1581 verklaarden de opstandige gewesten met het Plakkaat van Verlatinghe dat Filips zijn recht om te regeren had verspeeld: een vorst die zijn onderdanen onderdrukt, hoeft niet gehoorzaamd te worden.',
       'Uit de opstand groeide de Republiek der Zeven Verenigde Nederlanden. Terwijl de oorlog doorging, met een onderbreking tijdens het Twaalfjarig Bestand, werd die een van de rijkste handelsstaten van Europa.',
       'Met de Vrede van Münster in 1648 erkende Spanje de Republiek als onafhankelijke staat. De zuidelijke Nederlanden bleven Spaans; die scheiding ligt aan de basis van de latere grens tussen Nederland en België.',
     ],
@@ -161,8 +161,8 @@ export const deepdives = [
     title: 'Hoe de pokken werden uitgeroeid',
     body: [
       'Pokken waren eeuwenlang een van de meest gevreesde ziekten. Het virus veroorzaakte hoge koorts en blaren over het hele lichaam; ongeveer drie op de tien zieken stierven, en wie het overleefde hield vaak littekens over of werd blind. Alleen al in de twintigste eeuw stierven er naar schatting 300 miljoen mensen aan.',
-      'In 1796 deed de Engelse arts Edward Jenner een proef. Het was hem opgevallen dat melkmeisjes die de onschuldige koepokken hadden gehad, geen pokken kregen. Hij bracht materiaal uit een koepokblaar aan bij de achtjarige James Phipps, die daarna immuun bleek. Het woord vaccin komt van vacca, het Latijnse woord voor koe.',
-      'De inenting verspreidde zich snel, maar in arme landen bleef de ziekte bestaan. In 1967 begon de Wereldgezondheidsorganisatie een campagne om de pokken overal uit te roeien. De sleutel was niet iedereen inenten, maar elk ziektegeval opsporen en alle mensen eromheen vaccineren.',
+      'In 1796 deed de Engelse arts Edward Jenner een proef. Het was bekend dat melkmeisjes die de onschuldige koepokken hadden gehad, geen pokken kregen. Hij bracht materiaal uit een koepokblaar aan bij de achtjarige James Phipps, die daarna immuun bleek. Het woord vaccin komt van vacca, het Latijnse woord voor koe.',
+      'De inenting verspreidde zich snel, maar in arme landen bleef de ziekte bestaan. In 1959 besloot de Wereldgezondheidsorganisatie de pokken overal uit te roeien; vanaf 1967 kwam die campagne met meer geld en mensen echt op gang. De sleutel was niet iedereen inenten, maar elk ziektegeval opsporen en alle mensen eromheen vaccineren.',
       'Het laatste natuurlijke geval deed zich voor in 1977, in Somalië. In 1980 verklaarde de WHO de pokken officieel uitgeroeid. Het is tot nu toe de enige ziekte bij mensen waarbij dat is gelukt. Het virus bestaat nog in twee laboratoria, in de Verenigde Staten en in Rusland.',
     ],
     source: wiki('Pokken'),
@@ -180,7 +180,7 @@ export const deepdives = [
     body: [
       'In 1799 vonden Franse soldaten van Napoleons expeditie naar Egypte bij de stad Rosette, in de Nijldelta, een donkere steen vol inscripties. Hij was verwerkt in een oude muur waar ze een fort verstevigden.',
       'Op de steen staat een besluit van Egyptische priesters uit 196 voor Christus, ter ere van koning Ptolemaeus V. Het bijzondere is dat dezelfde tekst er drie keer op staat: in hiërogliefen, in het demotisch, een Egyptisch schrift voor dagelijks gebruik, en in het Grieks. Grieks konden geleerden lezen, en daarmee hadden ze een sleutel.',
-      'Na de Franse nederlaag kwam de steen in Britse handen; sinds 1802 staat hij in het British Museum. De Brit Thomas Young ontdekte dat de ovale kaders in de tekst koningsnamen bevatten. De Fransman Jean-François Champollion toonde in 1822 aan dat hiërogliefen niet alleen begrippen maar ook klanken weergeven.',
+      'Na de Franse nederlaag kwam de steen in Britse handen; sinds 1802 staat hij in het British Museum. De Brit Thomas Young wist in een van de ovale kaders de naam van koning Ptolemaeus te lezen en vond zo de eerste klanktekens. De Fransman Jean-François Champollion toonde in 1822 aan dat hiërogliefen niet alleen begrippen maar ook klanken weergeven.',
       'De kennis van de hiërogliefen was toen al ruim 1.400 jaar verloren: de laatste bekende inscriptie dateert uit 394 na Christus. Door de ontcijfering werd drieduizend jaar Egyptische geschiedenis weer leesbaar. Egypte vraagt al jaren om teruggave van de steen.',
     ],
     source: wiki('Steen_van_Rosetta'),
@@ -197,7 +197,7 @@ export const deepdives = [
     topic: 'nederland',
     title: 'De Hongerwinter',
     body: [
-      'In september 1944 was het zuiden van Nederland bevrijd, maar het westen niet. Na de spoorwegstaking die de regering in Londen had afgekondigd, blokkeerde de bezetter wekenlang de aanvoer van voedsel naar de grote steden. Toen de blokkade werd versoepeld, lagen de vaarwegen dichtgevroren.',
+      'In september 1944 werd een deel van het zuiden van Nederland bevrijd, maar het westen niet. Na de spoorwegstaking die de regering in Londen had afgekondigd, blokkeerde de bezetter wekenlang de aanvoer van voedsel naar de grote steden. Toen de blokkade in november werd opgeheven, kwam de aanvoer maar moeizaam op gang, en eind december vroren de vaarwegen dicht.',
       'De rantsoenen daalden in de eerste maanden van 1945 tot minder dan 500 kilocalorieën per dag, een kwart van wat een volwassene nodig heeft. Mensen aten tulpenbollen en suikerbieten en trokken op hongertochten naar het platteland om spullen te ruilen voor eten. Zeker 20.000 mensen stierven.',
       'Hulp kwam laat. Vanaf eind april 1945 wierpen geallieerde bommenwerpers voedselpakketten af boven West-Nederland, kort voor de bevrijding op 5 mei.',
       'De Hongerwinter heeft ook de geneeskunde iets geleerd. Kinderen die in die maanden in de baarmoeder zaten, bleken decennia later vaker hart- en vaatziekten en diabetes te hebben. Het is een van de duidelijkste aanwijzingen dat omstandigheden vóór de geboorte een leven lang doorwerken.',
@@ -220,7 +220,7 @@ export const deepdives = [
     title: 'De Berlijnse Muur',
     body: [
       'Na de Tweede Wereldoorlog was Duitsland verdeeld in een westelijk en een oostelijk deel, en Berlijn ook. Via West-Berlijn verlieten miljoenen Oost-Duitsers hun land. In de nacht van 12 op 13 augustus 1961 sloot de DDR de grens af, eerst met prikkeldraad, daarna met beton.',
-      'De Muur liep ongeveer 155 kilometer rond heel West-Berlijn. Families en straten werden van de ene op de andere dag gescheiden. Bij pogingen om over te steken kwamen in 28 jaar zeker 140 mensen om het leven.',
+      'De Muur liep ongeveer 155 kilometer rond heel West-Berlijn. Families en straten werden van de ene op de andere dag gescheiden. Aan de Muur kwamen in 28 jaar zeker 140 mensen om het leven, van wie ruim honderd bij een vluchtpoging.',
       'In 1989 groeide het protest in Oost-Duitsland, terwijl Hongarije zijn grens met het Westen opende. Op 9 november zei een partijwoordvoerder op een persconferentie, slecht voorbereid, dat nieuwe reisregels ‘per direct’ golden. Diezelfde avond stroomden duizenden mensen naar de grensposten, die uiteindelijk opengingen.',
       'Minder dan een jaar later, op 3 oktober 1990, was Duitsland herenigd. De val van de Muur geldt als het symbolische einde van de Koude Oorlog.',
     ],
