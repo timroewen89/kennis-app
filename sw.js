@@ -1,7 +1,7 @@
 // Service worker: eerst het netwerk proberen (zo zie je altijd de nieuwste versie),
 // en zonder verbinding terugvallen op de laatst opgeslagen kopie.
-const CACHE = 'kennis-v1'
-const SHELL = ['./', 'content/facts.js', 'content/deepdives.js', 'manifest.webmanifest', 'icons/icon.svg']
+const CACHE = 'kennis-v2'
+const SHELL = ['./', 'content/topics.js', 'content/facts.js', 'content/deepdives.js', 'manifest.webmanifest', 'icons/icon.svg']
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -13,7 +13,13 @@ self.addEventListener('install', (event) => {
 })
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil(self.clients.claim())
+  // Oude opslag van eerdere versies opruimen.
+  event.waitUntil(
+    caches
+      .keys()
+      .then((keys) => Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key))))
+      .then(() => self.clients.claim()),
+  )
 })
 
 self.addEventListener('fetch', (event) => {

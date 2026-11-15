@@ -1,12 +1,16 @@
 # Kennis
 
-Een dagelijkse kennisfeed tegen doomscrollen. Elke dag één eindige editie van 8 kaarten:
-4 nieuwspunten (landelijk, Drenthe, wereld), 1 "vandaag in de geschiedenis", 1 weetje, 1 verdieping
-en een mini-quiz.
+Een dagelijkse kennisfeed tegen doomscrollen. Elke dag één eindige editie van 9 kaarten:
+4 nieuwspunten (landelijk, Drenthe, wereld), 1 "vandaag in de geschiedenis", 1 tijdlijn, 1 weetje,
+1 verdieping en een mini-quiz.
 Daarna: klaar voor vandaag.
 
 Het weetje en de geschiedeniskaart beginnen met een vraag: **eerst raden, dan lezen**. Je kiest een
 antwoord of "Geen idee", en dan draait de kaart om.
+
+Na de geschiedeniskaart volgt de **tijdlijn**: drie andere gebeurtenissen van dezelfde datum, die je
+aantikt van vroegst naar laatst. Daarna zie je de juiste volgorde met de jaartallen. Is Wikipedia
+onbereikbaar, dan vervalt deze kaart die dag.
 
 De mini-quiz heeft drie vragen: één over de verdieping van vandaag en twee **herhalingsvragen** uit
 edities die je eerder hebt afgerond.
@@ -44,7 +48,7 @@ bestand elke ochtend rond 05:00 en zet het terug in de repo; Pages publiceert he
 | Onderdeel | Bron | Hoe |
 | --- | --- | --- |
 | Nieuws | NOS, RTV Drenthe, BBC News (vertaald), The Guardian (vertaald) | `scripts/fetch-news.mjs` schrijft `news.json`; de feeds staan geen directe browser-aanroep toe |
-| Geschiedenis | Engelse Wikipedia, On this day (vertaald) | Rechtstreeks vanuit de app; de Nederlandse variant van deze API bestaat niet |
+| Geschiedenis en tijdlijn | Engelse Wikipedia, On this day (vertaald) | Rechtstreeks vanuit de app; de Nederlandse variant van deze API bestaat niet |
 | Weetje | `content/facts.js` (nl) | Elke dag het volgende uit de lijst |
 | Verdieping | `content/deepdives.js` (nl) | Elke dag de volgende uit de lijst |
 | Mini-quiz | De kaarten van vandaag en van eerdere dagen | Eén vraag over de verdieping, twee herhalingsvragen |
@@ -61,7 +65,7 @@ Kaarten uit Engelse bronnen worden in de app naar het Nederlands vertaald en kri
 - De app stuurt daarvoor de Engelse tekst van die kaarten vanuit je browser naar die dienst. Dat is
   openbare tekst; er gaat niets persoonlijks mee.
 - De dienst staat ongeveer 5000 tekens per dag per internetaansluiting toe. Een editie heeft er
-  ongeveer 1500 nodig, één keer per dag per apparaat.
+  ongeveer 2000 nodig, één keer per dag per apparaat.
 - Lukt vertalen niet (limiet bereikt, dienst onbereikbaar), dan staat de kaart in het Engels en meldt
   de app dat. Bij de volgende keer openen probeert hij het opnieuw.
 - Het is een machinevertaling: namen en uitdrukkingen kunnen soms vreemd uitvallen.
