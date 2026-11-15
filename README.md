@@ -4,11 +4,22 @@ Een dagelijkse kennisfeed tegen doomscrollen. Elke dag één eindige editie van 
 3 nieuwspunten, 1 "vandaag in de geschiedenis", 1 weetje, 1 verdieping en een mini-quiz.
 Daarna: klaar voor vandaag.
 
+Het weetje en de geschiedeniskaart beginnen met een vraag: **eerst raden, dan lezen**. Je kiest een
+antwoord of "Geen idee", en dan draait de kaart om.
+
+De mini-quiz heeft drie vragen: één over de verdieping van vandaag en twee **herhalingsvragen** uit
+edities die je eerder hebt afgerond.
+
+- Een vraag komt op zijn vroegst twee dagen later terug, en daarna hooguit eens per vijf dagen.
+- Wat je fout had of niet wist, komt het eerst terug.
+- Heb je een vraag twee keer achter elkaar goed, of is hij ouder dan 45 dagen, dan verdwijnt hij uit de herhaling.
+- De eerste dagen valt er nog niets te herhalen; dan vullen de vragen van vandaag de quiz aan.
+
 Bladeren doe je door te vegen: naar links voor de volgende kaart, naar rechts voor de vorige.
 Op een computer zijn er knoppen en werken de pijltjestoetsen.
 
 De app is één `index.html` zonder bouwstap. Geen account, geen betaalde diensten;
-dagreeks en bewaarde kaarten staan lokaal in je browser.
+dagreeks, bewaarde kaarten en de vragen voor de herhaling staan lokaal in je browser.
 
 ## Bekijken via GitHub Pages
 
@@ -35,7 +46,7 @@ bestand elke ochtend rond 05:00 en zet het terug in de repo; Pages publiceert he
 | Geschiedenis | Engelse Wikipedia, On this day | Rechtstreeks vanuit de app; de Nederlandse variant van deze API bestaat niet |
 | Weetje | `content/facts.js` (nl) | Elke dag het volgende uit de lijst |
 | Verdieping | `content/deepdives.js` (nl) | Elke dag de volgende uit de lijst |
-| Mini-quiz | De kaarten van de dag | Eén vraag bij het weetje, de geschiedenis en de verdieping |
+| Mini-quiz | De kaarten van vandaag en van eerdere dagen | Eén vraag over de verdieping, twee herhalingsvragen |
 
 Engelse kaarten blijven in het Engels (geen vertaaldienst). Is een bron onbereikbaar, dan meldt de
 app dat en is de rest van de editie gewoon compleet. Een complete editie wordt per dag vastgelegd,
@@ -71,7 +82,7 @@ vormfouten en laat zien wat er de komende week aan de beurt is.
 
 | Bestand | Wat het doet |
 | --- | --- |
-| `index.html` | De hele app: opmaak, schermen, dagreeks, bewaren, quiz |
+| `index.html` | De hele app: opmaak, schermen, raden, herhaling, dagreeks, bewaren, quiz |
 | `content/facts.js`, `content/deepdives.js` | Eigen weetjes en verdiepingen, met quizvraag |
 | `news.json` | De nieuwspunten van vandaag (automatisch ververst) |
 | `scripts/fetch-news.mjs` | Haalt de RSS-feeds op; de lijst met feeds staat bovenin |

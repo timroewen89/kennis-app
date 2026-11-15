@@ -268,6 +268,65 @@ button:disabled {
   margin-top: auto;
   padding-top: 1.25rem;
 }
+/* Eerst raden: de voorkant van een kaart, en de uitslag op de achterkant. */
+.card__tag {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.card--guess .options {
+  margin-top: 1rem;
+}
+.skip {
+  display: block;
+  min-height: 2.75rem;
+  margin: 0.5rem auto 0;
+  padding: 0.4rem 1rem;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.result {
+  margin: 0 0 0.9rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 0.6rem;
+  background: var(--bad-bg);
+  color: var(--bad);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.result.is-correct {
+  background: var(--good-bg);
+  color: var(--good);
+}
+.result.is-neutral {
+  background: none;
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+.swipe.flip-in {
+  animation: flip-in 0.35s ease-out;
+}
+@keyframes flip-in {
+  from { transform: perspective(900px) rotateY(-90deg); opacity: 0.3; }
+}
+.question__tag {
+  display: block;
+  margin-bottom: 0.2rem;
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.stats small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+
 /* Vegen: de kaart volgt je vinger; verticaal scrollen blijft gewoon werken. */
 main {
   overflow-x: clip; /* een wegschuivende kaart mag de pagina niet breder maken */
@@ -293,7 +352,7 @@ main {
 }
 @media (prefers-reduced-motion: reduce) {
   .swipe.is-settling { transition: none; }
-  .swipe.enter-right, .swipe.enter-left { animation: none; }
+  .swipe.enter-right, .swipe.enter-left, .swipe.flip-in { animation: none; }
 }
 .pager__hint {
   display: none;
@@ -481,6 +540,9 @@ function previousDayKey(key) {
 function formatLongDate(key) {
   return new Intl.DateTimeFormat('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' }).format(toDate(key))
 }
+function formatShortDate(key) {
+  return new Intl.DateTimeFormat('nl-NL', { day: 'numeric', month: 'long' }).format(toDate(key))
+}
 function dayNumber(key) {
   const [y, m, d] = key.split('-').map(Number)
   return Math.round(Date.UTC(y, m - 1, d) / 86_400_000)
@@ -488,8 +550,10 @@ function dayNumber(key) {
 
 // ---------- Opslag (alleen in deze browser; geen account, geen server) ----------
 const STATE_KEY = 'kennis:v1'
-const EDITION_KEY = 'kennis:edition:v4'
-const NO_PROGRESS = { index: 0, answers: [], completed: false }
+const EDITION_KEY = 'kennis:edition:v5'
+// Voortgang van vandaag. guesses: je gok per kaart (-1 = 'Geen idee'); answers: je quizantwoorden;
+// reviews: de herhalingsvragen die voor vandaag gekozen zijn (null = nog niet gekozen).
+const NO_PROGRESS = { v: 2, index: 0, guesses: {}, answers: [], reviews: null, completed: false }
 
 function readJson(key) {
   try {
@@ -511,6 +575,8 @@ function loadState() {
     streak: { count: 0, best: 0, lastCompleted: null, ...saved.streak },
     progress: saved.progress ?? {},
     saved: Array.isArray(saved.saved) ? saved.saved : [],
+    // Vragen uit edities die je hebt afgerond; hieruit komt de herhaling in de quiz.
+    log: Array.isArray(saved.log) ? saved.log : [],
   }
 }
 
@@ -597,6 +663,7 @@ async function fetchHistory(day) {
     question = {
       q: `In welk jaar gebeurde dit? “${text}”`,
       lang: 'en',
+      ordered: true, // jaartallen blijven op volgorde staan, dus niet husselen
       options: years.map(formatYear),
       answer: years.indexOf(event.year),
       explain: `Het was ${formatYear(event.year)}.`,
@@ -643,6 +710,40 @@ function shuffleQuestion(question, day, salt) {
   }
   return { ...question, options: order.map((i) => question.options[i]), answer: order.indexOf(question.answer) }
 }
+// Een vraag zoals hij vandaag getoond wordt. 'salt' zorgt dat dezelfde vraag op twee plekken
+// (raden en quiz) niet dezelfde volgorde krijgt.
+const present = (question, day, salt) => (question.ordered ? question : shuffleQuestion(question, day, salt))
+
+// ---------- Herhaling ----------
+// Elke dag komen er twee vragen terug uit edities die je eerder hebt afgerond.
+const REVIEW_COUNT = 2
+const REVIEW_MIN_AGE = 2 // op zijn vroegst twee dagen later
+const REVIEW_GAP = 5 // dezelfde vraag hooguit eens per vijf dagen
+const REVIEW_MAX_AGE = 45 // daarna verdwijnt een vraag uit de herhaling
+const REVIEW_DONE_STREAK = 2 // twee keer achter elkaar goed = onthouden
+
+function pickReviews(log, day) {
+  const now = dayNumber(day)
+  const due = log.filter(
+    (item) =>
+      now - dayNumber(item.day) >= REVIEW_MIN_AGE &&
+      now - dayNumber(item.day) <= REVIEW_MAX_AGE &&
+      (!item.lastReview || now - dayNumber(item.lastReview) >= REVIEW_GAP),
+  )
+  // Eerst wat je fout had, dan wat je het minst vaak herhaald hebt, dan het oudste.
+  due.sort(
+    (a, b) =>
+      Number(b.wrong) - Number(a.wrong) ||
+      a.reviews - b.reviews ||
+      dayNumber(a.day) - dayNumber(b.day) ||
+      a.id.localeCompare(b.id),
+  )
+  const picked = due.slice(0, 1)
+  // De tweede vraag liefst uit een andere editie dan de eerste.
+  const second = due.find((item) => item.day !== picked[0]?.day) ?? due[1]
+  if (second) picked.push(second)
+  return picked.slice(0, REVIEW_COUNT).map(({ id, day, type, question }) => ({ id, day, type, question }))
+}
 
 async function getEdition(day) {
   const cached = readJson(EDITION_KEY)
@@ -673,21 +774,15 @@ async function getEdition(day) {
     notes,
     cards: [
       ...news,
-      history.card,
-      toCard(fact, 'fact'),
+      // 'guess' is de vraag op de voorkant van de kaart: eerst raden, dan lezen.
+      { ...history.card, guess: history.question },
+      { ...toCard(fact, 'fact'), guess: present(fact.question, day, 1) },
       toCard(deepdive, 'deepdive'),
-      {
-        id: `quiz-${day}`,
-        type: 'quiz',
-        title: 'Vragen over vandaag',
-        // De jaartallen bij de geschiedenisvraag blijven op volgorde staan.
-        questions: [
-          shuffleQuestion(fact.question, day, 1),
-          history.question,
-          shuffleQuestion(deepdive.question, day, 2),
-        ].filter(Boolean),
-      },
+      { id: `quiz-${day}`, type: 'quiz', title: 'Wat weet je nog?' },
     ],
+    // De vragen bij de kaarten van vandaag, zoals ze in de inhoud staan. De quiz wordt hier
+    // later uit samengesteld (zie quizQuestions), samen met de herhaling.
+    questions: { fact: fact.question, history: history.question, deepdive: deepdive.question },
   }
   // Alleen een complete editie vastleggen; anders proberen we het de volgende keer opnieuw.
   if (notes.length === 0) writeJson(EDITION_KEY, edition)
@@ -695,6 +790,7 @@ async function getEdition(day) {
 }
 
 // ---------- Scherm ----------
+const TYPE_NAMES = { fact: 'weetje', history: 'geschiedenis', deepdive: 'verdieping' }
 const LABELS = {
   news: 'Nieuws',
   history: 'Vandaag in de geschiedenis',
@@ -726,6 +822,7 @@ let state = loadState()
 let edition = null
 let view = 'edition' // 'edition' | 'saved'
 let navigate = {} // wat 'vorige' en 'volgende' op dit moment doen (voor de pijltjestoetsen)
+let flipped = null // id van de kaart die net is omgedraaid (voor de animatie)
 
 const main = document.getElementById('main')
 document.getElementById('date').textContent = formatLongDate(today)
@@ -734,8 +831,10 @@ document.getElementById('toggle-saved').addEventListener('click', () => {
   render(true)
 })
 
+// Voortgang van een oudere versie van de app (zonder v: 2) telt niet meer mee.
+const progressOf = (s) => (s.progress[today]?.v === 2 ? s.progress[today] : NO_PROGRESS)
 function progress() {
-  return state.progress[today] ?? NO_PROGRESS
+  return progressOf(state)
 }
 function update(change, toTop = false) {
   state = change(state)
@@ -744,32 +843,126 @@ function update(change, toTop = false) {
 }
 function setProgress(patch, toTop = false) {
   // Alleen de voortgang van vandaag bewaren, zodat de opslag niet eindeloos groeit.
-  update((s) => ({ ...s, progress: { [today]: { ...(s.progress[today] ?? NO_PROGRESS), ...patch } } }), toTop)
+  update((s) => ({ ...s, progress: { [today]: { ...progressOf(s), ...patch } } }), toTop)
 }
+function guess(card, choice) {
+  flipped = card.id
+  setProgress({ guesses: { ...progress().guesses, [card.id]: choice } })
+}
+
+// De vragen van de mini-quiz: één over de verdieping van vandaag en twee herhalingsvragen.
+// Valt er nog niets te herhalen, dan vullen de vragen van vandaag de lege plekken.
+function quizQuestions() {
+  const { fact, history, deepdive } = edition.questions
+  const reviews = progress().reviews ?? []
+  const list = [{ label: 'Vandaag · verdieping', question: present(deepdive, today, 2) }]
+  reviews.forEach((item, i) => {
+    list.push({
+      label: `Herhaling · ${TYPE_NAMES[item.type]} van ${formatShortDate(item.day)}`,
+      question: present(item.question, today, 10 + i),
+      reviewId: item.id,
+    })
+  })
+  const again = [
+    fact && { label: 'Weet je het nog? · weetje van vandaag', question: present(fact, today, 3) },
+    history && { label: 'Weet je het nog? · geschiedenis van vandaag', question: present(history, today, 4) },
+  ].filter(Boolean)
+  return list.concat(again.slice(0, Math.max(0, REVIEW_COUNT - reviews.length)))
+}
+// Hoeveel van de raadkaarten je goed had.
+function guessScore() {
+  const { guesses } = progress()
+  const cards = edition.cards.filter((card) => card.guess)
+  return { right: cards.filter((card) => guesses[card.id] === card.guess.answer).length, total: cards.length }
+}
+
 function isSaved(card, day = today) {
   return state.saved.some((item) => item.key === `${day}:${card.id}`)
 }
 function toggleSave(card, day = today) {
   const key = `${day}:${card.id}`
+  const { guess: _guess, ...copy } = card // de raadvraag hoeft niet mee bewaard te worden
   update((s) => ({
     ...s,
     saved: s.saved.some((item) => item.key === key)
       ? s.saved.filter((item) => item.key !== key)
-      : [{ key, day, card }, ...s.saved], // volledige kopie: blijft bestaan na de editie
+      : [{ key, day, card: copy }, ...s.saved], // volledige kopie: blijft bestaan na de editie
   }))
 }
 function finish() {
-  update(
-    (s) => ({
+  const total = edition.cards.length
+  // Na 'Editie teruglezen' is de dag al afgerond: dan alleen terug naar het eindscherm.
+  if (progress().completed) return setProgress({ index: total }, true)
+
+  const { answers, guesses } = progress()
+  const questions = quizQuestions()
+  const now = dayNumber(today)
+  update((s) => {
+    // 1. Uitslag van de herhalingsvragen bijwerken.
+    let log = s.log.map((item) => {
+      const i = questions.findIndex((entry) => entry.reviewId === item.id)
+      if (i < 0) return item
+      const correct = answers[i] === questions[i].question.answer
+      return { ...item, wrong: !correct, streak: correct ? item.streak + 1 : 0, reviews: item.reviews + 1, lastReview: today }
+    })
+    // 2. De vragen van vandaag onthouden voor later (één keer per dag).
+    if (!log.some((item) => item.day === today)) {
+      const guessedWrong = (type) => {
+        const card = edition.cards.find((c) => c.type === type)
+        return guesses[card.id] !== card.guess.answer
+      }
+      const { fact, history, deepdive } = edition.questions
+      const entry = (type, question, wrong) => ({
+        id: `${today}:${type}`, day: today, type, question, wrong, streak: 0, reviews: 0, lastReview: null,
+      })
+      if (fact) log.push(entry('fact', fact, guessedWrong('fact')))
+      if (history) log.push(entry('history', history, guessedWrong('history')))
+      log.push(entry('deepdive', deepdive, answers[0] !== questions[0].question.answer))
+    }
+    // 3. Opruimen: wat je onthouden hebt of wat te oud is, hoeft niet meer terug te komen.
+    log = log.filter((item) => item.streak < REVIEW_DONE_STREAK && now - dayNumber(item.day) <= REVIEW_MAX_AGE)
+    return {
       ...s,
       streak: completeDay(s.streak, today),
-      progress: { [today]: { ...(s.progress[today] ?? NO_PROGRESS), index: edition.cards.length, completed: true } },
-    }),
-    true,
+      log,
+      progress: { [today]: { ...progressOf(s), index: total, completed: true } },
+    }
+  }, true)
+}
+
+// De voorkant van een raadkaart: eerst een gok, dan pas de inhoud.
+function guessView(card) {
+  const question = card.guess
+  return el(
+    'article',
+    { class: `card card--${card.type} card--guess` },
+    el(
+      'header',
+      { class: 'card__head' },
+      el('span', { class: 'card__kicker' }, LABELS[card.type]),
+      el('span', { class: 'card__tag' }, 'Eerst raden'),
+    ),
+    card.type === 'history'
+      ? [el('h2', { class: 'card__title' }, 'In welk jaar gebeurde dit?'), el('p', { class: 'card__body', lang: card.lang }, card.title)]
+      : el('h2', { class: 'card__title', lang: question.lang }, question.q),
+    el(
+      'div',
+      { class: 'options' },
+      question.options.map((option, i) => el('button', { type: 'button', class: 'option', onclick: () => guess(card, i) }, option)),
+    ),
+    el('button', { type: 'button', class: 'skip', onclick: () => guess(card, -1) }, 'Geen idee'),
   )
 }
 
-function cardView(card, { day = today, savedOn = null } = {}) {
+// De uitslag van je gok, bovenaan de omgedraaide kaart.
+function guessResult(card, choice) {
+  const { options, answer } = card.guess
+  if (choice === answer) return el('p', { class: 'result is-correct', role: 'status' }, '✓ Goed geraden')
+  if (choice === -1) return el('p', { class: 'result is-neutral', role: 'status' }, `Het was: ${options[answer]}`)
+  return el('p', { class: 'result', role: 'status' }, `✗ Niet geraden — het was: ${options[answer]}`)
+}
+
+function cardView(card, { day = today, savedOn = null, choice = null } = {}) {
   const saved = isSaved(card, day)
   const source =
     card.source &&
@@ -789,6 +982,7 @@ function cardView(card, { day = today, savedOn = null } = {}) {
         saved ? '★ Bewaard' : '☆ Bewaar',
       ),
     ),
+    Number.isInteger(choice) && guessResult(card, choice),
     // lang: zodat schermlezers en afbreking de taal van de bron volgen
     el(
       'div',
@@ -801,19 +995,19 @@ function cardView(card, { day = today, savedOn = null } = {}) {
   )
 }
 
-function quizView(card, answers) {
+function quizView(card, questions, answers) {
   return el(
     'article',
     { class: 'card card--quiz' },
     el('header', { class: 'card__head' }, el('span', { class: 'card__kicker' }, LABELS.quiz)),
     el('h2', { class: 'card__title' }, card.title),
-    card.questions.map((question, qi) => {
+    questions.map(({ label, question }, qi) => {
       const chosen = answers[qi]
       const answered = Number.isInteger(chosen)
       return el(
         'fieldset',
         { class: 'question' },
-        el('legend', { lang: question.lang }, `${qi + 1}. ${question.q}`),
+        el('legend', {}, el('span', { class: 'question__tag' }, label), el('span', { lang: question.lang }, `${qi + 1}. ${question.q}`)),
         el(
           'div',
           { class: 'options' },
@@ -848,10 +1042,11 @@ function quizView(card, answers) {
   )
 }
 
-function doneView(quiz, answers) {
+function doneView(questions, answers) {
   const streak = currentStreak(state.streak, today)
-  const score = quiz.questions.filter((q, i) => answers[i] === q.answer).length
-  const stat = (label, value) => el('div', {}, el('dt', {}, label), el('dd', {}, value))
+  const score = questions.filter((entry, i) => answers[i] === entry.question.answer).length
+  const guessed = guessScore()
+  const stat = (label, value, sub) => el('div', {}, el('dt', {}, label), el('dd', {}, value, sub && el('small', {}, sub)))
   return el(
     'section',
     { class: 'done' },
@@ -861,9 +1056,9 @@ function doneView(quiz, answers) {
     el(
       'dl',
       { class: 'stats' },
-      stat('Dagreeks', `${streak} ${streak === 1 ? 'dag' : 'dagen'}`),
-      stat('Quiz', `${score} van ${quiz.questions.length}`),
-      stat('Langste reeks', String(state.streak.best)),
+      stat('Dagreeks', `${streak} ${streak === 1 ? 'dag' : 'dagen'}`, `langste: ${state.streak.best}`),
+      stat('Geraden', `${guessed.right} van ${guessed.total}`),
+      stat('Quiz', `${score} van ${questions.length}`),
     ),
     el(
       'div',
@@ -933,7 +1128,7 @@ function makeSwipeable(node, { onNext, onPrev }) {
       if (Math.abs(dy) > 10 && Math.abs(dy) >= Math.abs(dx)) start = null // verticaal: scrollen
       else if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy) * 1.2) {
         dragging = true
-        node.classList.remove('is-settling', 'enter-left', 'enter-right')
+        node.classList.remove('is-settling', 'enter-left', 'enter-right', 'flip-in')
         node.setPointerCapture(event.pointerId)
       }
       if (!dragging) return
@@ -962,6 +1157,9 @@ function makeSwipeable(node, { onNext, onPrev }) {
   }
   node.addEventListener('pointerup', end)
   node.addEventListener('pointercancel', end)
+  // Tijdens een horizontale veeg de aanraking zelf afhandelen. Anders ziet de browser een snelle
+  // veeg als 'uitrollen' en slikt hij de eerstvolgende tik in (bijvoorbeeld op een antwoord).
+  node.addEventListener('touchmove', (event) => dragging && event.cancelable && event.preventDefault(), { passive: false })
   // Na een veeg mag de knop onder je vinger niet ook nog afgaan.
   node.addEventListener('click', (event) => suppressClick && (event.stopPropagation(), event.preventDefault()), true)
   return node
@@ -977,21 +1175,32 @@ function go(index, from) {
 function editionView() {
   const cards = edition.cards
   const total = cards.length
-  const { answers } = progress()
+  const { answers, guesses } = progress()
   const index = Math.min(progress().index, total)
-  const quiz = cards.find((card) => card.type === 'quiz')
-  if (index >= total) return [doneView(quiz, answers)]
+  const questions = quizQuestions()
+  if (index >= total) return [doneView(questions, answers)]
 
   const card = cards[index]
   const isLast = index === total - 1
-  const quizDone = card.type !== 'quiz' || card.questions.every((_, i) => Number.isInteger(answers[i]))
+  // Verder kan pas als je geraden hebt (raadkaart) of alle vragen beantwoord hebt (quiz).
+  const needsGuess = Boolean(card.guess) && !Number.isInteger(guesses[card.id])
+  const quizDone = card.type !== 'quiz' || questions.every((_, i) => Number.isInteger(answers[i]))
   const onPrev = index > 0 ? () => go(index - 1, 'left') : null
-  const onNext = !quizDone ? null : isLast ? finish : () => go(index + 1, 'right')
+  const onNext = needsGuess || !quizDone ? null : isLast ? finish : () => go(index + 1, 'right')
   navigate = { onPrev, onNext }
 
-  const cardNode = makeSwipeable(card.type === 'quiz' ? quizView(card, answers) : cardView(card), { onNext, onPrev })
-  if (enterFrom) cardNode.classList.add(`enter-${enterFrom}`)
+  const content =
+    card.type === 'quiz'
+      ? quizView(card, questions, answers)
+      : needsGuess
+        ? guessView(card)
+        : cardView(card, { choice: card.guess ? guesses[card.id] : null })
+  const cardNode = makeSwipeable(content, { onNext, onPrev })
+  if (flipped === card.id) cardNode.classList.add('flip-in')
+  else if (enterFrom) cardNode.classList.add(`enter-${enterFrom}`)
+  flipped = null
   enterFrom = null
+  const hint = needsGuess ? ' · kies eerst een antwoord' : index === 0 ? ' · veeg naar links voor de volgende' : null
 
   return [
     el(
@@ -1009,7 +1218,7 @@ function editionView() {
         'span',
         { class: 'pager__count' },
         `${index + 1} / ${total}`,
-        index === 0 && el('span', { class: 'pager__hint' }, ' · veeg naar links voor de volgende'),
+        hint && el('span', { class: 'pager__hint' }, hint),
       ),
       // 'Afronden' blijft altijd een zichtbare knop; bladeren doe je op een aanraakscherm met vegen.
       el(
@@ -1039,7 +1248,10 @@ function render(toTop = false) {
 render()
 getEdition(today).then((result) => {
   edition = result
-  render()
+  // De herhalingsvragen voor vandaag één keer kiezen en vastleggen, zodat de quiz gelijk
+  // blijft als je de app opnieuw opent of de editie terugleest.
+  if (progress().reviews === null) setProgress({ reviews: pickReviews(state.log, today) })
+  else render()
 })
 
 // Pijltjestoetsen: links = vorige, rechts = volgende.
