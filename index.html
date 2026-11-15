@@ -550,7 +550,8 @@ function dayNumber(key) {
 
 // ---------- Opslag (alleen in deze browser; geen account, geen server) ----------
 const STATE_KEY = 'kennis:v1'
-const EDITION_KEY = 'kennis:edition:v5'
+const EDITION_KEY = 'kennis:edition:v6'
+const TRANSLATION_KEY = 'kennis:vertaling:v1'
 // Voortgang van vandaag. guesses: je gok per kaart (-1 = 'Geen idee'); answers: je quizantwoorden;
 // reviews: de herhalingsvragen die voor vandaag gekozen zijn (null = nog niet gekozen).
 const NO_PROGRESS = { v: 2, index: 0, guesses: {}, answers: [], reviews: null, completed: false }
@@ -602,6 +603,80 @@ function safeUrl(value) {
   }
 }
 
+// ---------- Vertalen ----------
+// Engelse bronnen worden in de app naar het Nederlands vertaald via MyMemory: gratis, zonder
+// account of sleutel. De dienst staat ongeveer 5000 tekens per dag per internetaansluiting toe;
+// een editie heeft er zo'n 1500 nodig. Lukt vertalen niet, dan blijft de tekst Engels.
+const TRANSLATE_URL = 'https://api.mymemory.translated.net/get'
+const TRANSLATE_MAX = 450 // de dienst accepteert alleen korte stukken; lange tekst gaat per zin
+
+// Wat vandaag al vertaald is, wordt onthouden: een tweede poging vraagt alleen op wat nog ontbreekt.
+const translations = (() => {
+  const stored = readJson(TRANSLATION_KEY)
+  return stored?.day === dayKey() ? stored : { day: dayKey(), map: {} }
+})()
+
+async function translatePiece(text) {
+  if (translations.map[text]) return translations.map[text]
+  const url = `${TRANSLATE_URL}?q=${encodeURIComponent(text)}&langpair=en|nl`
+  const res = await fetch(url, { signal: AbortSignal.timeout(8000) })
+  if (!res.ok) throw new Error(`Vertaaldienst gaf status ${res.status}`)
+  const data = await res.json()
+  if (Number(data.responseStatus) !== 200 || data.quotaFinished) throw new Error('Vertaaldienst weigert (daglimiet?)')
+  // De dienst geeft soms een 'bijna passende' eerdere vertaling van een andere zin terug.
+  // De machinevertaling van precies deze zin is betrouwbaarder.
+  const machine = data.matches?.find((match) => match['created-by'] === 'MT!')?.translation
+  const raw = machine || data.responseData?.translatedText
+  if (typeof raw !== 'string' || !raw.trim() || /^MYMEMORY WARNING/i.test(raw)) throw new Error('Geen vertaling ontvangen')
+  // Het antwoord kan HTML-codes bevatten (&#39;); omzetten naar gewone tekst, nooit naar HTML.
+  const clean = new DOMParser().parseFromString(raw, 'text/html').documentElement.textContent.trim()
+  translations.map[text] = clean
+  writeJson(TRANSLATION_KEY, translations)
+  return clean
+}
+
+// Knipt lange tekst op zinsgrenzen in stukken die de dienst aankan.
+function splitForTranslation(text) {
+  const sentences = text.match(/[^.!?]+(?:[.!?]+["”’')\]]*|$)\s*/g) ?? [text]
+  const pieces = []
+  let current = ''
+  for (const sentence of sentences) {
+    if (current && (current + sentence).length > TRANSLATE_MAX) {
+      pieces.push(current.trim())
+      current = ''
+    }
+    current += sentence
+    // Eén zin die op zichzelf al te lang is: op een woordgrens doorknippen.
+    while (current.length > TRANSLATE_MAX) {
+      const cut = current.lastIndexOf(' ', TRANSLATE_MAX)
+      const at = cut > 0 ? cut : TRANSLATE_MAX
+      pieces.push(current.slice(0, at).trim())
+      current = current.slice(at)
+    }
+  }
+  if (current.trim()) pieces.push(current.trim())
+  // Vangnet: is er bij het knippen iets weggevallen, vertaal de tekst dan liever in vaste stukken.
+  const size = (value) => value.replace(/\s/g, '').length
+  if (size(pieces.join('')) !== size(text)) return text.match(new RegExp(`[\\s\\S]{1,${TRANSLATE_MAX}}`, 'g'))
+  return pieces
+}
+
+async function translate(text) {
+  if (!text?.trim()) return text
+  return (await Promise.all(splitForTranslation(text).map(translatePiece))).join(' ')
+}
+
+// Vertaalt titel en tekst van een Engelse kaart. Mislukt het, dan blijft de kaart Engels.
+async function translateCard(card) {
+  if (card.lang !== 'en') return card
+  try {
+    const [title, ...body] = await Promise.all([card.title, ...card.body].map(translate))
+    return { ...card, title, body, lang: 'nl', translated: true }
+  } catch {
+    return { ...card, untranslated: true }
+  }
+}
+
 // Nieuws: news.json wordt dagelijks ververst door een GitHub Action (scripts/fetch-news.mjs),
 // omdat nieuwsfeeds niet rechtstreeks vanuit een browser opgehaald mogen worden.
 const NEWS_MAX_AGE_HOURS = 36
@@ -613,18 +688,19 @@ async function fetchNews() {
   const age = (Date.now() - new Date(generatedAt).getTime()) / 3_600_000
   return {
     stale: !(age < NEWS_MAX_AGE_HOURS) ? new Date(generatedAt) : null,
-    cards: items.slice(0, 3).map((item) => ({
+    cards: await Promise.all(items.slice(0, 3).map((item) => translateCard({
       id: `news-${item.id}`,
       type: 'news',
       lang: item.lang,
       title: String(item.title),
       body: item.summary ? [String(item.summary)] : [],
       source: { name: String(item.source), url: safeUrl(item.url) },
-    })),
+    }))),
   }
 }
 
-// Geschiedenis: Wikipedia 'On this day'. Die feed bestaat niet in het Nederlands, wel in het Engels.
+// Geschiedenis: Wikipedia 'On this day'. Die feed bestaat niet in het Nederlands, wel in het Engels;
+// de gekozen gebeurtenis wordt daarna vertaald.
 async function fetchHistory(day) {
   const [year, month, date] = day.split('-')
   const res = await fetch(`https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday/selected/${month}/${date}`)
@@ -641,7 +717,7 @@ async function fetchHistory(day) {
   const text = event.text.replace(/\s*\((?:[^()]*\s)?pictured\)/g, '').trim()
   const formatYear = (y) => (y < 0 ? `${-y} v.Chr.` : String(y))
 
-  const card = {
+  const card = await translateCard({
     id: `history-${day}`,
     type: 'history',
     lang: 'en',
@@ -652,7 +728,7 @@ async function fetchHistory(day) {
       name: page ? `Wikipedia (EN): ${page.titles?.normalized ?? page.title}` : 'Wikipedia (EN)',
       url: safeUrl(page?.content_urls?.desktop?.page),
     },
-  }
+  })
 
   // Quizvraag "in welk jaar?", met de twee dichtstbijzijnde jaren van dezelfde datum als afleiders.
   let question = null
@@ -661,8 +737,8 @@ async function fetchHistory(day) {
     others.sort((a, b) => Math.abs(a - event.year) - Math.abs(b - event.year))
     const years = [event.year, others[0], others[1]].sort((a, b) => a - b)
     question = {
-      q: `In welk jaar gebeurde dit? “${text}”`,
-      lang: 'en',
+      q: `In welk jaar gebeurde dit? “${card.title}”`,
+      lang: card.lang,
       ordered: true, // jaartallen blijven op volgorde staan, dus niet husselen
       options: years.map(formatYear),
       answer: years.indexOf(event.year),
@@ -764,6 +840,10 @@ async function getEdition(day) {
   let history = FALLBACK_HISTORY
   if (historyResult.status === 'fulfilled') history = historyResult.value
   else notes.push('Vandaag in de geschiedenis kon niet worden geladen.')
+
+  if ([...news, history.card].some((card) => card.untranslated)) {
+    notes.push('Vertalen lukte niet voor alle kaarten; een deel staat in het Engels.')
+  }
 
   const fact = pickForDay(facts, day)
   const deepdive = pickForDay(deepdives, day)
@@ -991,7 +1071,13 @@ function cardView(card, { day = today, savedOn = null, choice = null } = {}) {
       el('h2', { class: 'card__title' }, card.title),
       card.body.map((text) => el('p', { class: 'card__body' }, text)),
     ),
-    el('footer', { class: 'card__foot' }, source, savedOn && el('span', {}, `Bewaard op ${savedOn}`)),
+    el(
+      'footer',
+      { class: 'card__foot' },
+      source,
+      card.translated && el('span', {}, 'Automatisch vertaald uit het Engels'),
+      savedOn && el('span', {}, `Bewaard op ${savedOn}`),
+    ),
   )
 }
 
