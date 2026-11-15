@@ -1,44 +1,58 @@
-// Eén plek waar de editie van de dag vandaan komt.
-// Echte bronnen waar het kan, voorbeeldinhoud als terugval (offline, bron onbereikbaar).
-// Weetje en verdieping komen voorlopig nog uit de voorbeeldeditie.
-import { sampleEdition } from '../data/sampleEdition.js'
+// Eén plek waar de editie van de dag wordt samengesteld:
+//   3x nieuws      public/news.json (RSS), anders voorbeeldinhoud
+//   geschiedenis   Wikipedia On this day, anders voorbeeldinhoud
+//   weetje         src/data/facts.js, elke dag de volgende
+//   verdieping     src/data/deepdives.js, elke dag de volgende
+//   mini-quiz      één vraag bij het weetje, de geschiedenis en de verdieping
+import { deepdives } from '../data/deepdives.js'
+import { facts } from '../data/facts.js'
+import { sampleHistory, sampleNews } from '../data/sampleEdition.js'
 import { fetchHistory } from './history.js'
 import { fetchNews } from './news.js'
+import { pickForDay, shuffleQuestion } from './rotation.js'
 
-const CACHE_KEY = 'kennis:edition:v1'
+const CACHE_KEY = 'kennis:edition:v3'
 
 export async function getEdition(day) {
   const cached = readCache(day)
   if (cached) return cached
 
-  const [news, history] = await Promise.allSettled([fetchNews(), fetchHistory(day)])
+  const [newsResult, historyResult] = await Promise.allSettled([fetchNews(), fetchHistory(day)])
   const missing = []
-  let cards = sampleEdition.cards
+  if (newsResult.status === 'rejected') missing.push('nieuws')
+  if (historyResult.status === 'rejected') missing.push('geschiedenis')
 
-  if (news.status === 'fulfilled') {
-    cards = [...news.value, ...cards.filter((c) => c.type !== 'news')]
-  } else {
-    missing.push('nieuws')
-  }
+  const news = newsResult.status === 'fulfilled' ? newsResult.value : sampleNews
+  const history = historyResult.status === 'fulfilled' ? historyResult.value : sampleHistory
+  const fact = pickForDay(facts, day)
+  const deepdive = pickForDay(deepdives, day)
 
-  if (history.status === 'fulfilled') {
-    const { card, question } = history.value
-    cards = cards.map((c) => {
-      if (c.type === 'history') return card
-      if (c.type === 'quiz' && question) {
-        // De voorbeeldvraag over geschiedenis vervangen door een vraag over de echte kaart.
-        return { ...c, questions: c.questions.map((q) => (q.about === 'history' ? question : q)) }
-      }
-      return c
-    })
-  } else {
-    missing.push('geschiedenis')
-  }
+  const cards = [
+    ...news,
+    history.card,
+    toCard(fact, 'fact'),
+    toCard(deepdive, 'deepdive'),
+    {
+      id: `quiz-${day}`,
+      type: 'quiz',
+      title: 'Drie vragen over vandaag',
+      // De jaartallen bij de geschiedenisvraag blijven op volgorde staan.
+      questions: [
+        shuffleQuestion(fact.question, day, 1),
+        history.question,
+        shuffleQuestion(deepdive.question, day, 2),
+      ].filter(Boolean),
+    },
+  ]
 
   const edition = { day, cards, missing }
   // Alleen een complete editie vastleggen; anders proberen we het de volgende keer opnieuw.
   if (missing.length === 0) writeCache(edition)
   return edition
+}
+
+function toCard({ question, ...item }, type) {
+  return { ...item, id: `${type}-${item.id}`, type }
 }
 
 function readCache(day) {
@@ -52,6 +66,7 @@ function readCache(day) {
 
 function writeCache(edition) {
   try {
+    for (const old of ['v1', 'v2']) localStorage.removeItem(`kennis:edition:${old}`)
     localStorage.setItem(CACHE_KEY, JSON.stringify(edition))
   } catch {
     // Geen opslag beschikbaar: dan halen we de editie elke keer opnieuw op.
