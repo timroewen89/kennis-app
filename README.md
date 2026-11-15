@@ -100,6 +100,10 @@ erbij en pas het aan:
 De lijsten lopen rond (nu 45 weetjes en 24 verdiepingen) en wisselen de thema's af; de app husselt
 de antwoorden per dag. Voeg je een item toe, dan schuift de volgorde voor de dagen erna op.
 
+Alle 69 teksten zijn nagelopen tegen Wikipedia en andere bronnen. Waar bronnen elkaar tegenspreken,
+staat dat in de tekst of is een voorzichtige formulering gekozen. Controleer een nieuw item zelf
+voordat je het toevoegt.
+
 Wie Node heeft, kan de inhoud laten controleren met `node scripts/check-content.mjs`: dat meldt
 vormfouten en laat zien hoeveel items elk thema heeft.
 

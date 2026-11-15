@@ -237,7 +237,7 @@ export const deepdives = [
     topic: 'natuur',
     title: 'Het uitsterven van de dodo',
     body: [
-      'De dodo was een loopvogel van ongeveer een meter hoog, verwant aan de duiven, die alleen op het eiland Mauritius voorkwam. Omdat er geen roofdieren leefden, had hij het vliegen verleerd en broedde hij op de grond.',
+      'De dodo was een vogel van zo’n 70 centimeter tot een meter hoog, verwant aan de duiven, die alleen op het eiland Mauritius voorkwam. Omdat er geen roofdieren leefden, had hij het vliegen verleerd en broedde hij op de grond.',
       'In 1598 gingen Nederlandse zeelieden op het eiland aan land. Ze noemden het Mauritius, naar prins Maurits, en beschreven de vreemde vogel als eersten. In de jaren daarna deden schepen het eiland regelmatig aan om vers voedsel in te slaan.',
       'De dodo werd bejaagd, maar de grootste schade kwam van de dieren die met de schepen meereisden. Ratten, varkens en apen vraten de eieren en kuikens op, en het bos waarin de vogel leefde werd gekapt. De laatste algemeen aanvaarde waarneming is van 1662. Binnen een eeuw na de ontdekking was de soort verdwenen.',
       'Lange tijd werd zelfs betwijfeld of het dier echt had bestaan. In de negentiende eeuw, mede door zijn rol in Alice in Wonderland, werd de dodo het symbool van uitsterven door toedoen van de mens. Een compleet opgezet exemplaar bestaat niet; wat we weten komt uit botten, tekeningen en reisverslagen.',
@@ -274,9 +274,9 @@ export const deepdives = [
     title: 'De Statenvertaling',
     body: [
       'Aan het begin van de zeventiende eeuw lazen Nederlandse protestanten bijbels die waren vertaald uit andere vertalingen. De Synode van Dordrecht, de grote kerkvergadering van 1618 en 1619, besloot dat er een nieuwe moest komen, rechtstreeks uit het Hebreeuws, Aramees en Grieks.',
-      'De Staten-Generaal betaalden het werk, en daaraan dankt de vertaling haar naam. De vertalers gingen in Leiden aan de slag. In 1637 was de Statenvertaling klaar.',
-      'Voor de taal was het een bijzonder moment. Een standaardnederlands bestond nog niet: elke streek sprak en schreef anders. De vertalers en hun controleurs kwamen daarom met opzet uit verschillende gewesten, en kozen woorden en vormen die overal te begrijpen waren.',
-      'De vertaling lag eeuwenlang in vrijwel elk protestants gezin op tafel en werd dagelijks voorgelezen. Daardoor heeft ze het Nederlands sterk gevormd. Uitdrukkingen als ‘een doorn in het oog’ en ‘de eerste steen werpen’ komen uit de Bijbel en zijn mede door deze vertaling gewoon Nederlands geworden.',
+      'De Staten-Generaal betaalden het werk, en daaraan dankt de vertaling haar naam. De vertalers gingen in Leiden aan de slag. In 1635 was de vertaling af en in 1637 verscheen de Statenvertaling in druk.',
+      'Voor de taal was het een bijzonder moment. Een standaardnederlands bestond nog niet: elke streek sprak en schreef anders. De vertalers kwamen uit verschillende gewesten, en uit elke provincie werden controleurs aangewezen. Samen kozen ze woorden en vormen die overal te begrijpen waren.',
+      'De vertaling lag eeuwenlang in vrijwel elk protestants gezin op tafel en werd dagelijks voorgelezen. Daardoor zijn veel uitdrukkingen uit de Bijbel, zoals ‘een doorn in het oog’, gewoon Nederlands geworden. Hoe groot de invloed van de vertaling op de standaardtaal was, is omstreden: volgens taalkundigen is die vroeger overschat.',
     ],
     source: wiki('Statenvertaling'),
     question: {
@@ -297,7 +297,7 @@ export const deepdives = [
       'In Suriname was de vrijheid bovendien niet meteen volledig. Wie op een plantage had gewerkt, moest onder staatstoezicht nog tien jaar tegen loon arbeid blijven verrichten. Pas in 1873 kwam daar een einde aan.',
       'De afschaffing wordt elk jaar op 1 juli herdacht en gevierd met Keti Koti, wat ‘verbroken ketenen’ betekent. In 2022 bood de Nederlandse regering excuses aan voor het slavernijverleden.',
     ],
-    source: wiki('Geschiedenis_van_de_Nederlandse_slavernij'),
+    source: wiki('Afschaffing_van_de_slavernij_in_het_Koninkrijk_der_Nederlanden'),
     question: {
       q: 'Wie kreeg in 1863 een schadeloosstelling van de Nederlandse staat?',
       options: ['De vrijgemaakte mensen', 'De eigenaren', 'Niemand'],
@@ -312,12 +312,12 @@ export const deepdives = [
     body: [
       'In 1789 stond Frankrijk aan de rand van een bankroet. Koning Lodewijk XVI riep de Staten-Generaal bijeen, voor het eerst sinds 1614, om nieuwe belastingen te regelen. De vertegenwoordigers van de burgerij namen daar geen genoegen mee en riepen zichzelf uit tot Nationale Vergadering.',
       'Op 14 juli bestormde een menigte in Parijs de Bastille, een gevangenis die symbool stond voor de willekeur van de koning. In augustus schafte de vergadering de voorrechten van adel en geestelijkheid af en nam ze de Verklaring van de rechten van de mens en de burger aan: mensen worden vrij en met gelijke rechten geboren.',
-      'De revolutie werd daarna steeds radicaler. In 1792 werd de republiek uitgeroepen, en in januari 1793 stierf de koning onder de guillotine. Tijdens de Terreur van 1793 en 1794 werden duizenden mensen als vijand van de revolutie terechtgesteld.',
+      'De revolutie werd daarna steeds radicaler. In 1792 werd de republiek uitgeroepen, en in januari 1793 stierf de koning onder de guillotine. Tijdens de Terreur van 1793 en 1794 werden ongeveer 17.000 mensen na een vonnis terechtgesteld; nog eens duizenden stierven zonder proces of in de gevangenis.',
       'In 1799 greep generaal Napoleon Bonaparte de macht. Maar de ideeën bleven: gelijkheid voor de wet en een volk dat zichzelf bestuurt. Ze verspreidden zich over Europa, ook naar Nederland, waar in 1795 de Bataafse Republiek ontstond.',
     ],
     source: wiki('Franse_Revolutie'),
     question: {
-      q: 'Welke gebeurtenis op 14 juli 1789 geldt als het begin van de Franse Revolutie?',
+      q: 'Welke gebeurtenis op 14 juli 1789 geldt als het symbolische begin van de Franse Revolutie?',
       options: ['De bestorming van de Bastille', 'De terechtstelling van de koning', 'De kroning van Napoleon'],
       answer: 0,
       explain: '14 juli is nog altijd de Franse nationale feestdag.',
@@ -385,10 +385,10 @@ export const deepdives = [
     body: [
       'In 1672 werd de Republiek der Zeven Verenigde Nederlanden van vier kanten tegelijk aangevallen: door Frankrijk, Engeland en de bisschoppen van Münster en Keulen. Het Franse leger van Lodewijk XIV trok in juni vrijwel ongehinderd het land binnen, en de stad Utrecht gaf zich zonder strijd over.',
       'Tijdgenoten vatten de toestand samen in drie woorden: het volk was redeloos, de regering radeloos en het land reddeloos. Holland werd gered door de Hollandse Waterlinie, een strook land die onder water werd gezet: te diep om doorheen te waden, te ondiep om te bevaren. Op zee hield Michiel de Ruyter de Engelse en Franse vloot tegen.',
-      'De woede van de bevolking richtte zich op raadpensionaris Johan de Witt, die het land twintig jaar zonder stadhouder had geleid. De jonge prins Willem III werd tot stadhouder benoemd. Op 20 augustus werden Johan de Witt en zijn broer Cornelis in Den Haag door een menigte vermoord.',
+      'De woede van de bevolking richtte zich op raadpensionaris Johan de Witt, die het land bijna twintig jaar zonder stadhouder had geleid. De jonge prins Willem III werd tot stadhouder benoemd. Op 20 augustus werden Johan de Witt en zijn broer Cornelis in Den Haag door een menigte vermoord.',
       'In het noorden liep de aanval van de bisschop van Münster vast voor de stad Groningen, en eind december werd de vesting Coevorden heroverd. De Republiek overleefde: in 1674 sloten Engeland, Münster en Keulen vrede, en in 1678 volgde Frankrijk. Toch geldt het Rampjaar als het einde van de grootste bloei van de Gouden Eeuw.',
     ],
-    source: wiki('Rampjaar'),
+    source: wiki('Rampjaar_1672'),
     question: {
       q: 'Wat hield het Franse leger in 1672 tegen bij de grens van Holland?',
       options: ['De Hollandse Waterlinie', 'Een strenge winter', 'Een opstand in Frankrijk'],
@@ -402,8 +402,8 @@ export const deepdives = [
     title: 'Het begin van de Eerste Wereldoorlog',
     body: [
       'Op 28 juni 1914 schoot de Bosnisch-Servische student Gavrilo Princip in Sarajevo de Oostenrijkse troonopvolger Frans Ferdinand en diens vrouw Sophie dood. Oostenrijk-Hongarije gaf Servië de schuld, stelde een ultimatum en verklaarde een maand later de oorlog.',
-      'Door een web van bondgenootschappen sleepte dat conflict de rest van Europa mee. Rusland steunde Servië, Duitsland steunde Oostenrijk-Hongarije en verklaarde de oorlog aan Rusland en Frankrijk. Toen Duitse troepen het neutrale België binnenvielen, deed ook Groot-Brittannië mee. Binnen een week was vrijwel heel Europa in oorlog.',
-      'Bijna iedereen verwachtte een korte strijd. In plaats daarvan liep het front in het westen vast in loopgraven, van de Noordzee tot aan Zwitserland. Mitrailleurs, artillerie en gifgas maakten elke aanval tot een slachting. Bij veldslagen als Verdun en de Somme vielen honderdduizenden doden voor een paar kilometer terreinwinst.',
+      'Door een web van bondgenootschappen sleepte dat conflict de rest van Europa mee. Rusland steunde Servië, Duitsland steunde Oostenrijk-Hongarije en verklaarde de oorlog aan Rusland en Frankrijk. Toen Duitse troepen het neutrale België binnenvielen, deed ook Groot-Brittannië mee. Binnen een week waren alle grote Europese mogendheden behalve Italië in oorlog.',
+      'Veel mensen verwachtten een korte strijd. In plaats daarvan liep het front in het westen vast in loopgraven, van de Noordzee tot aan Zwitserland. Mitrailleurs, artillerie en gifgas maakten elke aanval tot een slachting. Bij veldslagen als Verdun en de Somme vielen honderdduizenden doden voor een paar kilometer terreinwinst.',
       'Op 11 november 1918 zwegen de wapens. Naar schatting negen tot tien miljoen militairen waren gesneuveld, en vier keizerrijken waren ingestort. Nederland bleef neutraal, maar hield zijn leger vier jaar gemobiliseerd en ving in 1914 ongeveer een miljoen Belgische vluchtelingen op.',
     ],
     source: wiki('Eerste_Wereldoorlog'),
@@ -439,10 +439,10 @@ export const deepdives = [
     body: [
       'In 1948 won de Nationale Partij de verkiezingen in Zuid-Afrika, waaraan vrijwel alleen witte inwoners mochten meedoen. De partij voerde een beleid in dat ze apartheid noemde, een Afrikaans woord dat ‘gescheidenheid’ betekent.',
       'Een reeks wetten deelde elke inwoner in bij een ‘ras’ en bepaalde op grond daarvan waar iemand mocht wonen, werken en naar school gaan. Huwelijken tussen wit en zwart werden verboden. Zwarte Zuid-Afrikanen moesten altijd een pasje bij zich hebben, en miljoenen mensen werden gedwongen te verhuizen naar afgelegen ‘thuislanden’.',
-      'Het verzet werd geleid door het Afrikaans Nationaal Congres, het ANC. Op 21 maart 1960 schoot de politie in Sharpeville op mensen die tegen de pasjeswetten demonstreerden; er vielen 69 doden. Het ANC werd verboden. Nelson Mandela, een van de leiders, werd in 1962 opgepakt en bleef 27 jaar gevangen, grotendeels op Robbeneiland.',
-      'Internationale boycots en aanhoudend verzet in het land zelf maakten het systeem onhoudbaar. In 1990 hief president De Klerk het verbod op het ANC op en kwam Mandela vrij. In april 1994 mochten voor het eerst alle Zuid-Afrikanen stemmen, en werd Mandela president.',
+      'Het verzet werd geleid door het Afrikaans Nationaal Congres, het ANC, en later ook door het Pan-Afrikaans Congres, het PAC. Op 21 maart 1960 schoot de politie in Sharpeville op mensen die op oproep van het PAC tegen de pasjeswetten demonstreerden; volgens de officiële telling vielen er 69 doden. Het ANC en het PAC werden verboden. Nelson Mandela, een van de leiders, werd in 1962 opgepakt en bleef 27 jaar gevangen, grotendeels op Robbeneiland.',
+      'Internationale boycots en aanhoudend verzet in het land zelf maakten het systeem onhoudbaar. In 1990 hief president De Klerk het verbod op het ANC op en kwam Mandela vrij. In april 1994 mochten voor het eerst alle Zuid-Afrikanen stemmen, en in mei werd Mandela president.',
     ],
-    source: wiki('Apartheid'),
+    source: wiki('Apartheid_in_Zuid-Afrika'),
     question: {
       q: 'Hoe lang zat Nelson Mandela gevangen?',
       options: ['7 jaar', '17 jaar', '27 jaar'],
