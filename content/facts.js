@@ -1,5 +1,5 @@
 // Weetjes. Elke dag komt de volgende aan de beurt; na de laatste begint de lijst opnieuw.
-// De volgorde wisselt de thema's af. Een nieuw weetje toevoegen = een blok toevoegen (zie README).
+// De volgorde wisselt de thema's af; geschiedenis (Nederland en wereld) komt het vaakst voor. Een nieuw weetje toevoegen = een blok toevoegen (zie README).
 // 'topic' is een thema uit content/topics.js.
 // 'answer' is de positie van het goede antwoord in 'options', geteld vanaf 0.
 import { wiki } from './topics.js'
@@ -81,6 +81,36 @@ export const facts = [
       explain: 'De eenhoorn, die ook in het Britse wapen staat.',
     },
   },
+  {
+    id: 'voc-aandelen',
+    topic: 'nederland',
+    title: 'De VOC geldt als het eerste bedrijf met vrij verhandelbare aandelen',
+    body: [
+      'De Verenigde Oost-Indische Compagnie werd in 1602 opgericht. Iedereen kon voor een bedrag naar keuze meedoen, en die aandelen mochten daarna worden doorverkocht. Daaruit groeide in Amsterdam wat geldt als de eerste moderne effectenbeurs ter wereld.',
+    ],
+    source: wiki('Vereenigde_Oostindische_Compagnie'),
+    question: {
+      q: 'In welk jaar werd de VOC opgericht?',
+      options: ['1568', '1602', '1648'],
+      answer: 1,
+      explain: 'In 1602; de aandelen konden daarna vrij worden verhandeld.',
+    },
+  },
+  {
+    id: 'magna-carta',
+    topic: 'wereld',
+    title: 'In 1215 moest een Engelse koning beloven dat ook hij zich aan de wet hield',
+    body: [
+      'Koning Jan zonder Land had ruzie met zijn edelen over belastingen en willekeur. In juni 1215 dwongen ze hem bij Runnymede een oorkonde te bezegelen: de Magna Carta. Daarin stond dat ook de koning aan de wet gebonden was en dat geen vrij man zonder rechtmatig vonnis gevangen mocht worden gezet. Van de versie uit 1215 zijn vier exemplaren bewaard.',
+    ],
+    source: wiki('Magna_Carta'),
+    question: {
+      q: 'Wat legde de Magna Carta van 1215 vast?',
+      options: ['Dat ook de koning aan de wet gebonden was', 'Dat Engeland een republiek werd', 'Dat de paus de koning mocht afzetten'],
+      answer: 0,
+      explain: 'De edelen dwongen koning Jan zijn macht aan regels te binden.',
+    },
+  },
   // ---------- ronde 2 ----------
   {
     id: 'hunebedden',
@@ -155,6 +185,36 @@ export const facts = [
       options: ['Als publiciteitsstunt', 'Het is een oude Keltische toverspreuk', 'Door een fout van een ambtenaar'],
       answer: 0,
       explain: 'De naam werd in de negentiende eeuw bedacht om bezoekers te trekken.',
+    },
+  },
+  {
+    id: 'leidens-ontzet',
+    topic: 'nederland',
+    title: 'Leiden werd in 1574 gered door het land onder water te zetten',
+    body: [
+      'Spaanse troepen belegerden Leiden maandenlang, en in de stad heersten honger en pest. De opstandelingen staken de dijken door, zodat de geuzen met platte schepen over het ondergelopen land konden varen. Op 3 oktober 1574 trokken de Spanjaarden weg. Leiden viert dat nog elk jaar met haring, wittebrood en hutspot.',
+    ],
+    source: wiki('Beleg_van_Leiden_(1573-1574)'),
+    question: {
+      q: 'Hoe werd het beleg van Leiden in 1574 gebroken?',
+      options: ['Door de dijken door te steken', 'Door een uitval van de burgers', 'Door een vredesverdrag'],
+      answer: 0,
+      explain: 'Het land liep onder, zodat de geuzen de stad per schip konden bereiken.',
+    },
+  },
+  {
+    id: 'val-van-constantinopel',
+    topic: 'wereld',
+    title: 'Het Romeinse Rijk hield pas in 1453 echt op te bestaan',
+    body: [
+      'Het westelijke deel van het Romeinse Rijk viel in 476, maar het oostelijke deel bestond nog bijna duizend jaar door als het Byzantijnse Rijk. Op 29 mei 1453 veroverde de Ottomaanse sultan Mehmet II, toen 21 jaar oud, de hoofdstad Constantinopel. De stad heet nu Istanbul.',
+    ],
+    source: wiki('Beleg_en_val_van_Constantinopel_(1453)'),
+    question: {
+      q: 'Wie veroverde Constantinopel in 1453?',
+      options: ['De Ottomanen', 'De kruisvaarders', 'De Mongolen'],
+      answer: 0,
+      explain: 'Sultan Mehmet II nam de stad in op 29 mei 1453.',
     },
   },
   // ---------- ronde 3 ----------
@@ -233,6 +293,36 @@ export const facts = [
       explain: 'Vijf klinkers, zeven medeklinkers en de ʻokina; zonder de ʻokina zijn het er twaalf.',
     },
   },
+  {
+    id: 'eerste-spoorlijn',
+    topic: 'nederland',
+    title: 'De eerste Nederlandse trein reed in 1839 van Amsterdam naar Haarlem',
+    body: [
+      'Op 20 september 1839 opende de eerste spoorlijn van Nederland, tussen Amsterdam en Haarlem. De trein werd getrokken door twee stoomlocomotieven: De Snelheid en De Arend. Nederland was daarmee later dan Engeland, België en Duitsland, waar al eerder treinen reden.',
+    ],
+    source: wiki('Spoorlijn_Amsterdam_-_Haarlem'),
+    question: {
+      q: 'Tussen welke steden reed in 1839 de eerste trein van Nederland?',
+      options: ['Amsterdam en Haarlem', 'Rotterdam en Den Haag', 'Utrecht en Arnhem'],
+      answer: 0,
+      explain: 'Op 20 september 1839, met de locomotieven De Snelheid en De Arend.',
+    },
+  },
+  {
+    id: 'pompeii',
+    topic: 'wereld',
+    title: 'Pompeï lag bijna zeventienhonderd jaar onder de as',
+    body: [
+      'In het jaar 79 barstte de Vesuvius uit en bedolf de Romeinse stad Pompeï onder meters as en puimsteen. De stad raakte vergeten tot er in 1748 met opgravingen werd begonnen. Omdat alles in één keer werd afgedekt, zijn huizen, muurschilderingen en zelfs broden bewaard gebleven.',
+    ],
+    source: wiki('Pompeï'),
+    question: {
+      q: 'Welke vulkaan bedolf Pompeï in het jaar 79?',
+      options: ['De Etna', 'De Vesuvius', 'De Stromboli'],
+      answer: 1,
+      explain: 'De Vesuvius, bij het huidige Napels.',
+    },
+  },
   // ---------- ronde 4 ----------
   {
     id: 'mount-scenery',
@@ -307,6 +397,36 @@ export const facts = [
       options: ['Twee dagen', 'Ruim twee jaar', 'Bijna twintig jaar'],
       answer: 1,
       explain: 'Het schilderij dook eind 1913 weer op in Italië.',
+    },
+  },
+  {
+    id: 'vrouwenkiesrecht',
+    topic: 'nederland',
+    title: 'Vrouwen konden in Nederland eerder gekozen worden dan zelf stemmen',
+    body: [
+      'Sinds 1917 mochten vrouwen zich verkiesbaar stellen, en in 1918 kwam Suze Groeneweg als eerste vrouw in de Tweede Kamer. Zelf stemmen mochten vrouwen toen nog niet: dat recht kwam er in 1919. Bij de Kamerverkiezingen van 1922 konden voor het eerst alle vrouwen in het land stemmen.',
+    ],
+    source: wiki('Vrouwenkiesrecht_in_Nederland'),
+    question: {
+      q: 'Wie was de eerste vrouw in de Tweede Kamer?',
+      options: ['Aletta Jacobs', 'Suze Groeneweg', 'Wilhelmina Drucker'],
+      answer: 1,
+      explain: 'Suze Groeneweg werd in 1918 gekozen, toen vrouwen zelf nog niet mochten stemmen.',
+    },
+  },
+  {
+    id: 'grote-brand-londen',
+    topic: 'wereld',
+    title: 'De Grote Brand van Londen begon in een bakkerij',
+    body: [
+      'In de nacht van 2 september 1666 brak brand uit in de bakkerij van Thomas Farriner in Pudding Lane. Door de droge zomer en een harde wind sloeg het vuur over op de dicht opeen gebouwde houten huizen. In vier dagen gingen ruim 13.000 huizen en de oude St Paul’s Cathedral verloren. Het aantal geregistreerde doden bleef opvallend laag.',
+    ],
+    source: wiki('Grote_brand_van_Londen'),
+    question: {
+      q: 'Waar begon de Grote Brand van Londen in 1666?',
+      options: ['In een bakkerij', 'In het koninklijk paleis', 'Op een schip in de haven'],
+      answer: 0,
+      explain: 'In de bakkerij van Thomas Farriner in Pudding Lane.',
     },
   },
   // ---------- ronde 5 ----------
@@ -385,6 +505,36 @@ export const facts = [
       explain: 'Van de Spelen van 1912 tot en met die van 1948.',
     },
   },
+  {
+    id: 'hugo-de-groot',
+    topic: 'nederland',
+    title: 'Hugo de Groot ontsnapte in een boekenkist',
+    body: [
+      'De rechtsgeleerde Hugo de Groot zat sinds 1619 levenslang gevangen op Slot Loevestein. Hij mocht wel boeken ontvangen, die in een grote kist heen en weer gingen. Op 22 maart 1621 kroop hij zelf in de kist en liet zich naar buiten dragen. Het plan kwam van zijn vrouw, Maria van Reigersberch.',
+    ],
+    source: wiki('Ontsnapping_van_Hugo_de_Groot'),
+    question: {
+      q: 'Uit welk kasteel ontsnapte Hugo de Groot in een boekenkist?',
+      options: ['Slot Loevestein', 'Het Muiderslot', 'Kasteel Radboud'],
+      answer: 0,
+      explain: 'Uit Slot Loevestein, op 22 maart 1621.',
+    },
+  },
+  {
+    id: 'titanic',
+    topic: 'wereld',
+    title: 'De Titanic had maar voor de helft van de opvarenden reddingsboten',
+    body: [
+      'Het schip botste in de nacht van 14 op 15 april 1912 op een ijsberg en zonk binnen drie uur. Aan boord waren ruim 2.200 mensen, maar in de twintig reddingsboten was plaats voor nog geen 1.200. Ongeveer 1.500 mensen kwamen om. De ramp leidde tot internationale regels: genoeg reddingsboten voor iedereen aan boord.',
+    ],
+    source: wiki('Titanic_(schip,_1912)'),
+    question: {
+      q: 'Waarom kwamen er bij de ramp met de Titanic zoveel mensen om?',
+      options: ['Er waren te weinig reddingsboten', 'Het schip zonk binnen tien minuten', 'Er was geen radio aan boord'],
+      answer: 0,
+      explain: 'Twintig boten boden plaats aan nog geen 1.200 van de ruim 2.200 opvarenden.',
+    },
+  },
   // ---------- ronde 6 ----------
   {
     id: 'elfstedentocht',
@@ -459,6 +609,36 @@ export const facts = [
       options: ['De componist was vrijwel doof', 'Het orkest speelde in het donker', 'De componist was al overleden'],
       answer: 0,
       explain: 'Beethoven moest worden omgedraaid om het applaus te kunnen zien.',
+    },
+  },
+  {
+    id: 'tulpenmanie',
+    topic: 'nederland',
+    title: 'Voor één tulpenbol werd in 1637 de prijs van een grachtenpand geboden',
+    body: [
+      'In de winter van 1636 op 1637 werd in Holland wild gespeculeerd met tulpenbollen. Voor de zeldzaamste soorten werden duizenden guldens geboden, evenveel als voor een huis aan de gracht. In februari 1637 vonden verkopers plotseling geen kopers meer en stortten de prijzen in. De tulpenmanie geldt als de eerste goed beschreven speculatiebubbel uit de geschiedenis.',
+    ],
+    source: wiki('Tulpenmanie'),
+    question: {
+      q: 'In welk jaar stortte de handel in tulpenbollen in?',
+      options: ['1602', '1637', '1672'],
+      answer: 1,
+      explain: 'In februari 1637 vonden verkopers geen kopers meer.',
+    },
+  },
+  {
+    id: 'toetanchamon',
+    topic: 'wereld',
+    title: 'Het graf van Toetanchamon lag ruim drieduizend jaar vrijwel onaangeroerd',
+    body: [
+      'Op 4 november 1922 vond het team van de Britse archeoloog Howard Carter in de Vallei der Koningen een trap naar een verzegeld graf. Het bleek dat van de jong gestorven farao Toetanchamon te zijn. Anders dan bijna alle andere koningsgraven was het nauwelijks geplunderd: er lagen ruim vijfduizend voorwerpen in.',
+    ],
+    source: wiki('Graf_DK_62'),
+    question: {
+      q: 'Wie ontdekte in 1922 het graf van Toetanchamon?',
+      options: ['Howard Carter', 'Heinrich Schliemann', 'Jean-François Champollion'],
+      answer: 0,
+      explain: 'De Britse archeoloog Howard Carter, in de Vallei der Koningen.',
     },
   },
   // ---------- ronde 7 ----------
@@ -537,6 +717,36 @@ export const facts = [
       explain: 'De rode wijngaard, in 1890 gekocht door Anna Boch.',
     },
   },
+  {
+    id: 'koninkrijk-holland',
+    topic: 'nederland',
+    title: 'De eerste koning van Holland was een broer van Napoleon',
+    body: [
+      'In 1806 maakte Napoleon zijn broer Lodewijk koning van Holland. Lodewijk Napoleon deed zijn best Nederlands te leren en maakte van het stadhuis op de Dam in Amsterdam zijn paleis. Hij kwam zo vaak op voor Nederlandse belangen dat hij in conflict raakte met Napoleon. In 1810 trad Lodewijk onder druk af, en Napoleon voegde het land bij Frankrijk.',
+    ],
+    source: wiki('Koninkrijk_Holland'),
+    question: {
+      q: 'Wie werd in 1806 de eerste koning van Holland?',
+      options: ['Willem I', 'Lodewijk Napoleon', 'Willem van Oranje'],
+      answer: 1,
+      explain: 'Lodewijk Napoleon, de broer van de Franse keizer, regeerde van 1806 tot 1810.',
+    },
+  },
+  {
+    id: 'suezkanaal',
+    topic: 'wereld',
+    title: 'Sinds 1869 hoeven schepen niet meer om Afrika heen',
+    body: [
+      'Het Suezkanaal in Egypte verbindt de Middellandse Zee met de Rode Zee. Het werd na tien jaar graven geopend op 17 november 1869. De vaarroute tussen Europa en Azië werd er duizenden kilometers korter door. Tot die tijd moesten schepen helemaal om Kaap de Goede Hoop varen.',
+    ],
+    source: wiki('Suezkanaal'),
+    question: {
+      q: 'Welke twee zeeën verbindt het Suezkanaal?',
+      options: ['De Middellandse Zee en de Rode Zee', 'De Zwarte Zee en de Kaspische Zee', 'De Atlantische en de Stille Oceaan'],
+      answer: 0,
+      explain: 'Het kanaal werd in 1869 geopend en maakte de omweg om Afrika overbodig.',
+    },
+  },
   // ---------- ronde 8 ----------
   {
     id: 'nieuw-amsterdam',
@@ -613,6 +823,36 @@ export const facts = [
       explain: 'Cookie komt van koekje; window komt uit het Oudnoors en table via het Frans uit het Latijn.',
     },
   },
+  {
+    id: 'belgische-opstand',
+    topic: 'nederland',
+    title: 'De Belgische opstand begon na een operavoorstelling',
+    body: [
+      'Van 1815 tot 1830 vormden Nederland en België samen één koninkrijk onder Willem I. Op 25 augustus 1830 werd in Brussel de opera De Stomme van Portici opgevoerd, over een volksopstand in Napels. Na afloop braken er rellen uit, die uitgroeiden tot een opstand. Pas in 1839 erkende Nederland de Belgische onafhankelijkheid.',
+    ],
+    source: wiki('Belgische_Revolutie'),
+    question: {
+      q: 'In welk jaar erkende Nederland de onafhankelijkheid van België?',
+      options: ['1815', '1830', '1839'],
+      answer: 2,
+      explain: 'De opstand begon in 1830, maar Willem I legde zich er pas in 1839 bij neer.',
+    },
+  },
+  {
+    id: 'olympische-spelen-1896',
+    topic: 'wereld',
+    title: 'Bij de eerste moderne Olympische Spelen kreeg de winnaar zilver',
+    body: [
+      'De eerste Olympische Spelen van de moderne tijd werden in april 1896 gehouden in Athene. Er deden ongeveer 240 sporters uit 14 landen mee, allemaal mannen. De winnaar van een onderdeel kreeg een zilveren medaille en een olijftak; de nummer twee kreeg een bronzen of koperen medaille. Gouden medailles kwamen er pas later.',
+    ],
+    source: wiki('Olympische_Zomerspelen_1896'),
+    question: {
+      q: 'In welke stad werden in 1896 de eerste moderne Olympische Spelen gehouden?',
+      options: ['Parijs', 'Athene', 'Londen'],
+      answer: 1,
+      explain: 'In Athene, als eerbetoon aan de Spelen van het oude Griekenland.',
+    },
+  },
   // ---------- ronde 9 ----------
   {
     id: 'waddenzee',
@@ -687,6 +927,67 @@ export const facts = [
       options: ['Vier', 'Zes', 'Tien'],
       answer: 1,
       explain: 'Zes punten, in twee kolommen van drie.',
+    },
+  },
+  {
+    id: 'drenthe-zonder-stem',
+    topic: 'nederland',
+    title: 'Drenthe hoorde bij de Republiek, maar had er niets te zeggen',
+    body: [
+      'De Republiek der Zeven Verenigde Nederlanden bestond uit zeven gewesten met een stem in de Staten-Generaal. Drenthe was het achtste gebied: het bestuurde zichzelf en betaalde mee, maar had geen stem. Het gewest gold als te dunbevolkt en te arm. Pas in 1796, in de Bataafse Republiek, kreeg Drenthe een eigen vertegenwoordiging.',
+    ],
+    source: wiki('Drenthe_(landschap)'),
+    question: {
+      q: 'Wat was er bijzonder aan Drenthe in de tijd van de Republiek?',
+      options: ['Het had geen stem in de Staten-Generaal', 'Het was een zelfstandig koninkrijk', 'Het hoorde bij Duitsland'],
+      answer: 0,
+      explain: 'Drenthe hoorde erbij en betaalde mee, maar mocht niet meestemmen.',
+    },
+  },
+  {
+    id: 'mongoolse-rijk',
+    topic: 'wereld',
+    title: 'Het Mongoolse Rijk was het grootste aaneengesloten rijk ooit',
+    body: [
+      'In 1206 werd Temüjin uitgeroepen tot Dzjengis Khan, heerser over alle Mongoolse stammen. Hij en zijn opvolgers veroverden in enkele tientallen jaren een gebied dat van Korea tot in Oost-Europa reikte. Geen ander rijk heeft ooit zo’n groot aaneengesloten stuk land bestuurd.',
+    ],
+    source: wiki('Mongoolse_Rijk'),
+    question: {
+      q: 'Wie stichtte het Mongoolse Rijk?',
+      options: ['Dzjengis Khan', 'Attila de Hun', 'Timoer Lenk'],
+      answer: 0,
+      explain: 'Temüjin werd in 1206 uitgeroepen tot Dzjengis Khan.',
+    },
+  },
+  // ---------- ronde 10 ----------
+  {
+    id: 'tocht-naar-chatham',
+    topic: 'nederland',
+    title: 'De vloot van Michiel de Ruyter sleepte het Engelse vlaggenschip mee naar huis',
+    body: [
+      'In juni 1667 voer een Nederlandse vloot de rivier de Medway op, tot bij de Engelse marinewerf in Chatham. De Nederlanders maakten een ketting over de rivier onklaar, staken een deel van de Engelse vloot in brand en namen het vlaggenschip Royal Charles mee. Het schip is later gesloopt, maar de versiering van de achterkant, met het Engelse koningswapen, is nog te zien in het Rijksmuseum.',
+    ],
+    source: wiki('Tocht_naar_Chatham'),
+    question: {
+      q: 'Welk Engels schip namen de Nederlanders in 1667 mee uit Chatham?',
+      options: ['De Royal Charles', 'De Mary Rose', 'De Victory'],
+      answer: 0,
+      explain: 'Het vlaggenschip Royal Charles; de versiering van de achterkant hangt in het Rijksmuseum.',
+    },
+  },
+  {
+    id: 'luchtbrug-berlijn',
+    topic: 'wereld',
+    title: 'West-Berlijn werd bijna een jaar lang via een luchtbrug bevoorraad',
+    body: [
+      'In juni 1948 sloot de Sovjet-Unie alle wegen, spoorlijnen en kanalen tussen West-Duitsland en West-Berlijn af. De westelijke geallieerden antwoordden met een luchtbrug: elke paar minuten landde er een vliegtuig met voedsel, kolen of medicijnen. In mei 1949 hief de Sovjet-Unie de blokkade op. Toen de luchtbrug in september stopte, waren er in ruim 270.000 vluchten meer dan twee miljoen ton goederen naar de stad gebracht.',
+    ],
+    source: wiki('Berlijnse_luchtbrug'),
+    question: {
+      q: 'Hoe werd West-Berlijn tijdens de blokkade van 1948 en 1949 bevoorraad?',
+      options: ['Met vliegtuigen', 'Via een tunnel', 'Met schepen over de Oostzee'],
+      answer: 0,
+      explain: 'Een luchtbrug van ruim 270.000 vluchten hield de stad draaiend.',
     },
   },
 ]
