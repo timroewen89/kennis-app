@@ -1,0 +1,12 @@
+{
+  "name": "kennis-app-tests",
+  "private": true,
+  "description": "Hulpmiddelen voor de browsertests. De app zelf heeft geen pakketten nodig.",
+  "scripts": {
+    "test": "node --test news-lib.test.mjs && node browser/run.cjs"
+  },
+  "devDependencies": {
+    "axe-core": "4.14.0",
+    "playwright": "1.63.0"
+  }
+}

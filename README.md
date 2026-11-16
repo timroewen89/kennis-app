@@ -143,6 +143,8 @@ vormfouten en laat zien hoeveel items elk thema heeft.
 | `scripts/check-content.mjs` | Controleert de eigen inhoud |
 | `.github/workflows/nieuws.yml` | Draait het nieuws-script elke ochtend |
 | `manifest.webmanifest`, `sw.js`, `icons/` | Installeren op je telefoon en gebruik zonder verbinding |
+| `tests/` | Tests voor de nieuwsselectie en de browsertests; alleen hier staan pakketten in |
+| `.github/workflows/controle.yml` | Draait de controles bij elke wijziging |
 
 ## Toegankelijkheid
 
@@ -160,6 +162,28 @@ vormfouten en laat zien hoeveel items elk thema heeft.
 - De pagina mag alleen eigen bestanden laden en alleen verbinding maken met Wikipedia en de
   vertaaldienst. Voeg je een nieuwe bron toe die vanuit de app wordt opgehaald, zet het adres dan ook
   in de regel `Content-Security-Policy` bovenin `index.html`.
+
+## Controle en tests
+
+Bij elke wijziging op `main` draait de workflow `.github/workflows/controle.yml`:
+
+- **Inhoud** (enkele seconden): zijn de inhoudsbestanden en de code geldig, en klopt de vorm van elk
+  weetje en elke verdieping?
+- **Browser** (een minuut of tien): de hele app in een nagebootste telefoon. Twaalf reeksen in
+  `tests/browser/`, onder meer een editie over meerdere dagen, vegen, tijdlijn, weekquiz, instellingen,
+  gebruik zonder verbinding, een hele editie met alleen het toetsenbord en een toegankelijkheidscontrole.
+
+Mislukt er iets, dan stuurt GitHub een mail en staat er een rood kruis bij de commit. De dagelijkse
+nieuws-commit wordt niet opnieuw getest.
+
+Zelf draaien kan met Node:
+
+```bash
+node scripts/check-content.mjs          # inhoud
+node --test tests/news-lib.test.mjs     # nieuwsselectie
+cd tests && npm ci && npx playwright install chromium && cd ..
+node tests/browser/run.cjs              # alle browsertests; of bijvoorbeeld: node tests/browser/run.cjs vegen
+```
 
 ## Lokaal bekijken
 

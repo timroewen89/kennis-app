@@ -1,0 +1,53 @@
+# Controleert de app bij elke wijziging. Gaat er iets mis, dan stuurt GitHub een mail.
+#  - inhoud: snelle controle van de inhoudsbestanden en de code (enkele seconden)
+#  - browser: de hele app in een nagebootste telefoon (een minuut of tien)
+name: Controle
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - news.json # de dagelijkse nieuws-commit hoeft niet opnieuw getest te worden
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: controle-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  inhoud:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Code is geldig JavaScript
+        run: node --check app.js && node --check sw.js
+      - name: Inhoud is in orde
+        run: node scripts/check-content.mjs
+      - name: Nieuwsselectie
+        run: node --test tests/news-lib.test.mjs
+
+  browser:
+    needs: inhoud
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Hulpmiddelen installeren
+        working-directory: tests
+        run: npm ci
+      - name: Browser installeren
+        working-directory: tests
+        run: npx playwright install --with-deps chromium
+      - name: Browsertests
+        run: node tests/browser/run.cjs
