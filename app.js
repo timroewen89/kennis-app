@@ -52,7 +52,7 @@ function dayNumber(key) {
 
 // ---------- Opslag (alleen in deze browser; geen account, geen server) ----------
 const STATE_KEY = 'kennis:v1'
-const EDITION_KEY = 'kennis:edition:v9'
+const EDITION_KEY = 'kennis:edition:v10'
 const TRANSLATION_KEY = 'kennis:vertaling:v1'
 // Voortgang van vandaag. guesses: je gok per kaart (-1 = 'Geen idee'); answers: je quizantwoorden;
 // reviews: de herhalingsvragen die voor vandaag gekozen zijn (null = nog niet gekozen);
@@ -151,11 +151,12 @@ function cleanProgress(stored) {
 // De opgehaalde bronnen van vandaag uit de opslag, of null als ze niet de verwachte vorm hebben.
 function validSources(stored, day) {
   if (!isObject(stored) || stored.day !== day) return null
-  const { news, brief, history, notes } = stored
+  const { news, topics, brief, history, notes } = stored
   const timeline = history?.timeline
   const ok =
     Array.isArray(news) && news.length > 0 && news.every(validCard) &&
     Array.isArray(notes) && notes.every(isText) &&
+    (topics === undefined || (Array.isArray(topics) && topics.every(validCard))) &&
     (brief === undefined || (Array.isArray(brief) && brief.every((item) => isObject(item) && isText(item.title) && isText(item.url)))) &&
     isObject(history) && validCard(history.card) &&
     (history.question == null || validQuestion(history.question)) &&
@@ -271,25 +272,32 @@ async function translateCard(card) {
 const NEWS_MAX_AGE_HOURS = 36
 const NEWS_MAX_ITEMS = 6 // twee van NOS, twee van RTV Drenthe, BBC News en The Guardian
 const BRIEF_MAX_ITEMS = 5 // koppen op de kaart 'Kort nieuws'
+const TOPIC_MAX_ITEMS = 2 // de kaarten Tech en AI
 async function fetchNews() {
   const res = await fetch('news.json', { cache: 'no-cache' })
   if (!res.ok) throw new Error(`news.json gaf status ${res.status}`)
-  const { generatedAt, items, brief } = await res.json()
+  const { generatedAt, items, topics, brief } = await res.json()
   if (!Array.isArray(items) || items.length === 0) throw new Error('news.json is leeg')
   const age = (Date.now() - new Date(generatedAt).getTime()) / 3_600_000
+  // Een bericht uit news.json als nieuwskaart; Engelse berichten worden vertaald.
+  const toCard = (item, extra = {}) =>
+    translateCard({
+      id: `news-${item.id}`,
+      type: 'news',
+      kicker: item.label ? clip(String(item.label), 40) : null, // bijvoorbeeld 'Nieuws uit Drenthe', 'Tech' of 'AI'
+      lang: item.lang,
+      title: clip(String(item.title), 300),
+      body: item.summary ? [clip(String(item.summary), 600)] : [],
+      source: { name: clip(String(item.source), 40), url: safeUrl(item.url) },
+      ...extra,
+    })
   return {
     stale: !(age < NEWS_MAX_AGE_HOURS) ? new Date(generatedAt) : null,
     // Van vóór vandaag (de verversing van vanochtend is nog niet geweest): wel tonen, later opnieuw ophalen.
     early: dayKey(new Date(generatedAt)) !== dayKey(),
-    cards: await Promise.all(items.slice(0, NEWS_MAX_ITEMS).map((item) => translateCard({
-      id: `news-${item.id}`,
-      type: 'news',
-      kicker: item.label ? String(item.label) : null, // bijvoorbeeld 'Nieuws uit Drenthe'
-      lang: item.lang,
-      title: clip(String(item.title), 300),
-      body: item.summary ? [clip(String(item.summary), 600)] : [],
-      source: { name: String(item.source), url: safeUrl(item.url) },
-    }))),
+    cards: await Promise.all(items.slice(0, NEWS_MAX_ITEMS).map((item) => toCard(item))),
+    // De onderwerpkaarten Tech en AI; 'topic' markeert dat ze ook in de korte editie blijven.
+    topics: await Promise.all((Array.isArray(topics) ? topics : []).filter((item) => isObject(item) && item.title).slice(0, TOPIC_MAX_ITEMS).map((item) => toCard(item, { topic: true }))),
     // Koppen voor de kaart 'Kort nieuws'; alleen wat een geldige link heeft.
     brief: (Array.isArray(brief) ? brief : [])
       .map((item) => ({ title: clip(String(item.title), 300), label: clip(String(item.label ?? ''), 40), source: clip(String(item.source), 40), url: safeUrl(item.url) }))
@@ -521,11 +529,13 @@ async function getSources(day, { refresh = true } = {}) {
   // als je nu geen verbinding hebt), en pas als laatste de terugvalkaart.
   let news = FALLBACK_NEWS
   let brief = []
+  let topics = []
   let newsEarly = false
   let newsNote = 'Het nieuws kon niet worden geladen.'
   if (newsResult.status === 'fulfilled') {
     news = newsResult.value.cards
     brief = newsResult.value.brief
+    topics = newsResult.value.topics
     newsEarly = newsResult.value.early
     newsNote = null
     if (newsResult.value.stale) {
@@ -535,6 +545,7 @@ async function getSources(day, { refresh = true } = {}) {
   } else if (cached?.newsOk) {
     news = cached.news
     brief = cached.brief ?? []
+    topics = cached.topics ?? []
     newsEarly = Boolean(cached.newsEarly)
     newsNote = cached.newsNote
   }
@@ -549,7 +560,7 @@ async function getSources(day, { refresh = true } = {}) {
     historyNote = null
   }
 
-  const translateNote = [...news, history.card, history.timeline].some((card) => card?.untranslated)
+  const translateNote = [...news, ...topics, history.card, history.timeline].some((card) => card?.untranslated)
     ? 'Vertalen lukte niet voor alle kaarten; een deel staat in het Engels.'
     : null
 
@@ -558,6 +569,7 @@ async function getSources(day, { refresh = true } = {}) {
     day,
     notes,
     news,
+    topics,
     brief,
     history,
     newsNote,
@@ -583,7 +595,7 @@ function pickContent(day, topics) {
 }
 
 // Stelt de editie samen uit de bronnen van vandaag en de gekozen eigen inhoud.
-function assembleEdition({ day, notes, news, brief, history }, picks, short = false) {
+function assembleEdition({ day, notes, news, topics, brief, history }, picks, short = false) {
   const fact = facts.find((item) => item.id === picks?.fact) ?? pickForDay(facts, day)
   const deepdive = deepdives.find((item) => item.id === picks?.deepdive) ?? pickForDay(deepdives, day)
   const toCard = ({ question, ...item }, type) => ({ ...item, id: `${type}-${item.id}`, type })
@@ -592,6 +604,7 @@ function assembleEdition({ day, notes, news, brief, history }, picks, short = fa
     notes,
     cards: [
       ...(short ? news.slice(0, NEWS_ITEMS_SHORT) : news),
+      ...(topics ?? []), // Tech en AI; ook in de korte editie
       // Vervalt als de koppen ontbreken (bijvoorbeeld bij een oudere news.json).
       brief?.length > 0 && { id: `brief-${day}`, type: 'brief', items: brief },
       // 'guess' is de vraag op de voorkant van de kaart: eerst raden, dan lezen.
@@ -1108,7 +1121,7 @@ function setLength(length) {
   const currentId = edition.cards[Math.min(current.index, edition.cards.length - 1)]?.id
   const next = assembleEdition(sources, current.picks, length === 'short')
   let index = current.index >= edition.cards.length ? next.cards.length : next.cards.findIndex((card) => card.id === currentId)
-  if (index < 0) index = next.cards.findIndex((card) => card.type !== 'news')
+  if (index < 0) index = next.cards.findIndex((card) => card.type !== 'news' || card.topic)
   state = { ...state, length, progress: { [today]: { ...current, short: length === 'short', index } } }
   writeJson(STATE_KEY, state)
   edition = next
@@ -1127,8 +1140,8 @@ function topicsView() {
       'div',
       { class: 'topics__list', role: 'radiogroup', 'aria-label': 'Lengte van de editie' },
       [
-        ['long', 'Uitgebreid', 'Zes nieuwskaarten; 12 kaarten in totaal'],
-        ['short', 'Kort', 'Vier nieuwskaarten; 10 kaarten in totaal'],
+        ['long', 'Uitgebreid', 'Zes nieuwskaarten, plus Tech en AI; 14 kaarten in totaal'],
+        ['short', 'Kort', 'Vier nieuwskaarten, plus Tech en AI; 12 kaarten in totaal'],
       ].map(([value, name, detail]) =>
         el(
           'label',
@@ -1560,7 +1573,16 @@ function render(toTop = false) {
   const streak = currentStreak(state.streak, today)
   document.getElementById('streak').textContent = streak
   document.getElementById('streak-label').textContent = ` ${streak === 1 ? 'dag' : 'dagen'} op rij`
-  document.getElementById('toggle-saved').textContent = view === 'edition' ? `Bewaard (${state.saved.length})` : '← Editie'
+  const savedButton = document.getElementById('toggle-saved')
+  if (view === 'edition') {
+    // Het woord staat apart, zodat het op heel smalle schermen kan wegvallen.
+    savedButton.replaceChildren(el('span', { class: 'top__word' }, 'Bewaard '), `(${state.saved.length})`)
+    // De naam begint met de zichtbare tekst, zodat spraakbediening ('tik Bewaard') ook werkt.
+    savedButton.setAttribute('aria-label', `Bewaard (${state.saved.length}), bewaarde kaarten bekijken`)
+  } else {
+    savedButton.textContent = '← Editie'
+    savedButton.setAttribute('aria-label', 'Editie, terug naar de editie')
+  }
   document.getElementById('toggle-topics').setAttribute('aria-pressed', String(view === 'topics'))
   document.getElementById('toggle-progress').setAttribute('aria-pressed', String(view === 'progress'))
   document.getElementById('toggle-progress').setAttribute('aria-label', `Voortgang bekijken. Dagreeks: ${streak} ${streak === 1 ? 'dag' : 'dagen'}`)

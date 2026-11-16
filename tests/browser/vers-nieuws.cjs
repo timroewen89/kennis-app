@@ -10,7 +10,7 @@ const { chromium, BASE, wait, phone, ok, failures } = require('./lib.cjs')
     j.generatedAt = d.toISOString(); j.items[0].title = `NOS-kop van ${version}`
     await r.fulfill({ response: res, json: j })
   })
-  const cache = () => p.evaluate(() => { const s = JSON.parse(localStorage.getItem('kennis:edition:v9')); return { complete: s.complete, early: s.newsEarly } })
+  const cache = () => p.evaluate(() => { const s = JSON.parse(localStorage.getItem('kennis:edition:v10')); return { complete: s.complete, early: s.newsEarly } })
   await p.goto(BASE); await p.waitForSelector('.card')
   ok('nieuws van gisteravond wordt getoond, zonder melding', await p.innerText('.card__title') === 'NOS-kop van gisteren' && await p.locator('.notice').count() === 0)
   ok('maar niet als definitief vastgelegd', JSON.stringify(await cache()) === '{"complete":false,"early":true}', JSON.stringify(await cache()))
@@ -18,7 +18,7 @@ const { chromium, BASE, wait, phone, ok, failures } = require('./lib.cjs')
   const before = wikiCalls
   version = 'vandaag'
   await p.reload(); await p.waitForSelector('.card')
-  ok('na de ochtendverversing: bij opnieuw openen het nieuws van vandaag, op dezelfde kaartpositie', await pos() === '3 / 12')
+  ok('na de ochtendverversing: bij opnieuw openen het nieuws van vandaag, op dezelfde kaartpositie', await pos() === '3 / 14')
   await swipe('right'); await swipe('right')
   ok('eerste kaart toont de nieuwe kop', await p.innerText('.card__title') === 'NOS-kop van vandaag', await p.innerText('.card__title'))
   ok('nu wel vastgelegd; geschiedenis niet opnieuw opgehaald', JSON.stringify(await cache()) === '{"complete":true,"early":false}' && wikiCalls === before, `${wikiCalls - before} Wikipedia-verzoeken`)

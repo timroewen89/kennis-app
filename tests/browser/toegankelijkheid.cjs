@@ -22,6 +22,8 @@ const axeSource = fs.readFileSync(process.env.AXE || require.resolve('axe-core/a
     const next = async () => { await p.keyboard.press('ArrowRight'); await wait(80) }
     await check('nieuwskaart')
     for (let i = 0; i < 6; i++) await next()
+    await check('kaart Tech'); await next()
+    await check('kaart AI'); await next()
     await check('kort nieuws'); await next()
     await check('geschiedenis: raden')
     await p.locator('.option').first().click(); await check('geschiedenis: omgedraaid'); await next()

@@ -1,7 +1,7 @@
 // Test voor het kiezen van nieuwsberichten. Draai met: node --test tests/
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { pickItems, rankItems, summarize, usableItems } from '../scripts/news-lib.mjs'
+import { isAboutAI, pickItems, pickTopic, rankItems, summarize, usableItems } from '../scripts/news-lib.mjs'
 
 const NOW = Date.parse('2026-11-16T07:00:00Z')
 const hoursAgo = (h) => new Date(NOW - h * 3_600_000).toUTCString()
@@ -75,4 +75,40 @@ test('onbekende codes blijven tekst; adressen met een naam ervoor worden geweige
 test('<items> en andere tags die op <item> lijken tellen niet mee', () => {
   const items = usableItems('<rss><items><title>Geen bericht</title></items><item><title>Wel een bericht</title><link>https://example.org/b</link></item></rss>')
   assert.deepEqual(items.map((i) => i.title), ['Wel een bericht'])
+})
+
+test('programma-aankondigingen van Nieuwsuur worden overgeslagen', () => {
+  const items = usableItems(feed(['15/11 in Nieuwsuur: Nog geen uitkomst crisisoverleg', 1], ['3/1 in Nieuwsuur: iets anders', 1], ['Nieuwsuur onthult datalek', 1]))
+  assert.deepEqual(items.map((i) => i.title), ['Nieuwsuur onthult datalek'])
+})
+
+test('herkent berichten over AI aan kop of samenvatting', () => {
+  const about = (title, summary = '') => isAboutAI({ title, summary })
+  assert.ok(about('OpenAI brengt nieuw model uit'))
+  assert.ok(about('Chipmaker ziet winst stijgen', 'De vraag naar AI-chips blijft groeien.'))
+  assert.ok(about('New rules for artificial intelligence in schools'))
+  assert.ok(about('Chatbots give wrong medical advice'))
+  assert.ok(!about('Apple MacBook Pro review: probably the last of its generation'))
+  assert.ok(!about('Ai, dat deed pijn voor de fietsenmaker')) // 'Ai' is geen 'AI'
+  assert.ok(!about('Mail en Spotify weer bereikbaar na storing'))
+})
+
+test('onderwerpkaart: eerste keus, anders de reserve, anders niets', () => {
+  const item = (title, hours, url = `https://example.org/${encodeURIComponent(title)}`) => ({ title, url, summary: '', publishedAt: new Date(NOW - hours * 3_600_000).toISOString() })
+  const primary = [item('Eerste keus, vers', 3), item('Eerste keus, ouder', 30)]
+  const backup = [item('Reserve over fietsen', 1), item('Reserve over AI', 2)]
+  // eerste keus heeft een vers bericht
+  assert.equal(pickTopic([{ items: primary }, { items: backup }], new Set(), NOW).item.title, 'Eerste keus, vers')
+  // dat bericht staat al op een andere kaart: het volgende verse, ook als dat uit de reserve komt
+  assert.equal(pickTopic([{ items: primary }, { items: backup }], new Set([primary[0].url]), NOW).item.title, 'Reserve over fietsen')
+  // de reserve heeft een filter
+  const picked = pickTopic([{ items: primary }, { items: backup, filter: isAboutAI }], new Set([primary[0].url]), NOW)
+  assert.deepEqual([picked.item.title, picked.index], ['Reserve over AI', 1])
+  // eerste keus uitgevallen
+  assert.equal(pickTopic([null, { items: backup }], new Set(), NOW).index, 1)
+  // nergens iets vers: het nieuwste van hooguit drie dagen
+  assert.equal(pickTopic([{ items: [item('Twee dagen oud', 48)] }], new Set(), NOW).item.title, 'Twee dagen oud')
+  // alleen heel oud nieuws, of alles uitgevallen: de kaart vervalt
+  assert.equal(pickTopic([{ items: [item('Een week oud', 170)] }], new Set(), NOW), null)
+  assert.equal(pickTopic([null, null], new Set(), NOW), null)
 })

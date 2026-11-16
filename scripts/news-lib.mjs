@@ -4,9 +4,9 @@
 export const MAX_SUMMARY = 280
 const FRESH_HOURS = 24
 
-// Geen nieuwsberichten maar vaste rubrieken en promo's: de dagagenda van de NOS, live-uitzendingen,
-// liveblogs en podcasts.
-export const SKIP_TITLE = /^(wekdienst\b|nos-wekdienst\b|kijk en luister live|kijk live\b|liveblog\b|live:|live blog\b|podcast\b)/i
+// Geen nieuwsberichten maar vaste rubrieken en promo's: de dagagenda van de NOS, aankondigingen van
+// Nieuwsuur ("15/11 in Nieuwsuur: ..."), live-uitzendingen, liveblogs en podcasts.
+export const SKIP_TITLE = /^(wekdienst\b|nos-wekdienst\b|\d{1,2}\/\d{1,2} in nieuwsuur\b|kijk en luister live|kijk live\b|liveblog\b|live:|live blog\b|podcast\b)/i
 
 // Grenzen voor wat we uit een feed aannemen. Een kapotte of kwaadwillende feed mag het script niet
 // minutenlang bezighouden of een bericht van honderdduizend tekens in de app zetten.
@@ -131,4 +131,30 @@ export function pickItems(feeds, total) {
   for (let round = 0; round < total; round++) for (const feed of feeds) if (round < feed.count) take(feed.list[round])
   for (let round = 0; round < total; round++) for (const feed of feeds) take(feed.list[round])
   return { items, seen }
+}
+
+// Gaat dit bericht over AI? Gebruikt voor een algemene techfeed die als reserve voor de AI-kaart dient.
+// 'AI' telt alleen in hoofdletters, zodat een gewoon woord als 'ai' niet meetelt.
+export function isAboutAI(item) {
+  const text = `${item.title} ${item.summary ?? ''}`
+  return (
+    /\bA\.?I\.?\b/.test(text) ||
+    /\b(artificial intelligence|kunstmatige intelligentie|machine learning|chatbots?|chatgpt|openai|anthropic|large language models?|taalmodel(len)?|deepfakes?)\b/i.test(text)
+  )
+}
+
+// Kiest het bericht voor één onderwerpkaart (Tech of AI). 'lists' zijn de berichten per feed, in
+// volgorde van voorkeur: eerste keus, dan reserve; een uitgevallen feed is null. Elke feed kan een
+// eigen 'filter' hebben. Eerst zoeken we een vers bericht (laatste 24 uur) dat nog niet gebruikt is;
+// is dat er nergens, dan het nieuwste van hooguit drie dagen oud. Anders vervalt de kaart.
+export function pickTopic(lists, seen, now = Date.now()) {
+  const age = (item) => (item.publishedAt ? now - new Date(item.publishedAt).getTime() : Infinity)
+  for (const maxHours of [FRESH_HOURS, 72]) {
+    for (let index = 0; index < lists.length; index++) {
+      const { items, filter = () => true } = lists[index] ?? {}
+      const item = items?.find((candidate) => !seen.has(candidate.url) && age(candidate) <= maxHours * 3_600_000 && filter(candidate))
+      if (item) return { item, index }
+    }
+  }
+  return null
 }

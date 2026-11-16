@@ -1,8 +1,8 @@
 # Kennis
 
-Een dagelijkse kennisfeed tegen doomscrollen. Elke dag één eindige editie van 12 kaarten:
-6 nieuwskaarten (landelijk, Drenthe, wereld), 1 kaart "Kort nieuws" met vijf koppen, 1 "vandaag in de
-geschiedenis", 1 tijdlijn, 1 weetje, 1 verdieping en een mini-quiz.
+Een dagelijkse kennisfeed tegen doomscrollen. Elke dag één eindige editie van 14 kaarten:
+6 nieuwskaarten (landelijk, Drenthe, wereld), 1 kaart Tech, 1 kaart AI, 1 kaart "Kort nieuws" met vijf
+koppen, 1 "vandaag in de geschiedenis", 1 tijdlijn, 1 weetje, 1 verdieping en een mini-quiz.
 Daarna: klaar voor vandaag.
 
 Het weetje en de geschiedeniskaart beginnen met een vraag: **eerst raden, dan lezen**. Je kiest een
@@ -28,8 +28,8 @@ Tik op het vlammetje met je dagreeks voor je **voortgang**: je reeks, het aantal
 je gemiddelde quizscore, een kalender van de laatste vijf weken en mijlpalen bij 7, 30 en 100 dagen
 op rij. Er zijn geen punten of ranglijsten.
 
-Via het tandwiel rechtsboven kies je de **lengte**: uitgebreid (zes nieuwskaarten, 12 kaarten) of kort
-(vier nieuwskaarten, 10 kaarten).
+Via het tandwiel rechtsboven kies je de **lengte**: uitgebreid (zes nieuwskaarten, 14 kaarten) of kort
+(vier nieuwskaarten, 12 kaarten). De kaarten Tech en AI horen bij beide.
 
 Op hetzelfde scherm kies je je **onderwerpen**: Nederland, Wereldgeschiedenis, Wetenschap &
 techniek, Natuur & aarde en Taal & cultuur. De keuze bepaalt welk weetje en welke verdieping je
@@ -54,7 +54,7 @@ Op je telefoon kun je hem daarna via het browsermenu op je beginscherm zetten ("
 
 ## Nieuws verversen
 
-`news.json` bevat de zes nieuwskaarten en de vijf koppen voor "Kort nieuws". De workflow
+`news.json` bevat de zes nieuwskaarten, de kaarten Tech en AI en de vijf koppen voor "Kort nieuws". De workflow
 `.github/workflows/nieuws.yml` ververst dat bestand twee keer per dag (rond 05:15 en 12:15 in de
 winter, een uur later in de zomer) en zet het terug in de repo; Pages publiceert het daarna vanzelf.
 
@@ -71,6 +71,8 @@ winter, een uur later in de zomer) en zet het terug in de repo; Pages publiceert
 | Onderdeel | Bron | Hoe |
 | --- | --- | --- |
 | Nieuws | NOS (2), RTV Drenthe (2), BBC News en The Guardian (vertaald) | `scripts/fetch-news.mjs` schrijft `news.json`; de feeds staan geen directe browser-aanroep toe |
+| Tech | NOS Tech; als die uitvalt BBC Technology (vertaald) | Eén volledige kaart; uit hetzelfde `news.json` |
+| AI | TechCrunch, AI-rubriek (vertaald); als die uitvalt The Guardian Technology, alleen berichten over AI | Eén volledige kaart; is er geen bruikbaar bericht, dan vervalt de kaart die dag |
 | Kort nieuws | NOS binnenland en buitenland, RTV Drenthe | Vijf koppen met link, zonder samenvatting; uit hetzelfde `news.json` |
 | Geschiedenis en tijdlijn | Engelse Wikipedia, On this day (vertaald) | Rechtstreeks vanuit de app; de Nederlandse variant van deze API bestaat niet |
 | Weetje | `content/facts.js` (nl) | Elke dag het volgende uit de lijst, binnen je gekozen onderwerpen |
@@ -89,7 +91,7 @@ Kaarten uit Engelse bronnen worden in de app naar het Nederlands vertaald en kri
 - De app stuurt daarvoor de Engelse tekst van die kaarten vanuit je browser naar die dienst. Dat is
   openbare tekst; er gaat niets persoonlijks mee.
 - De dienst staat ongeveer 5000 tekens per dag per internetaansluiting toe. Een editie heeft er
-  ongeveer 2000 nodig, één keer per dag per apparaat.
+  ongeveer 2300 nodig, één keer per dag per apparaat.
 - Lukt vertalen niet (limiet bereikt, dienst onbereikbaar), dan staat de kaart in het Engels en meldt
   de app dat. Bij de volgende keer openen probeert hij het opnieuw.
 - Het is een machinevertaling: namen en uitdrukkingen kunnen soms vreemd uitvallen.
@@ -192,7 +194,7 @@ Bij elke wijziging op `main` draait de workflow `.github/workflows/controle.yml`
 
 - **Inhoud** (enkele seconden): zijn de inhoudsbestanden en de code geldig, en klopt de vorm van elk
   weetje en elke verdieping?
-- **Browser** (een minuut of tien): de hele app in een nagebootste telefoon. Twaalf reeksen in
+- **Browser** (een minuut of tien): de hele app in een nagebootste telefoon. Dertien reeksen in
   `tests/browser/`, onder meer een editie over meerdere dagen, vegen, tijdlijn, weekquiz, instellingen,
   gebruik zonder verbinding, een hele editie met alleen het toetsenbord en een toegankelijkheidscontrole.
 

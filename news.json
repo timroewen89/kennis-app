@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-16T08:53:58.672Z",
+  "generatedAt": "2026-11-16T09:23:46.043Z",
   "items": [
     {
       "id": "nos-1",
       "source": "NOS",
       "lang": "nl",
       "label": null,
-      "title": "Steeds minder zeehonden in de Waddenzee",
+      "title": "Steeds minder zeehonden in de Waddenzee, afname grootst in Nederlandse wateren",
       "url": "https://nos.nl/l/2639686",
       "summary": "Er zwemmen steeds minder zeehonden in de Waddenzee, concluderen Nederlandse, Duitse en Deense onderzoekers. De populatie krimpt al jaren, vooral in de Nederlandse Waddenzee.",
       "publishedAt": "2026-11-16T08:48:07.000Z"
@@ -60,6 +60,28 @@
       "url": "https://www.rtvdrenthe.nl/nieuws/18946095/asser-raadsleden-pakken-poetsdoek-op-voor-doffe-struikelstenen",
       "summary": "'Niet lullen maar poetsen', zei één van de raadsleden. En daar komt het dus wel op neer, met de belofte om één keer in het jaar zelf de mouwen op te stropen om de 420 herinneringsstenen schoon te maken.",
       "publishedAt": "2026-11-16T05:00:02.000Z"
+    }
+  ],
+  "topics": [
+    {
+      "id": "tech",
+      "source": "NOS",
+      "lang": "nl",
+      "label": "Tech",
+      "title": "Meerdere Nederlandse sites verspreidden malware via advertenties",
+      "url": "https://nos.nl/l/2639562",
+      "summary": "Niet alleen voetbalsite VI, ook andere Nederlandse sites blijken via advertenties een kwaadaardige code te hebben verspreid onder gebruikers.",
+      "publishedAt": "2026-11-15T10:36:36.000Z"
+    },
+    {
+      "id": "ai",
+      "source": "TechCrunch",
+      "lang": "en",
+      "label": "AI",
+      "title": "Apple launches new app to study how people use AI for health",
+      "url": "https://techcrunch.com/2026/11/15/apple-launches-new-app-to-study-how-people-use-ai-for-health/",
+      "summary": "Apple's new app for a study will answer everyday medical questions",
+      "publishedAt": "2026-11-16T01:30:00.000Z"
     }
   ],
   "brief": [

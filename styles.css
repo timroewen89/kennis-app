@@ -73,8 +73,12 @@ main {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
   margin-bottom: 1rem;
+}
+/* De titel met de datum mag krimpen (de datum breekt dan af); de knoppen rechts blijven heel. */
+.top > div:first-child {
+  min-width: 0;
 }
 .top h1 {
   margin: 0;
@@ -88,13 +92,20 @@ main {
   font-size: 0.9rem;
 }
 .top__right {
+  flex: none;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.4rem;
+}
+/* Op heel smalle schermen alleen het aantal bewaarde kaarten, zonder het woord. */
+@media (max-width: 350px) {
+  .top__word {
+    display: none;
+  }
 }
 .streak {
   min-height: 2.25rem;
-  padding: 0.3rem 0.4rem;
+  padding: 0.3rem 0.25rem;
   border: 0;
   border-radius: 999px;
   background: none;
@@ -242,6 +253,7 @@ button:disabled {
   padding: 0.3rem 0.8rem;
   font-size: 0.9rem;
   font-weight: 500;
+  white-space: nowrap;
 }
 .save {
   padding: 0.3rem 0.7rem;
@@ -802,4 +814,10 @@ main {
 .error__wipe p {
   margin: 0;
   font-size: 0.9rem;
+}
+
+/* Koppen en uitslagen krijgen de focus vanuit de app zelf (voor schermlezers en toetsenbord), niet
+   doordat iemand ernaartoe navigeert. Daar hoort geen zichtbaar kader bij. */
+main [tabindex='-1']:focus {
+  outline: none;
 }
