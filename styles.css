@@ -792,3 +792,14 @@ main {
   margin: 0 0 1.25rem;
   overflow-wrap: anywhere;
 }
+
+.error__wipe {
+  margin-top: 2rem;
+  display: grid;
+  justify-items: center;
+  gap: 0.6rem;
+}
+.error__wipe p {
+  margin: 0;
+  font-size: 0.9rem;
+}

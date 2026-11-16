@@ -146,6 +146,29 @@ vormfouten en laat zien hoeveel items elk thema heeft.
 | `tests/` | Tests voor de nieuwsselectie en de browsertests; alleen hier staan pakketten in |
 | `.github/workflows/controle.yml` | Draait de controles bij elke wijziging |
 
+## Beveiliging
+
+De hele code is nagelopen door een onafhankelijke reviewer. Er is geen manier gevonden waarop tekst
+van buiten (nieuwsfeeds, Wikipedia, de vertaaldienst) of uit de opslag als code kan worden uitgevoerd.
+De lichtere punten uit de review zijn opgelost:
+
+- Links worden gecontroleerd op het moment dat ze getoond worden, ook als ze uit de opslag komen.
+- Beschadigde of gemanipuleerde opslag laat de app niet meer vastlopen; wat niet de verwachte vorm
+  heeft, wordt overgeslagen. Als laatste redmiddel kun je op het foutscherm je gegevens wissen.
+- Het lezen van de nieuwsfeeds is begrensd in tijd en omvang.
+- De service worker blijft binnen zijn eigen opslag.
+- Alleen een machinevertaling van precies de gevraagde zin wordt overgenomen.
+- De pagina mag niets laden van buiten en alleen verbinding maken met Wikipedia en de vertaaldienst.
+
+Wat openstaat:
+
+- De workflows gebruiken `actions/checkout@v4` en `actions/setup-node@v4` op versienummer. Strenger is
+  vastzetten op een commit-SHA; dat is hier niet gedaan omdat de SHA's niet te controleren waren.
+- Alle projecten onder `timroewen89.github.io` delen één adres en dus één opslag. Een ander project
+  op dat adres kan de gegevens van deze app lezen en wijzigen. Alleen een eigen domein scheidt dat.
+- Een Content-Security-Policy in de pagina zelf kan niet verbieden dat de app in een andere pagina
+  wordt ingesloten; dat kan alleen met een header, en die biedt GitHub Pages niet.
+
 ## Toegankelijkheid
 
 - De hele editie is met het toetsenbord te doen: pijltjestoetsen om te bladeren, Tab en Enter voor de rest.

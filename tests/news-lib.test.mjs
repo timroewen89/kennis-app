@@ -51,3 +51,28 @@ test('kaarten komen om de beurt uit de feeds; uitgevallen feeds worden aangevuld
   const dup = pickItems([{ count: 2, list: list('nos', 3) }, { count: 2, list: [...list('nos', 1), ...list('rtv', 2)] }], 4)
   assert.equal(new Set(dup.items.map((i) => i.url)).size, dup.items.length)
 })
+
+test('vreemde of kwaadwillende feed-invoer wordt snel en begrensd verwerkt', () => {
+  const started = Date.now()
+  assert.deepEqual(usableItems('<item '.repeat(80_000)), [])
+  assert.deepEqual(usableItems(`<item>${'<title '.repeat(80_000)}</item>`), [])
+  usableItems(`<item><title>x</title><link>https://example.org/x</link><description>${'&lt;'.repeat(400_000)}</description></item>`)
+  assert.ok(Date.now() - started < 2000, `duurde ${Date.now() - started} ms`)
+})
+
+test('aantal berichten en lengte van de kop zijn begrensd', () => {
+  const many = Array.from({ length: 500 }, (_, i) => [`Bericht ${i}`, 1])
+  assert.equal(usableItems(feed(...many)).length, 60)
+  const [long] = usableItems(feed(['x'.repeat(5000), 1, 'https://example.org/lang']))
+  assert.equal(long.title.length, 300)
+})
+
+test('onbekende codes blijven tekst; adressen met een naam ervoor worden geweigerd', () => {
+  const items = usableItems(feed(['Kop met &constructor; en &toString;', 1, 'https://example.org/a'], ['Misleidend adres', 1, 'https://nos.nl@elders.example/x']))
+  assert.deepEqual(items.map((i) => i.title), ['Kop met &constructor; en &toString;'])
+})
+
+test('<items> en andere tags die op <item> lijken tellen niet mee', () => {
+  const items = usableItems('<rss><items><title>Geen bericht</title></items><item><title>Wel een bericht</title><link>https://example.org/b</link></item></rss>')
+  assert.deepEqual(items.map((i) => i.title), ['Wel een bericht'])
+})

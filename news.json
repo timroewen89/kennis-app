@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-11-16T08:07:30.909Z",
+  "generatedAt": "2026-11-16T08:53:58.672Z",
   "items": [
     {
       "id": "nos-1",
       "source": "NOS",
       "lang": "nl",
       "label": null,
-      "title": "Kladversie 'I have a dream'-speech teruggevonden in bureaula en geveild",
-      "url": "https://nos.nl/l/2639677",
-      "summary": "Een handgeschreven kladversie van een van de beroemdste toespraken uit de wereldgeschiedenis komt binnenkort onder de hamer. De zeven kantjes van Martin Luther Kings 'I have a dream'-speech worden vanaf vandaag tentoongesteld in Atlanta, voorafgaand aan een veiling in New York.",
-      "publishedAt": "2026-11-16T07:45:32.000Z"
+      "title": "Steeds minder zeehonden in de Waddenzee",
+      "url": "https://nos.nl/l/2639686",
+      "summary": "Er zwemmen steeds minder zeehonden in de Waddenzee, concluderen Nederlandse, Duitse en Deense onderzoekers. De populatie krimpt al jaren, vooral in de Nederlandse Waddenzee.",
+      "publishedAt": "2026-11-16T08:48:07.000Z"
     },
     {
       "id": "rtvdrenthe-1",
       "source": "RTV Drenthe",
       "lang": "nl",
       "label": "Nieuws uit Drenthe",
-      "title": "Ongeluk op A28 zorgt voor file tussen Meppel en Zwolle",
-      "url": "https://www.rtvdrenthe.nl/nieuws/18950505/ongeluk-op-a28-zorgt-voor-file-tussen-meppel-en-zwolle",
+      "title": "Vijf auto's betrokken bij kop-staartbotsing op A28",
+      "url": "https://www.rtvdrenthe.nl/nieuws/18950505/vijf-autos-betrokken-bij-kop-staartbotsing-op-a28",
       "summary": "Voor weggebruikers loopt de extra reistijd op tot ruim een kwartier.",
       "publishedAt": "2026-11-16T07:45:15.000Z"
     },
@@ -46,10 +46,10 @@
       "source": "NOS",
       "lang": "nl",
       "label": null,
-      "title": "Zeker 11 doden na brand bij motorverhuurbedrijf op Thais eiland Phuket",
-      "url": "https://nos.nl/l/2639671",
-      "summary": "Bij een brand in de Thaise badplaats Patong op het eiland Phuket zijn vannacht elf mensen om het leven gekomen. Volgens de politie raakten zestien mensen gewond.",
-      "publishedAt": "2026-11-16T06:33:34.000Z"
+      "title": "ACM gaat de bouwsector onder de loep nemen",
+      "url": "https://nos.nl/l/2639681",
+      "summary": "Toezichthouder ACM gaat de komende tijd marktonderzoek doen naar de bouwsector. Volgens de Autoriteit Consument en Markt is er geen directe aanleiding voor het onderzoek, maar door de grote vraag naar bouwprojecten zoals nieuwbouwhuizen en de vele renovaties aan infrastructuur…",
+      "publishedAt": "2026-11-16T08:33:10.000Z"
     },
     {
       "id": "rtvdrenthe-2",
@@ -81,15 +81,15 @@
       "id": "buitenland-3",
       "source": "NOS",
       "label": "Buitenland",
-      "title": "'Derde Amerikaanse vliegdekschip, USS Theodore Roosevelt, aangekomen in Golfregio'",
-      "url": "https://nos.nl/l/2639661"
+      "title": "Kladversie 'I have a dream'-speech teruggevonden in bureaula en geveild",
+      "url": "https://nos.nl/l/2639677"
     },
     {
       "id": "buitenland-4",
       "source": "NOS",
       "label": "Buitenland",
-      "title": "Mexico's eerste kartelbaas Félix Gallardo op 80-jarige leeftijd overleden",
-      "url": "https://nos.nl/l/2639660"
+      "title": "Zeker 11 doden na brand bij motorverhuurbedrijf op Thais eiland Phuket",
+      "url": "https://nos.nl/l/2639671"
     },
     {
       "id": "drenthe-5",

@@ -8,27 +8,55 @@ const FRESH_HOURS = 24
 // liveblogs en podcasts.
 export const SKIP_TITLE = /^(wekdienst\b|nos-wekdienst\b|kijk en luister live|kijk live\b|liveblog\b|live:|live blog\b|podcast\b)/i
 
+// Grenzen voor wat we uit een feed aannemen. Een kapotte of kwaadwillende feed mag het script niet
+// minutenlang bezighouden of een bericht van honderdduizend tekens in de app zetten.
+export const MAX_FEED_SIZE = 3_000_000
+const MAX_ITEMS = 60
+const MAX_FIELD = 20_000
+const MAX_TITLE = 300
+
+// Zoekt het eerste <tag ...>...</tag> vanaf een positie. Met indexOf in plaats van een reguliere
+// expressie, zodat de tijd niet kwadratisch oploopt bij vreemde invoer.
+function element(text, tag, from = 0) {
+  const open = `<${tag}`
+  for (let at = text.indexOf(open, from); at !== -1; at = text.indexOf(open, at + 1)) {
+    const next = text[at + open.length]
+    if (next !== '>' && !/\s/.test(next ?? '')) continue // bijvoorbeeld <items> als we <item> zoeken
+    const start = text.indexOf('>', at)
+    if (start === -1) return null
+    const end = text.indexOf(`</${tag}>`, start)
+    if (end === -1) return null
+    return { content: text.slice(start + 1, end), next: end + tag.length + 3 }
+  }
+  return null
+}
+
 // Leest de <item>-blokken uit een RSS-feed. Bewust eenvoudig: we hebben alleen titel,
 // link, beschrijving en datum nodig, en alles wordt daarna nog opgeschoond en gecontroleerd.
 export function parseItems(xml) {
+  const text = String(xml).slice(0, MAX_FEED_SIZE)
   const field = (block, tag) => {
-    const match = block.match(new RegExp(`<${tag}(?:\\s[^>]*)?>([\\s\\S]*?)</${tag}>`))
-    if (!match) return ''
-    return match[1].replace(/^\s*<!\[CDATA\[([\s\S]*?)\]\]>\s*$/, '$1').trim()
+    let content = element(block, tag)?.content.trim() ?? ''
+    if (content.startsWith('<![CDATA[') && content.endsWith(']]>')) content = content.slice(9, -3)
+    return content.slice(0, MAX_FIELD).trim()
   }
-  return [...xml.matchAll(/<item(?:\s[^>]*)?>([\s\S]*?)<\/item>/g)].map(([, block]) => ({
-    title: field(block, 'title'),
-    link: field(block, 'link'),
-    description: field(block, 'description'),
-    pubDate: field(block, 'pubDate'),
-  }))
+  const items = []
+  for (let found = element(text, 'item'); found && items.length < MAX_ITEMS; found = element(text, 'item', found.next)) {
+    items.push({
+      title: field(found.content, 'title'),
+      link: field(found.content, 'link'),
+      description: field(found.content, 'description'),
+      pubDate: field(found.content, 'pubDate'),
+    })
+  }
+  return items
 }
 
-const ENTITIES = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' }
+const ENTITIES = new Map([['amp', '&'], ['lt', '<'], ['gt', '>'], ['quot', '"'], ['apos', "'"], ['nbsp', ' ']])
 
 export function decodeEntities(text) {
   return text.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, code) => {
-    if (code[0] !== '#') return ENTITIES[code.toLowerCase()] ?? match
+    if (code[0] !== '#') return ENTITIES.get(code.toLowerCase()) ?? match
     const point = code[1].toLowerCase() === 'x' ? parseInt(code.slice(2), 16) : Number(code.slice(1))
     return point > 0 && point <= 0x10ffff ? String.fromCodePoint(point) : match
   })
@@ -57,7 +85,8 @@ export function summarize(description) {
 export function httpsUrl(value) {
   try {
     const url = new URL(decodeEntities(String(value)).trim())
-    return url.protocol === 'https:' ? url.href : null
+    // Geen adressen met een naam of wachtwoord ervoor (https://nos.nl@elders.example): die misleiden.
+    return url.protocol === 'https:' && !url.username && !url.password ? url.href : null
   } catch {
     return null
   }
@@ -69,7 +98,7 @@ export function usableItems(xml) {
     .map((item) => {
       const published = new Date(item.pubDate)
       return {
-        title: plainText(item.title).replace(/\s+/g, ' '),
+        title: plainText(item.title).replace(/\s+/g, ' ').slice(0, MAX_TITLE),
         url: httpsUrl(item.link),
         summary: summarize(item.description),
         publishedAt: Number.isNaN(published.getTime()) ? null : published.toISOString(),

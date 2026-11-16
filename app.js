@@ -75,29 +75,94 @@ function writeJson(key, value) {
     // Opslag vol of geblokkeerd (privémodus): de app werkt door, maar onthoudt niets.
   }
 }
+// Wat in de opslag staat kan beschadigd zijn of door iets anders op hetzelfde adres zijn veranderd.
+// Daarom nemen we alleen over wat de vorm heeft die de app verwacht; de rest valt weg.
+const isDay = (value) => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)
+const isObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value)
+const isText = (value) => typeof value === 'string'
+const count = (value, max) => (Number.isInteger(value) ? Math.min(Math.max(value, 0), max) : 0)
+const validQuestion = (q) =>
+  isObject(q) && isText(q.q) && Array.isArray(q.options) && q.options.length > 0 && q.options.every(isText) && Number.isInteger(q.answer)
+const validCard = (card) => isObject(card) && isText(card.id) && isText(card.type) && isText(card.title) && Array.isArray(card.body) && card.body.every(isText)
+// Een onthouden vraag (voor de herhaling en de weekquiz).
+const validItem = (item) => isObject(item) && isText(item.id) && isDay(item.day) && isText(item.type) && validQuestion(item.question)
+const scoreOrNull = (value) => (Array.isArray(value) && value.length === 2 && value.every(Number.isInteger) ? value : null)
+
 function loadState() {
-  const saved = readJson(STATE_KEY) ?? {}
-  const streak = { count: 0, best: 0, lastCompleted: null, ...saved.streak }
+  const stored = readJson(STATE_KEY)
+  const saved = isObject(stored) ? stored : {}
+  const streak = {
+    count: count(saved.streak?.count, 36500),
+    best: count(saved.streak?.best, 36500),
+    lastCompleted: isDay(saved.streak?.lastCompleted) ? saved.streak.lastCompleted : null,
+  }
   // Per afgeronde dag: { quiz: [goed, totaal], guess: [goed, totaal] }. De dagen van je reeks van
   // vóór deze versie zijn niet bewaard; die worden hier als afgerond ingevuld, zonder score.
-  const days = { ...saved.days }
+  const days = {}
+  for (const [key, value] of Object.entries(isObject(saved.days) ? saved.days : {})) {
+    if (isDay(key) && isObject(value)) days[key] = { quiz: scoreOrNull(value.quiz), guess: scoreOrNull(value.guess) }
+  }
   for (let key = streak.lastCompleted, n = 0; key && n < streak.count; key = previousDayKey(key), n++) {
-    days[key] ??= {}
+    days[key] ??= { quiz: null, guess: null }
+  }
+  const weeks = {}
+  for (const [key, value] of Object.entries(isObject(saved.weeks) ? saved.weeks : {})) {
+    if (!isDay(key) || !isObject(value) || !Array.isArray(value.items)) continue
+    weeks[key] = {
+      items: value.items.filter(validItem),
+      answers: Array.isArray(value.answers) ? value.answers : [],
+      done: value.done === true && scoreOrNull(value.score) !== null,
+      score: scoreOrNull(value.score),
+    }
   }
   return {
     streak,
     days,
-    progress: saved.progress ?? {},
-    saved: Array.isArray(saved.saved) ? saved.saved : [],
+    progress: isObject(saved.progress) ? saved.progress : {},
+    saved: (Array.isArray(saved.saved) ? saved.saved : []).filter((item) => isObject(item) && isText(item.key) && isDay(item.day) && validCard(item.card)),
     // Vragen uit edities die je hebt afgerond; hieruit komt de herhaling in de quiz.
-    log: Array.isArray(saved.log) ? saved.log : [],
+    log: (Array.isArray(saved.log) ? saved.log : [])
+      .filter(validItem)
+      .map((item) => ({ ...item, wrong: item.wrong === true, streak: count(item.streak, 99), reviews: count(item.reviews, 9999), lastReview: isDay(item.lastReview) ? item.lastReview : null })),
     // Weekquizzen, per zondag: { items, answers, done, score: [goed, totaal] }.
-    weeks: saved.weeks && typeof saved.weeks === 'object' ? saved.weeks : {},
+    weeks,
     // De gekozen thema's (lijst van id's), of null als alle thema's aan staan.
-    topics: Array.isArray(saved.topics) ? saved.topics : null,
+    topics: Array.isArray(saved.topics) && saved.topics.every(isText) ? saved.topics : null,
     // Lengte van de editie: 'long' (zes nieuwskaarten) of 'short' (vier).
     length: saved.length === 'short' ? 'short' : 'long',
   }
+}
+
+// De voortgang van één dag, met ontbrekende of ongeldige onderdelen aangevuld.
+function cleanProgress(stored) {
+  if (!isObject(stored) || stored.v !== 2) return NO_PROGRESS
+  return {
+    v: 2,
+    index: count(stored.index, 1000),
+    guesses: isObject(stored.guesses) ? stored.guesses : {},
+    answers: Array.isArray(stored.answers) ? stored.answers : [],
+    reviews: Array.isArray(stored.reviews) ? stored.reviews.filter(validItem) : null,
+    picks: isObject(stored.picks) && isText(stored.picks.fact) && isText(stored.picks.deepdive) ? stored.picks : null,
+    short: typeof stored.short === 'boolean' ? stored.short : null,
+    completed: stored.completed === true,
+  }
+}
+
+// De opgehaalde bronnen van vandaag uit de opslag, of null als ze niet de verwachte vorm hebben.
+function validSources(stored, day) {
+  if (!isObject(stored) || stored.day !== day) return null
+  const { news, brief, history, notes } = stored
+  const timeline = history?.timeline
+  const ok =
+    Array.isArray(news) && news.length > 0 && news.every(validCard) &&
+    Array.isArray(notes) && notes.every(isText) &&
+    (brief === undefined || (Array.isArray(brief) && brief.every((item) => isObject(item) && isText(item.title) && isText(item.url)))) &&
+    isObject(history) && validCard(history.card) &&
+    (history.question == null || validQuestion(history.question)) &&
+    (timeline == null ||
+      (isObject(timeline) && isText(timeline.id) && isObject(timeline.source) && Array.isArray(timeline.items) &&
+        timeline.items.every((item) => isObject(item) && isText(item.text) && isText(item.label) && Number.isFinite(item.year))))
+  return ok ? stored : null
 }
 
 // De reeks telt alleen als je vandaag of gisteren een editie hebt afgerond.
@@ -116,11 +181,14 @@ function completeDay(streak, today) {
 function safeUrl(value) {
   try {
     const url = new URL(value)
-    return url.protocol === 'https:' ? url.href : null
+    // Geen adressen met een naam of wachtwoord ervoor (https://nos.nl@elders.example): die misleiden.
+    return url.protocol === 'https:' && !url.username && !url.password ? url.href : null
   } catch {
     return null
   }
 }
+// Kapt te lange tekst van buiten af, zodat één bericht niet honderden vertaalverzoeken kan veroorzaken.
+const clip = (text, max) => (text.length > max ? `${text.slice(0, max).trimEnd()}…` : text)
 
 // ---------- Vertalen ----------
 // Engelse bronnen worden in de app naar het Nederlands vertaald via MyMemory: gratis, zonder
@@ -130,27 +198,29 @@ const TRANSLATE_URL = 'https://api.mymemory.translated.net/get'
 const TRANSLATE_MAX = 450 // de dienst accepteert alleen korte stukken; lange tekst gaat per zin
 
 // Wat vandaag al vertaald is, wordt onthouden: een tweede poging vraagt alleen op wat nog ontbreekt.
+// Een Map, zodat een tekst als 'constructor' niet per ongeluk iets ingebouwds oplevert.
 const translations = (() => {
   const stored = readJson(TRANSLATION_KEY)
-  return stored?.day === dayKey() ? stored : { day: dayKey(), map: {} }
+  const entries = isObject(stored) && stored.day === dayKey() && isObject(stored.map) ? Object.entries(stored.map) : []
+  return new Map(entries.filter(([, value]) => isText(value)))
 })()
 
 async function translatePiece(text) {
-  if (translations.map[text]) return translations.map[text]
+  if (translations.has(text)) return translations.get(text)
   const url = `${TRANSLATE_URL}?q=${encodeURIComponent(text)}&langpair=en|nl`
   const res = await fetch(url, { signal: AbortSignal.timeout(8000) })
   if (!res.ok) throw new Error(`Vertaaldienst gaf status ${res.status}`)
   const data = await res.json()
   if (Number(data.responseStatus) !== 200 || data.quotaFinished) throw new Error('Vertaaldienst weigert (daglimiet?)')
-  // De dienst geeft soms een 'bijna passende' eerdere vertaling van een andere zin terug.
-  // De machinevertaling van precies deze zin is betrouwbaarder.
-  const machine = data.matches?.find((match) => match['created-by'] === 'MT!')?.translation
-  const raw = machine || data.responseData?.translatedText
-  if (typeof raw !== 'string' || !raw.trim() || /^MYMEMORY WARNING/i.test(raw)) throw new Error('Geen vertaling ontvangen')
+  // De dienst geeft soms een eerdere vertaling van een andere zin terug, die door iedereen kan zijn
+  // ingestuurd. Alleen de machinevertaling van precies deze zin telt; is die er niet, dan blijft de tekst Engels.
+  const matches = Array.isArray(data.matches) ? data.matches : []
+  const raw = matches.find((match) => match?.['created-by'] === 'MT!')?.translation
+  if (typeof raw !== 'string' || !raw.trim() || /^MYMEMORY WARNING/i.test(raw)) throw new Error('Geen machinevertaling ontvangen')
   // Het antwoord kan HTML-codes bevatten (&#39;); omzetten naar gewone tekst, nooit naar HTML.
   const clean = new DOMParser().parseFromString(raw, 'text/html').documentElement.textContent.trim()
-  translations.map[text] = clean
-  writeJson(TRANSLATION_KEY, translations)
+  translations.set(text, clean)
+  writeJson(TRANSLATION_KEY, { day: dayKey(), map: Object.fromEntries(translations) })
   return clean
 }
 
@@ -216,13 +286,13 @@ async function fetchNews() {
       type: 'news',
       kicker: item.label ? String(item.label) : null, // bijvoorbeeld 'Nieuws uit Drenthe'
       lang: item.lang,
-      title: String(item.title),
-      body: item.summary ? [String(item.summary)] : [],
+      title: clip(String(item.title), 300),
+      body: item.summary ? [clip(String(item.summary), 600)] : [],
       source: { name: String(item.source), url: safeUrl(item.url) },
     }))),
     // Koppen voor de kaart 'Kort nieuws'; alleen wat een geldige link heeft.
     brief: (Array.isArray(brief) ? brief : [])
-      .map((item) => ({ title: String(item.title), label: String(item.label ?? ''), source: String(item.source), url: safeUrl(item.url) }))
+      .map((item) => ({ title: clip(String(item.title), 300), label: clip(String(item.label ?? ''), 40), source: clip(String(item.source), 40), url: safeUrl(item.url) }))
       .filter((item) => item.title && item.url)
       .slice(0, BRIEF_MAX_ITEMS),
   }
@@ -243,7 +313,7 @@ async function fetchHistory(day) {
   const pick = Number(year) % events.length
   const event = events[pick]
   const page = event.pages?.[0]
-  const cleanText = (value) => value.replace(/\s*\((?:[^()]*\s)?pictured\)/g, '').trim()
+  const cleanText = (value) => clip(value.replace(/ ?\((?:[^()]*\s)?pictured\)/g, '').trim(), 400)
   const text = cleanText(event.text)
   const formatYear = (y) => (y < 0 ? `${-y} v.Chr.` : String(y))
 
@@ -253,7 +323,7 @@ async function fetchHistory(day) {
     lang: 'en',
     year: formatYear(event.year),
     title: text,
-    body: page?.extract ? [String(page.extract)] : [],
+    body: page?.extract ? [clip(String(page.extract), 1500)] : [],
     source: {
       name: page ? `Wikipedia (EN): ${page.titles?.normalized ?? page.title}` : 'Wikipedia (EN)',
       url: safeUrl(page?.content_urls?.desktop?.page),
@@ -439,8 +509,7 @@ function pruneLog(log, day) {
 // Wat van buiten komt (nieuws, geschiedenis, tijdlijn) wordt één keer per dag opgehaald en vastgelegd.
 // 'refresh: false' (de editie van vandaag is al afgerond) laat staan wat er staat.
 async function getSources(day, { refresh = true } = {}) {
-  const stored = readJson(EDITION_KEY)
-  const cached = stored?.day === day ? stored : null
+  const cached = validSources(readJson(EDITION_KEY), day)
   // Compleet en van vandaag: niet opnieuw ophalen, zodat de editie niet verspringt.
   if (cached && (cached.complete || !refresh)) return cached
 
@@ -596,7 +665,7 @@ document.getElementById('toggle-topics').addEventListener('click', () => {
 })
 
 // Voortgang van een oudere versie van de app (zonder v: 2) telt niet meer mee.
-const progressOf = (s) => (s.progress[today]?.v === 2 ? s.progress[today] : NO_PROGRESS)
+const progressOf = (s) => cleanProgress(s.progress[today])
 function progress() {
   return progressOf(state)
 }
@@ -709,6 +778,13 @@ function finish() {
   }, true)
 }
 
+// Een link naar buiten. Het adres wordt hier nog eens gecontroleerd, omdat het ook uit de opslag
+// kan komen; is het geen gewone https-link, dan staat er alleen de tekst.
+function link(url, text) {
+  const href = safeUrl(url)
+  return href ? el('a', { href, target: '_blank', rel: 'noopener noreferrer' }, text) : el('span', {}, text)
+}
+
 // Kort nieuws: vijf koppen met een link naar het bericht, zonder samenvatting.
 function briefView(card) {
   return el(
@@ -724,7 +800,7 @@ function briefView(card) {
           'li',
           {},
           el('span', { class: 'brief__label' }, [item.label, item.source].filter(Boolean).join(' · ')),
-          el('a', { href: item.url, target: '_blank', rel: 'noopener noreferrer' }, `${item.title} ↗`),
+          link(item.url, `${item.title} ↗`),
         ),
       ),
     ),
@@ -768,7 +844,7 @@ function timelineView(card, choice) {
   const foot = el(
     'footer',
     { class: 'card__foot' },
-    el('a', { href: card.source.url, target: '_blank', rel: 'noopener noreferrer' }, `Bron: ${card.source.name} ↗`),
+    link(card.source.url, `Bron: ${card.source.name} ↗`),
     card.translated && el('span', {}, 'Automatisch vertaald uit het Engels'),
   )
 
@@ -861,7 +937,7 @@ function cardView(card, { day = today, savedOn = null, choice = null } = {}) {
   const source =
     card.source &&
     (card.source.url
-      ? el('a', { href: card.source.url, target: '_blank', rel: 'noopener noreferrer' }, `Bron: ${card.source.name} ↗`)
+      ? link(card.source.url, `Bron: ${card.source.name} ↗`)
       : el('span', {}, `Bron: ${card.source.name}`))
   return el(
     'article',
@@ -1451,12 +1527,32 @@ function manageFocus(place) {
 
 // Een fout bij het starten: zeggen wat er mis is en een knop om het opnieuw te proberen.
 function errorView() {
+  // Bij een fout in de opgeslagen gegevens helpt opnieuw proberen niet; dan kun je ze wissen.
+  const wipe = () => {
+    for (const key of [STATE_KEY, EDITION_KEY, TRANSLATION_KEY]) localStorage.removeItem(key)
+    location.reload()
+  }
   return el(
     'section',
     { class: 'empty error', role: 'alert' },
     el('h2', {}, fatal.title),
     el('p', {}, fatal.detail),
     el('button', { type: 'button', class: 'btn', onclick: () => location.reload() }, 'Opnieuw proberen'),
+    fatal.canWipe &&
+      (fatal.confirmWipe
+        ? el(
+            'div',
+            { class: 'error__wipe' },
+            el('p', {}, 'Hiermee verdwijnen je dagreeks, voortgang, weekscores en bewaarde kaarten van dit apparaat. Dat kan niet ongedaan worden gemaakt.'),
+            el('button', { type: 'button', class: 'btn', onclick: wipe }, 'Ja, wis mijn gegevens'),
+            el('button', { type: 'button', class: 'btn btn--ghost', onclick: () => ((fatal.confirmWipe = false), render()) }, 'Annuleren'),
+          )
+        : el(
+            'div',
+            { class: 'error__wipe' },
+            el('p', {}, 'Blijft dit terugkomen, dan zijn de opgeslagen gegevens mogelijk beschadigd.'),
+            el('button', { type: 'button', class: 'btn btn--ghost', onclick: () => ((fatal.confirmWipe = true), render()) }, 'Opgeslagen gegevens wissen'),
+          )),
   )
 }
 
@@ -1471,13 +1567,20 @@ function render(toTop = false) {
 
   navigate = {}
   let content
-  if (view === 'saved') content = [savedView()]
-  else if (view === 'topics') content = [topicsView()]
-  else if (view === 'progress') content = [progressView()]
-  else if (view === 'week' && thisWeek()) content = [weekView()]
-  else if (fatal) content = [errorView()]
-  else if (!edition) content = [el('p', { class: 'loading' }, 'Editie laden…')]
-  else content = editionView()
+  try {
+    if (view === 'saved') content = [savedView()]
+    else if (view === 'topics') content = [topicsView()]
+    else if (view === 'progress') content = [progressView()]
+    else if (view === 'week' && thisWeek()) content = [weekView()]
+    else if (fatal) content = [errorView()]
+    else if (!edition) content = [el('p', { class: 'loading' }, 'Editie laden…')]
+    else content = editionView()
+  } catch (error) {
+    // Een scherm dat niet opgebouwd kan worden mag de app niet laten hangen.
+    fatal = { title: 'Dit scherm kon niet worden getoond', detail: `Melding: ${error.message}`, canWipe: true }
+    view = 'edition'
+    content = [errorView()]
+  }
   // Onthouden waar de focus stond: het soort element en het volgnummer binnen het scherm.
   const active = main.contains(document.activeElement) ? document.activeElement : null
   const place = active && { tag: active.tagName, index: [...main.querySelectorAll(active.tagName)].indexOf(active) }
@@ -1513,7 +1616,7 @@ async function start() {
     }
     edition = assembleEdition(sources, progress().picks, progress().short === true)
   } catch (error) {
-    fatal = { title: 'De editie kon niet worden opgebouwd', detail: `Melding: ${error.message}` }
+    fatal = { title: 'De editie kon niet worden opgebouwd', detail: `Melding: ${error.message}`, canWipe: true }
   }
   render()
 }

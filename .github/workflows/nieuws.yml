@@ -23,9 +23,8 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
+      # Het script heeft geen pakketten nodig en draait op de Node die al op de runner staat (18 of nieuwer).
+      # Hoe minder onderdelen van buiten in deze workflow, hoe beter: hij mag naar main schrijven.
       - name: Nieuws ophalen
         run: node scripts/fetch-news.mjs
       - name: news.json committen

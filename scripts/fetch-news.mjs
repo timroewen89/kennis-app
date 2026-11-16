@@ -2,7 +2,7 @@
 // Heeft alleen Node nodig, geen pakketten. Draai met: node scripts/fetch-news.mjs
 // Op GitHub draait dit twee keer per dag vanzelf (zie .github/workflows/nieuws.yml).
 import { writeFile } from 'node:fs/promises'
-import { pickItems, rankItems, usableItems } from './news-lib.mjs'
+import { MAX_FEED_SIZE, pickItems, rankItems, usableItems } from './news-lib.mjs'
 
 // Volledige nieuwskaarten: 'count' berichten per feed, om de beurt. Valt een feed uit, dan vullen de andere aan.
 // 'label' is de kop boven de kaart; zonder label staat er gewoon 'Nieuws'.
@@ -34,7 +34,7 @@ function readFeed(url) {
       (async () => {
         const res = await fetch(url, { headers: { 'User-Agent': 'kennis-app' }, signal: AbortSignal.timeout(20_000) })
         if (!res.ok) throw new Error(`status ${res.status}`)
-        const items = rankItems(usableItems(await res.text()))
+        const items = rankItems(usableItems((await res.text()).slice(0, MAX_FEED_SIZE)))
         if (items.length === 0) throw new Error('geen bruikbaar bericht')
         return items
       })(),
