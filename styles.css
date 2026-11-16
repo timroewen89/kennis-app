@@ -425,7 +425,6 @@ button:disabled {
 .calendar__day.is-future {
   border-style: dashed;
   color: var(--muted);
-  opacity: 0.5;
 }
 .milestones {
   display: grid;

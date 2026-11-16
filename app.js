@@ -1048,21 +1048,17 @@ function topicsView() {
     el('h2', {}, 'Instellingen'),
     el('h3', {}, 'Lengte van de editie'),
     el(
-      'ul',
+      'div',
       { class: 'topics__list', role: 'radiogroup', 'aria-label': 'Lengte van de editie' },
       [
         ['long', 'Uitgebreid', 'Zes nieuwskaarten; 12 kaarten in totaal'],
         ['short', 'Kort', 'Vier nieuwskaarten; 10 kaarten in totaal'],
       ].map(([value, name, detail]) =>
         el(
-          'li',
-          {},
-          el(
-            'label',
-            { class: 'topic' },
-            el('input', { type: 'radio', name: 'length', value, checked: state.length === value, onchange: () => setLength(value) }),
-            el('span', {}, el('span', { class: 'topic__name' }, name), el('span', { class: 'topic__count' }, detail)),
-          ),
+          'label',
+          { class: 'topic' },
+          el('input', { type: 'radio', name: 'length', value, checked: state.length === value, onchange: () => setLength(value) }),
+          el('span', {}, el('span', { class: 'topic__name' }, name), el('span', { class: 'topic__count' }, detail)),
         ),
       ),
     ),
@@ -1230,11 +1226,13 @@ function progressView() {
     const key = dayKey(date)
     const done = key in state.days
     const future = key > today
-    const label = `${formatLongDate(key)}: ${future ? 'nog niet geweest' : done ? 'afgerond' : 'niet afgerond'}`
+    const status = future ? 'nog niet geweest' : done ? 'afgerond' : 'niet afgerond'
+    const month = new Intl.DateTimeFormat('nl-NL', { month: 'long' }).format(date)
     return el(
       'li',
-      { class: `calendar__day ${done ? 'is-done' : ''} ${key === today ? 'is-today' : ''} ${future ? 'is-future' : ''}`, 'aria-label': label, title: label },
+      { class: `calendar__day ${done ? 'is-done' : ''} ${key === today ? 'is-today' : ''} ${future ? 'is-future' : ''}`, title: `${formatLongDate(key)}: ${status}` },
       String(date.getDate()),
+      el('span', { class: 'sr-only' }, ` ${month}${key === today ? ' (vandaag)' : ''}: ${status}`),
     )
   })
 
@@ -1411,6 +1409,46 @@ function editionView() {
   ]
 }
 
+// ---------- Focus en aankondigingen (toegankelijkheid) ----------
+// Het scherm wordt bij elke wijziging opnieuw opgebouwd. Zonder hulp raakt de focus dan kwijt,
+// wat lastig is met een toetsenbord of schermlezer. Daarom: bij een nieuw scherm of een nieuwe
+// kaart gaat de focus naar de kop, na raden naar de uitslag, en anders terug naar waar hij stond.
+let interacted = false // pas na de eerste handeling van de gebruiker; niet bij het laden
+let lastScreen = null
+for (const type of ['pointerdown', 'keydown']) window.addEventListener(type, () => (interacted = true), { capture: true })
+
+function screenId() {
+  if (view !== 'edition' || !edition) return { view, card: null, open: false }
+  const index = Math.min(progress().index, edition.cards.length)
+  const card = edition.cards[index]
+  return { view, card: index, open: Boolean(card) && progress().guesses[card.id] !== undefined }
+}
+function announce(text) {
+  document.getElementById('announce').textContent = text
+}
+function manageFocus(place) {
+  const now = screenId()
+  const before = lastScreen
+  lastScreen = now
+  if (!interacted || !before) return
+  let target = null
+  if (now.view !== before.view || now.card !== before.card) {
+    target = main.querySelector('h2')
+    if (now.view === 'edition' && edition) {
+      announce(now.card >= edition.cards.length ? 'Klaar voor vandaag' : `Kaart ${now.card + 1} van ${edition.cards.length}`)
+    }
+  } else if (now.open && !before.open) {
+    target = main.querySelector('.result') ?? main.querySelector('h2')
+  } else if (place) {
+    const same = main.querySelectorAll(place.tag)[place.index]
+    // Een quizantwoord wordt na het kiezen uitgeschakeld: dan naar de uitleg bij die vraag.
+    target = same?.disabled ? same.closest('.question')?.querySelector('.question__explain') ?? null : same ?? null
+  }
+  if (!target) return
+  if (!target.matches('button, a, input')) target.setAttribute('tabindex', '-1')
+  target.focus({ preventScroll: true })
+}
+
 // Een fout bij het starten: zeggen wat er mis is en een knop om het opnieuw te proberen.
 function errorView() {
   return el(
@@ -1429,6 +1467,7 @@ function render(toTop = false) {
   document.getElementById('toggle-saved').textContent = view === 'edition' ? `Bewaard (${state.saved.length})` : '← Editie'
   document.getElementById('toggle-topics').setAttribute('aria-pressed', String(view === 'topics'))
   document.getElementById('toggle-progress').setAttribute('aria-pressed', String(view === 'progress'))
+  document.getElementById('toggle-progress').setAttribute('aria-label', `Voortgang bekijken. Dagreeks: ${streak} ${streak === 1 ? 'dag' : 'dagen'}`)
 
   navigate = {}
   let content
@@ -1439,8 +1478,12 @@ function render(toTop = false) {
   else if (fatal) content = [errorView()]
   else if (!edition) content = [el('p', { class: 'loading' }, 'Editie laden…')]
   else content = editionView()
+  // Onthouden waar de focus stond: het soort element en het volgnummer binnen het scherm.
+  const active = main.contains(document.activeElement) ? document.activeElement : null
+  const place = active && { tag: active.tagName, index: [...main.querySelectorAll(active.tagName)].indexOf(active) }
   main.replaceChildren(...content.flat().filter(Boolean))
   if (toTop) window.scrollTo(0, 0)
+  manageFocus(place)
 }
 
 async function start() {

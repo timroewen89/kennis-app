@@ -144,6 +144,14 @@ vormfouten en laat zien hoeveel items elk thema heeft.
 | `.github/workflows/nieuws.yml` | Draait het nieuws-script elke ochtend |
 | `manifest.webmanifest`, `sw.js`, `icons/` | Installeren op je telefoon en gebruik zonder verbinding |
 
+## Toegankelijkheid
+
+- De hele editie is met het toetsenbord te doen: pijltjestoetsen om te bladeren, Tab en Enter voor de rest.
+- Na bladeren staat de focus op de kop van de nieuwe kaart en wordt de positie voorgelezen
+  ("Kaart 5 van 12"); na raden staat de focus op de uitslag.
+- Alle schermen zijn nagelopen met een geautomatiseerde controle (axe) in lichte en donkere weergave.
+  Met een echte schermlezer is niet getest.
+
 ## Als er iets misgaat
 
 - Zit er een fout in een inhoudsbestand (bijvoorbeeld een vergeten komma), dan toont de app
