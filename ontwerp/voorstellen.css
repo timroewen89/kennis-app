@@ -1,0 +1,48 @@
+/* Opmaak van de pagina met ontwerpvoorstellen (niet van de app zelf). */
+body {
+  margin: 0;
+  padding: 1.5rem 1rem 3rem;
+  background: #eceef2;
+  color: #16181d;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.5;
+}
+header, main {
+  max-width: 76rem;
+  margin: 0 auto;
+}
+h1 {
+  margin: 0 0 0.4rem;
+  font-size: 1.6rem;
+}
+header p, section p {
+  margin: 0 0 1rem;
+  color: #50566a;
+  max-width: 44rem;
+}
+section {
+  margin-top: 2.5rem;
+}
+h2 {
+  margin: 0 0 0.2rem;
+  font-size: 1.3rem;
+}
+.rij {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+.rij img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 1.2rem;
+  box-shadow: 0 8px 24px rgba(20, 24, 40, 0.16);
+}
+/* Op een telefoon twee naast elkaar. */
+@media (max-width: 700px) {
+  .rij {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+  }
+}
