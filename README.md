@@ -37,7 +37,7 @@ Bladeren doe je door te vegen: naar links voor de volgende kaart, naar rechts vo
 op de kaart zelf en in de ruimte eronder.
 Op een computer zijn er knoppen en werken de pijltjestoetsen.
 
-De app is één `index.html` zonder bouwstap. Geen account, geen betaalde diensten;
+De app bestaat uit `index.html`, `styles.css` en `app.js`, zonder bouwstap. Geen account, geen betaalde diensten;
 dagreeks, voortgang, weekscores, bewaarde kaarten, gekozen onderwerpen en de vragen voor de herhaling
 staan lokaal in je browser.
 
@@ -129,7 +129,9 @@ vormfouten en laat zien hoeveel items elk thema heeft.
 
 | Bestand | Wat het doet |
 | --- | --- |
-| `index.html` | De hele app: opmaak, schermen, raden, tijdlijn, herhaling, onderwerpen, voortgang, dagreeks, bewaren, quiz |
+| `index.html` | De pagina zelf, met de beveiligingsregels (Content-Security-Policy) |
+| `styles.css` | De opmaak |
+| `app.js` | De hele werking: schermen, raden, tijdlijn, herhaling, onderwerpen, voortgang, dagreeks, bewaren, quiz |
 | `content/facts.js`, `content/deepdives.js` | Eigen weetjes en verdiepingen, met thema, bron en quizvraag |
 | `content/topics.js` | De thema's waaruit je kunt kiezen |
 | `news.json` | De nieuwspunten van vandaag (automatisch ververst) |
@@ -138,6 +140,15 @@ vormfouten en laat zien hoeveel items elk thema heeft.
 | `scripts/check-content.mjs` | Controleert de eigen inhoud |
 | `.github/workflows/nieuws.yml` | Draait het nieuws-script elke ochtend |
 | `manifest.webmanifest`, `sw.js`, `icons/` | Installeren op je telefoon en gebruik zonder verbinding |
+
+## Als er iets misgaat
+
+- Zit er een fout in een inhoudsbestand (bijvoorbeeld een vergeten komma), dan toont de app
+  "De inhoud kon niet worden geladen" met de naam van het bestand en de foutmelding.
+- Staat de app nog open van gisteren, dan laadt hij de editie van vandaag zodra je terugkomt.
+- De pagina mag alleen eigen bestanden laden en alleen verbinding maken met Wikipedia en de
+  vertaaldienst. Voeg je een nieuwe bron toe die vanuit de app wordt opgehaald, zet het adres dan ook
+  in de regel `Content-Security-Policy` bovenin `index.html`.
 
 ## Lokaal bekijken
 

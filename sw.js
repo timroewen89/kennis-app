@@ -1,7 +1,7 @@
 // Service worker: eerst het netwerk proberen (zo zie je altijd de nieuwste versie),
 // en zonder verbinding terugvallen op de laatst opgeslagen kopie.
-const CACHE = 'kennis-v2'
-const SHELL = ['./', 'content/topics.js', 'content/facts.js', 'content/deepdives.js', 'manifest.webmanifest', 'icons/icon.svg']
+const CACHE = 'kennis-v3'
+const SHELL = ['./', 'styles.css', 'app.js', 'content/topics.js', 'content/facts.js', 'content/deepdives.js', 'manifest.webmanifest', 'icons/icon.svg']
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
