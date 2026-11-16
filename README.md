@@ -20,6 +20,10 @@ edities die je eerder hebt afgerond.
 - Heb je een vraag twee keer achter elkaar goed, of is hij ouder dan 45 dagen, dan verdwijnt hij uit de herhaling.
 - De eerste dagen valt er nog niets te herhalen; dan vullen de vragen van vandaag de quiz aan.
 
+Tik op het vlammetje met je dagreeks voor je **voortgang**: je reeks, het aantal afgeronde edities,
+je gemiddelde quizscore, een kalender van de laatste vijf weken en mijlpalen bij 7, 30 en 100 dagen
+op rij. Er zijn geen punten of ranglijsten.
+
 Via het tandwiel rechtsboven kies je je **onderwerpen**: Nederland, Wereldgeschiedenis, Wetenschap &
 techniek, Natuur & aarde en Taal & cultuur. De keuze bepaalt welk weetje en welke verdieping je
 krijgt. Een wijziging geldt meteen als je de editie van vandaag nog niet hebt afgerond, anders vanaf
@@ -114,7 +118,7 @@ vormfouten en laat zien hoeveel items elk thema heeft.
 
 | Bestand | Wat het doet |
 | --- | --- |
-| `index.html` | De hele app: opmaak, schermen, raden, tijdlijn, herhaling, onderwerpen, dagreeks, bewaren, quiz |
+| `index.html` | De hele app: opmaak, schermen, raden, tijdlijn, herhaling, onderwerpen, voortgang, dagreeks, bewaren, quiz |
 | `content/facts.js`, `content/deepdives.js` | Eigen weetjes en verdiepingen, met thema, bron en quizvraag |
 | `content/topics.js` | De thema's waaruit je kunt kiezen |
 | `news.json` | De nieuwspunten van vandaag (automatisch ververst) |

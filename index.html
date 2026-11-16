@@ -106,9 +106,18 @@ main {
   gap: 0.75rem;
 }
 .streak {
+  min-height: 2.25rem;
+  padding: 0.3rem 0.4rem;
+  border: 0;
+  border-radius: 999px;
+  background: none;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+}
+.streak[aria-pressed='true'] {
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--line);
 }
 
 /* Voortgang */
@@ -215,6 +224,7 @@ button {
   font: inherit;
   color: inherit;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 button:disabled {
   cursor: default;
@@ -325,6 +335,84 @@ button:disabled {
   color: var(--muted);
   font-size: 0.75rem;
   font-weight: 400;
+}
+
+/* Voortgang: cijfers, kalender en mijlpalen. */
+.progress h2 {
+  margin: 0 0 1rem;
+  font-family: var(--serif);
+  font-size: 1.55rem;
+}
+.progress h3 {
+  margin: 1.5rem 0 0.6rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.stats.stats--four {
+  grid-template-columns: repeat(2, 1fr);
+  margin-bottom: 0;
+  text-align: center;
+}
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: center;
+}
+.calendar__head {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+.calendar__day {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+.calendar__day.is-done {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 700;
+}
+.calendar__day.is-today {
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+}
+.calendar__day.is-future {
+  border-style: dashed;
+  color: var(--muted);
+  opacity: 0.5;
+}
+.milestones {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  list-style: none;
+}
+.milestones li {
+  padding: 0.6rem 0.9rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+}
+.milestones li.is-done {
+  border-color: var(--good);
+  color: var(--good);
+  font-weight: 600;
+}
+.progress__note {
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
 /* Kort nieuws: een lijst koppen. */
@@ -662,7 +750,7 @@ main {
       <p class="top__date" id="date"></p>
     </div>
     <div class="top__right">
-      <span class="streak" title="Dagreeks"><span aria-hidden="true">🔥</span> <span id="streak">0</span><span class="sr-only" id="streak-label"></span></span>
+      <button type="button" class="streak" id="toggle-progress" title="Voortgang bekijken"><span aria-hidden="true">🔥</span> <span id="streak">0</span><span class="sr-only" id="streak-label"></span></button>
       <button type="button" class="btn btn--ghost btn--small" id="toggle-saved"></button>
       <button type="button" class="btn btn--ghost btn--small icon-btn" id="toggle-topics" aria-label="Onderwerpen kiezen" title="Onderwerpen kiezen">⚙</button>
     </div>
@@ -729,8 +817,16 @@ function writeJson(key, value) {
 }
 function loadState() {
   const saved = readJson(STATE_KEY) ?? {}
+  const streak = { count: 0, best: 0, lastCompleted: null, ...saved.streak }
+  // Per afgeronde dag: { quiz: [goed, totaal], guess: [goed, totaal] }. De dagen van je reeks van
+  // vóór deze versie zijn niet bewaard; die worden hier als afgerond ingevuld, zonder score.
+  const days = { ...saved.days }
+  for (let key = streak.lastCompleted, n = 0; key && n < streak.count; key = previousDayKey(key), n++) {
+    days[key] ??= {}
+  }
   return {
-    streak: { count: 0, best: 0, lastCompleted: null, ...saved.streak },
+    streak,
+    days,
     progress: saved.progress ?? {},
     saved: Array.isArray(saved.saved) ? saved.saved : [],
     // Vragen uit edities die je hebt afgerond; hieruit komt de herhaling in de quiz.
@@ -1175,7 +1271,7 @@ const today = dayKey()
 let state = loadState()
 let edition = null
 let sources = null // nieuws, geschiedenis en tijdlijn van vandaag
-let view = 'edition' // 'edition' | 'saved' | 'topics'
+let view = 'edition' // 'edition' | 'saved' | 'topics' | 'progress'
 let navigate = {} // wat 'vorige' en 'volgende' op dit moment doen (voor de pijltjestoetsen)
 let flipped = null // id van de kaart die net is omgedraaid (voor de animatie)
 let timelinePick = { id: null, order: [] } // welke gebeurtenissen je al hebt aangetikt, in volgorde
@@ -1184,6 +1280,10 @@ const main = document.getElementById('main')
 document.getElementById('date').textContent = formatLongDate(today)
 document.getElementById('toggle-saved').addEventListener('click', () => {
   view = view === 'edition' ? 'saved' : 'edition'
+  render(true)
+})
+document.getElementById('toggle-progress').addEventListener('click', () => {
+  view = view === 'progress' ? 'edition' : 'progress'
   render(true)
 })
 document.getElementById('toggle-topics').addEventListener('click', () => {
@@ -1291,9 +1391,14 @@ function finish() {
     }
     // 3. Opruimen.
     log = pruneLog(log, today)
+    const guessed = guessScore()
     return {
       ...s,
       streak: completeDay(s.streak, today),
+      days: {
+        ...s.days,
+        [today]: { quiz: [questions.filter((_, i) => isRight(i)).length, questions.length], guess: [guessed.right, guessed.total] },
+      },
       log,
       progress: { [today]: { ...progressOf(s), index: total, completed: true } },
     }
@@ -1653,6 +1758,68 @@ function topicsView() {
   )
 }
 
+const MILESTONES = [7, 30, 100] // dagen op rij
+
+// Voortgang: wat je hebt afgerond, zonder punten of ranglijsten.
+function progressView() {
+  const streak = currentStreak(state.streak, today)
+  const best = Math.max(state.streak.best, streak)
+  const doneDays = Object.keys(state.days)
+  const scored = Object.values(state.days).filter((day) => Array.isArray(day.quiz) && day.quiz[1] > 0)
+  const right = scored.reduce((sum, day) => sum + day.quiz[0], 0)
+  const asked = scored.reduce((sum, day) => sum + day.quiz[1], 0)
+  const stat = (label, value, sub) => el('div', {}, el('dt', {}, label), el('dd', {}, value, sub && el('small', {}, sub)))
+
+  // Kalender: vijf hele weken (maandag tot en met zondag), eindigend met deze week.
+  const start = toDate(today)
+  start.setDate(start.getDate() - ((start.getDay() + 6) % 7) - 28)
+  const cells = Array.from({ length: 35 }, (_, i) => {
+    const date = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i)
+    const key = dayKey(date)
+    const done = key in state.days
+    const future = key > today
+    const label = `${formatLongDate(key)}: ${future ? 'nog niet geweest' : done ? 'afgerond' : 'niet afgerond'}`
+    return el(
+      'li',
+      { class: `calendar__day ${done ? 'is-done' : ''} ${key === today ? 'is-today' : ''} ${future ? 'is-future' : ''}`, 'aria-label': label, title: label },
+      String(date.getDate()),
+    )
+  })
+
+  return el(
+    'section',
+    { class: 'progress' },
+    el('h2', {}, 'Voortgang'),
+    el(
+      'dl',
+      { class: 'stats stats--four' },
+      stat('Dagreeks', `${streak} ${streak === 1 ? 'dag' : 'dagen'}`),
+      stat('Langste reeks', `${best} ${best === 1 ? 'dag' : 'dagen'}`),
+      stat('Afgeronde edities', String(doneDays.length)),
+      stat('Quiz gemiddeld', asked > 0 ? `${Math.round((right / asked) * 100)}%` : '–', asked > 0 && `${right} van ${asked} vragen`),
+    ),
+    el('h3', {}, 'Laatste vijf weken'),
+    el(
+      'ol',
+      { class: 'calendar' },
+      ['ma', 'di', 'wo', 'do', 'vr', 'za', 'zo'].map((name) => el('li', { class: 'calendar__head', 'aria-hidden': 'true' }, name)),
+      cells,
+    ),
+    el('h3', {}, 'Mijlpalen'),
+    el(
+      'ul',
+      { class: 'milestones' },
+      MILESTONES.map((goal) =>
+        best >= goal
+          ? el('li', { class: 'is-done' }, `✓ ${goal} dagen op rij gehaald`)
+          : el('li', {}, `${goal} dagen op rij: nog ${goal - streak} ${goal - streak === 1 ? 'dag' : 'dagen'}`),
+      ),
+    ),
+    el('p', { class: 'progress__note' }, 'De app houdt dit bij sinds deze versie; eerdere quizscores zijn niet bewaard. Alles staat alleen in je browser.'),
+    el('button', { type: 'button', class: 'btn', onclick: () => ((view = 'edition'), render(true)) }, 'Terug naar de editie'),
+  )
+}
+
 // Maakt een kaart veegbaar: naar links = volgende, naar rechts = vorige.
 // onNext/onPrev zijn null als die richting (nog) niet mag; de kaart veert dan terug.
 function makeSwipeable(node, { onNext, onPrev }) {
@@ -1796,11 +1963,13 @@ function render(toTop = false) {
   document.getElementById('streak-label').textContent = ` ${streak === 1 ? 'dag' : 'dagen'} op rij`
   document.getElementById('toggle-saved').textContent = view === 'edition' ? `Bewaard (${state.saved.length})` : '← Editie'
   document.getElementById('toggle-topics').setAttribute('aria-pressed', String(view === 'topics'))
+  document.getElementById('toggle-progress').setAttribute('aria-pressed', String(view === 'progress'))
 
   navigate = {}
   let content
   if (view === 'saved') content = [savedView()]
   else if (view === 'topics') content = [topicsView()]
+  else if (view === 'progress') content = [progressView()]
   else if (!edition) content = [el('p', { class: 'loading' }, 'Editie laden…')]
   else content = editionView()
   main.replaceChildren(...content.flat().filter(Boolean))
