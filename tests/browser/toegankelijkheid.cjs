@@ -40,6 +40,13 @@ const axeSource = fs.readFileSync(process.env.AXE || require.resolve('axe-core/a
     await p.locator('#toggle-saved').click(); await check('bewaard')
     await p.locator('#toggle-saved').click(); await p.locator('#toggle-topics').click(); await check('instellingen')
     await p.locator('#toggle-progress').click(); await check('voortgang')
+    // Een afgeronde leerreeks, om de knop naar de reekstoets en de toets zelf te controleren.
+    await p.evaluate(() => { const s = JSON.parse(localStorage.getItem('kennis:v1')); s.series.done['natuur-en-geschiedenis'] = { day: Object.keys(s.progress)[0], days: [], answers: [], score: null }; localStorage.setItem('kennis:v1', JSON.stringify(s)) })
+    await p.reload(); await p.waitForSelector('.done'); await p.evaluate(axeSource) // na herladen is het controlescript weg
+    await p.locator('#toggle-progress').click(); await p.waitForSelector('.serieslist .btn'); await check('voortgang met afgeronde reeks')
+    await p.locator('.serieslist .btn').click(); await p.waitForSelector('.week'); await check('reekstoets: leeg')
+    for (const q of await p.locator('.question').all()) await q.locator('.option').first().click()
+    await p.locator('text=Reekstoets afronden').click(); await check('reekstoets: uitslag')
     if (errors.length) { console.log('paginafouten:', errors); total++ }
     await ctx.close()
   }

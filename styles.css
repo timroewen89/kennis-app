@@ -235,6 +235,21 @@ main {
   font-weight: 750;
   letter-spacing: -0.025em;
 }
+/* Op de eerste stap van een verdieping uit een leerreeks: welke reeks, welke dag, en wat eraan voorafging. */
+.card__series {
+  margin: 0.5rem 0 0.6rem;
+  padding: 0.6rem 0.75rem;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 0.6rem 0.6rem 0;
+  background: rgba(125, 240, 198, 0.07);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #d4d8e3;
+}
+.card__series strong {
+  display: block;
+  color: var(--ink);
+}
 /* Boven de kernzin van een stapkaart: de titel van de verdieping waar hij bij hoort. */
 .card__context {
   margin: 0.35rem 0 0;
@@ -424,19 +439,54 @@ button:disabled {
   gap: 0.6rem;
   margin-top: 1.25rem;
 }
-.done__week {
+.done__week,
+.done__series {
   margin: 0 0 1.5rem;
   padding: 1rem;
   background: #171a23;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 1.1rem;
 }
-.done__week p {
+.done__week p,
+.done__series p {
   margin: 0 0 0.8rem;
   color: var(--muted);
 }
-.done__week p:last-child {
+.done__week p:last-child,
+.done__series p:last-child {
   margin-bottom: 0;
+}
+.done__series {
+  text-align: left;
+}
+.done__series strong {
+  color: var(--ink);
+}
+/* Leerreeksen op het voortgangsscherm. */
+.serieslist {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.serieslist li {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.65rem 0;
+  border-top: 1px solid var(--line);
+}
+.serieslist__title {
+  font-weight: 600;
+}
+.serieslist__status {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+.serieslist li.is-running .serieslist__status {
+  color: var(--accent);
+}
+.serieslist .btn {
+  justify-self: start;
+  margin-top: 0.4rem;
 }
 .weekscores {
   margin: 0;

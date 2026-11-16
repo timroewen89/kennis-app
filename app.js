@@ -5,6 +5,7 @@
 // inhoudsbestand een duidelijke melding in plaats van een app die blijft hangen.
 let facts = []
 let deepdives = []
+let series = []
 let TOPICS = []
 
 async function loadContent() {
@@ -19,9 +20,15 @@ async function loadContent() {
   ;({ TOPICS } = await load('topics.js'))
   ;({ facts } = await load('facts.js'))
   ;({ deepdives } = await load('deepdives.js'))
+  ;({ series } = await load('series.js'))
   for (const [name, list] of [['TOPICS', TOPICS], ['facts', facts], ['deepdives', deepdives]]) {
     if (!Array.isArray(list) || list.length === 0) throw new Error(`De lijst ${name} ontbreekt of is leeg.`)
   }
+  // Een reeks telt alleen mee als ze klopt: een naam, en delen die allemaal als verdieping bestaan.
+  const known = new Set(deepdives.map((item) => item.id))
+  series = (Array.isArray(series) ? series : []).filter(
+    (item) => isObject(item) && SERIES_ID.test(item.id) && isText(item.title) && Array.isArray(item.parts) && item.parts.length > 1 && item.parts.every((id) => known.has(id)),
+  )
 }
 
 // ---------- Datum ----------
@@ -60,6 +67,9 @@ const TRANSLATION_KEY = 'kennis:vertaling:v1'
 // short: of de editie van vandaag de korte vorm heeft (null = nog niet vastgelegd).
 const NO_PROGRESS = { v: 2, index: 0, guesses: {}, answers: [], reviews: null, picks: null, short: null, completed: false }
 const NEWS_ITEMS_SHORT = 4 // nieuwskaarten in de korte editie (uitgebreid: alle zes)
+const SERIES_GAP = 2 // dagen met een losse verdieping tussen twee leerreeksen
+const SERIES_REPEAT = 60 // een afgeronde reeks komt op zijn vroegst na zoveel dagen terug
+const SERIES_ID = /^[a-z0-9-]{1,60}$/
 
 function readJson(key) {
   try {
@@ -86,9 +96,11 @@ const validQuestion = (q) =>
 const optionalText = (value) => value === undefined || value === null || isText(value)
 const validCard = (card) =>
   isObject(card) && isText(card.id) && isText(card.type) && isText(card.title) && Array.isArray(card.body) && card.body.every(isText) &&
-  optionalText(card.kicker) && optionalText(card.kickerShort) && optionalText(card.context)
+  optionalText(card.kicker) && optionalText(card.kickerShort) && optionalText(card.context) && optionalText(card.series) && optionalText(card.seriesNote)
 // Een onthouden vraag (voor de herhaling en de weekquiz).
 const validItem = (item) => isObject(item) && isText(item.id) && isDay(item.day) && isText(item.type) && validQuestion(item.question)
+// Een deel van een leerreeks: welke reeks, en het hoeveelste deel (geteld vanaf 0).
+const validSeriesPick = (value) => isObject(value) && isText(value.id) && SERIES_ID.test(value.id) && Number.isInteger(value.part) && value.part >= 0 && value.part < 20
 const scoreOrNull = (value) => (Array.isArray(value) && value.length === 2 && value.every(Number.isInteger) ? value : null)
 
 function loadState() {
@@ -118,9 +130,29 @@ function loadState() {
       score: scoreOrNull(value.score),
     }
   }
+  // Leerreeksen: de lopende reeks, het aantal losse dagen sinds de laatste, en wat is afgerond.
+  const storedSeries = isObject(saved.series) ? saved.series : {}
+  const seriesDone = {}
+  for (const [id, value] of Object.entries(isObject(storedSeries.done) ? storedSeries.done : {})) {
+    if (!SERIES_ID.test(id) || !isObject(value) || !isDay(value.day)) continue
+    seriesDone[id] = {
+      day: value.day,
+      days: Array.isArray(value.days) ? value.days.filter(isDay) : [],
+      answers: Array.isArray(value.answers) ? value.answers : [],
+      score: scoreOrNull(value.score),
+    }
+  }
   return {
     streak,
     days,
+    series: {
+      current: validSeriesPick(storedSeries.current)
+        ? { id: storedSeries.current.id, part: storedSeries.current.part, days: Array.isArray(storedSeries.current.days) ? storedSeries.current.days.filter(isDay) : [] }
+        : null,
+      // Zonder eerdere reeks staat de teller meteen op 'klaar voor een reeks'.
+      gap: Number.isInteger(storedSeries.gap) ? count(storedSeries.gap, 99) : SERIES_GAP,
+      done: seriesDone,
+    },
     progress: isObject(saved.progress) ? saved.progress : {},
     saved: (Array.isArray(saved.saved) ? saved.saved : []).filter((item) => isObject(item) && isText(item.key) && isDay(item.day) && validCard(item.card)),
     // Vragen uit edities die je hebt afgerond; hieruit komt de herhaling in de quiz.
@@ -145,7 +177,10 @@ function cleanProgress(stored) {
     guesses: isObject(stored.guesses) ? stored.guesses : {},
     answers: Array.isArray(stored.answers) ? stored.answers : [],
     reviews: Array.isArray(stored.reviews) ? stored.reviews.filter(validItem) : null,
-    picks: isObject(stored.picks) && isText(stored.picks.fact) && isText(stored.picks.deepdive) ? stored.picks : null,
+    picks:
+      isObject(stored.picks) && isText(stored.picks.fact) && isText(stored.picks.deepdive)
+        ? { fact: stored.picks.fact, deepdive: stored.picks.deepdive, series: validSeriesPick(stored.picks.series) ? { id: stored.picks.series.id, part: stored.picks.series.part } : null }
+        : null,
     short: typeof stored.short === 'boolean' ? stored.short : null,
     completed: stored.completed === true,
   }
@@ -589,20 +624,91 @@ async function getSources(day, { refresh = true } = {}) {
 
 // Welk weetje en welke verdieping vandaag aan de beurt zijn, binnen de gekozen thema's.
 // Past geen enkel item bij de keuze, dan telt de hele lijst mee.
-function pickContent(day, topics) {
+// Loopt er een leerreeks, dan is het volgende deel daarvan de verdieping; anders start er een
+// nieuwe reeks of volgt een losse verdieping (zie nextSeriesPart).
+function pickContent(day, topics, seriesState) {
   const allowed = (list) => {
     const filtered = topics ? list.filter((item) => topics.includes(item.topic)) : list
     return filtered.length > 0 ? filtered : list
   }
-  return { fact: pickForDay(allowed(facts), day).id, deepdive: pickForDay(allowed(deepdives), day).id }
+  const fact = pickForDay(allowed(facts), day).id
+  // Losse verdiepingen: die bij geen enkele reeks horen, zodat je niets leest wat kort daarna in
+  // een reeks terugkomt. Zijn er binnen de gekozen onderwerpen minder dan SERIES_GAP, dan is de
+  // pauze tussen twee reeksen zoveel korter.
+  const pool = allowed(deepdives)
+  const inSeries = new Set(series.flatMap((item) => item.parts))
+  const loose = pool.filter((item) => !inSeries.has(item.id))
+  const pause = Math.min(SERIES_GAP, loose.length)
+  const next = nextSeriesPart(day, topics, seriesState, pause)
+  if (next) return { fact, deepdive: next.item.parts[next.part], series: { id: next.item.id, part: next.part } }
+  if (seriesState.gap < pause) {
+    // In de pauze: de losse verdiepingen op volgorde, zodat de dagen na elkaar verschillen en een
+    // dag die je niet afrondt de volgende keer dezelfde verdieping houdt.
+    const turn = Object.keys(seriesState.done).length * SERIES_GAP + seriesState.gap
+    return { fact, deepdive: loose[turn % loose.length].id, series: null }
+  }
+  // Er valt geen reeks te starten: de hele lijst doet mee, zoals zonder reeksen.
+  return { fact, deepdive: pickForDay(pool, day).id, series: null }
+}
+
+// Welk deel van welke leerreeks vandaag aan de beurt is, of null voor een losse verdieping.
+// - Een lopende reeks gaat altijd verder, ook als de onderwerpen intussen zijn gewijzigd.
+// - Na een reeks volgen eerst 'pause' losse dagen (SERIES_GAP, of minder als er te weinig losse
+//   verdiepingen zijn).
+// - Dan start de eerste reeks binnen de gekozen onderwerpen die nog niet is gedaan; zijn ze
+//   allemaal gedaan, dan de reeks die het langst geleden is afgerond (minstens SERIES_REPEAT dagen).
+function nextSeriesPart(day, topics, { current, gap, done }, pause = SERIES_GAP) {
+  const running = current && series.find((item) => item.id === current.id)
+  if (running && current.part < running.parts.length) return { item: running, part: current.part }
+  if (gap < pause) return null
+  const allowed = series.filter((item) => !topics || topics.includes(item.topic))
+  const fresh = allowed.find((item) => !done[item.id])
+  if (fresh) return { item: fresh, part: 0 }
+  const age = (item) => dayNumber(day) - dayNumber(done[item.id].day)
+  const again = allowed.filter((item) => age(item) >= SERIES_REPEAT).sort((a, b) => age(b) - age(a))[0]
+  return again ? { item: again, part: 0 } : null
+}
+
+// De stand van de reeksen nadat de editie van vandaag is afgerond. 'info' is de reeks van vandaag
+// (edition.series), of null bij een losse verdieping.
+function advanceSeries(seriesState, info, day) {
+  if (!info) return { ...seriesState, gap: Math.min(seriesState.gap + 1, 99) }
+  // Op welke dagen de delen zijn gelezen: daarmee vindt de reekstoets de vragen in de herhaling terug.
+  const days = [...(seriesState.current?.id === info.id ? seriesState.current.days : []), day]
+  if (info.part + 1 < info.total) return { ...seriesState, current: { id: info.id, part: info.part + 1, days } }
+  return { current: null, gap: 0, done: { ...seriesState.done, [info.id]: { day, days, answers: [], score: null } } }
+}
+
+// Wat de editie over de reeks van vandaag moet weten, of null als de verdieping los staat (ook als
+// de vastgelegde keuze niet meer bij de inhoud past).
+function seriesInfo(picks, deepdive) {
+  const item = series.find((entry) => entry.id === picks?.series?.id)
+  const part = picks?.series?.part
+  if (!item || item.parts[part] !== deepdive.id) return null
+  const titleOf = (id) => deepdives.find((entry) => entry.id === id)?.title ?? null
+  return {
+    id: item.id,
+    title: item.title,
+    intro: isText(item.intro) ? item.intro : '',
+    part,
+    total: item.parts.length,
+    previous: part > 0 ? titleOf(item.parts[part - 1]) : null,
+    next: part + 1 < item.parts.length ? titleOf(item.parts[part + 1]) : null,
+  }
 }
 
 // De verdieping in stappen: één kaart per alinea, met de kernzin van die alinea als kop en de
 // titel van de verdieping erboven. Zonder kernzinnen blijft het één kaart.
-function deepdiveSteps({ question, question2, heads, title, body, ...item }) {
-  if (!Array.isArray(heads) || heads.length !== body.length) return [{ ...item, title, body, id: `deepdive-${item.id}`, type: 'deepdive' }]
+// Hoort de verdieping bij een leerreeks, dan staat op de eerste kaart welke reeks en welke dag.
+function deepdiveSteps({ question, question2, heads, title, body, ...item }, info = null) {
+  const intro = info && {
+    series: `Reeks: ${info.title}`,
+    seriesNote: `Dag ${info.part + 1} van ${info.total}. ${info.previous ? `Vorige keer: ${info.previous}.` : info.intro}`.trim(),
+  }
+  if (!Array.isArray(heads) || heads.length !== body.length) return [{ ...item, ...intro, title, body, id: `deepdive-${item.id}`, type: 'deepdive' }]
   return body.map((text, i) => ({
     ...item,
+    ...(i === 0 ? intro : null),
     id: `deepdive-${item.id}-${i + 1}`,
     type: 'deepdive',
     kicker: `${LABELS.deepdive} · ${i + 1} van ${body.length}`,
@@ -618,9 +724,11 @@ function assembleEdition({ day, notes, news, topics, brief, history }, picks, sh
   const fact = facts.find((item) => item.id === picks?.fact) ?? pickForDay(facts, day)
   const deepdive = deepdives.find((item) => item.id === picks?.deepdive) ?? pickForDay(deepdives, day)
   const toCard = ({ question, ...item }, type) => ({ ...item, id: `${type}-${item.id}`, type })
+  const info = seriesInfo(picks, deepdive)
   return {
     day,
     notes,
+    series: info,
     cards: [
       ...(short ? news.slice(0, NEWS_ITEMS_SHORT) : news),
       ...(topics ?? []), // Tech en AI; ook in de korte editie
@@ -630,7 +738,7 @@ function assembleEdition({ day, notes, news, topics, brief, history }, picks, sh
       { ...history.card, guess: history.question },
       history.timeline, // vervalt als Wikipedia onbereikbaar is of te weinig gebeurtenissen heeft
       { ...toCard(fact, 'fact'), guess: present(fact.question, day, 1) },
-      ...deepdiveSteps(deepdive),
+      ...deepdiveSteps(deepdive, info),
       { id: `quiz-${day}`, type: 'quiz', title: 'Wat weet je nog?' },
     ].filter(Boolean),
     // De vragen bij de kaarten van vandaag, zoals ze in de inhoud staan. De quiz wordt hier
@@ -683,7 +791,8 @@ let state = loadState()
 let edition = null
 let fatal = null // als er iets misgaat bij het starten: { title, detail }
 let sources = null // nieuws, geschiedenis en tijdlijn van vandaag
-let view = 'edition' // 'edition' | 'saved' | 'topics' | 'progress' | 'week'
+let view = 'edition' // 'edition' | 'saved' | 'topics' | 'progress' | 'week' | 'seriestest'
+let seriesTest = { id: null, from: 'edition' } // welke reekstoets openstaat, en vanaf welk scherm
 let navigate = {} // wat 'vorige' en 'volgende' op dit moment doen (voor de pijltjestoetsen)
 let flipped = null // id van de kaart die net is omgedraaid (voor de animatie)
 let timelinePick = { id: null, order: [] } // welke gebeurtenissen je al hebt aangetikt, in volgorde
@@ -812,6 +921,7 @@ function finish() {
         [today]: { quiz: [questions.filter((_, i) => isRight(i)).length, questions.length], guess: [guessed.right, guessed.total] },
       },
       log,
+      series: advanceSeries(s.series, edition.series, today),
       progress: { [today]: { ...progressOf(s), index: total, completed: true } },
     }
   }, true)
@@ -1004,6 +1114,7 @@ function cardView(card, { day = today, savedOn = null, choice = null } = {}) {
       'div',
       { lang: card.lang },
       card.year && el('p', { class: 'card__year' }, card.year),
+      card.series && el('p', { class: 'card__series' }, el('strong', {}, card.series), card.seriesNote && el('span', {}, card.seriesNote)),
       card.context && el('p', { class: 'card__context' }, card.context),
       el('h2', { class: 'card__title' }, card.title),
       card.body.map((text) => el('p', { class: 'card__body' }, text)),
@@ -1109,6 +1220,7 @@ function doneView(questions, answers) {
       stat('Quiz', `${score} van ${questions.length}`),
     ),
     learnedBlock(),
+    seriesBlock(),
     isSunday(today) && weekBlock(),
     el(
       'div',
@@ -1156,7 +1268,7 @@ function setTopics(ids) {
   state = {
     ...state,
     topics,
-    progress: applyNow ? { [today]: { ...current, picks: pickContent(today, topics) } } : state.progress,
+    progress: applyNow ? { [today]: { ...current, picks: pickContent(today, topics, state.series) } } : state.progress,
   }
   writeJson(STATE_KEY, state)
   if (applyNow) edition = assembleEdition(sources, progress().picks, progress().short === true)
@@ -1209,7 +1321,7 @@ function topicsView() {
       ),
     ),
     el('h3', {}, 'Onderwerpen'),
-    el('p', {}, 'Kies waarover je weetjes en verdiepingen wilt krijgen. Het nieuws, de geschiedeniskaart en de tijdlijn blijven zoals ze zijn.'),
+    el('p', {}, 'Kies waarover je weetjes, verdiepingen en leerreeksen wilt krijgen. Het nieuws, de geschiedeniskaart en de tijdlijn blijven zoals ze zijn. Een leerreeks die al loopt, maak je eerst af.'),
     el(
       'ul',
       { class: 'topics__list' },
@@ -1338,6 +1450,139 @@ function weekView() {
   )
 }
 
+// ---------- Leerreeksen ----------
+const seriesById = (id) => series.find((item) => item.id === id) ?? null
+
+// De vragen van de reekstoets: één per deel, over de verdieping van die dag. De volgorde van de
+// antwoorden hangt af van de dag waarop de reeks is afgerond, zodat ze gelijk blijft als je later verdergaat.
+function seriesQuestions(id) {
+  const item = seriesById(id)
+  const entry = state.series.done[id]
+  return item.parts.map((partId, i) => {
+    const dive = deepdives.find((d) => d.id === partId)
+    return {
+      label: `Dag ${i + 1} · ${dive.title}`,
+      question: present(dive.question, entry.day, 40 + i),
+      // De vraag staat ook in de herhaling, onder de dag waarop je dat deel las.
+      reviewId: entry.days.length === item.parts.length ? `${entry.days[i]}:deepdive` : null,
+    }
+  })
+}
+const seriesTestEntry = () => (seriesById(seriesTest.id) && state.series.done[seriesTest.id]) || null
+function openSeriesTest(id) {
+  seriesTest = { id, from: view === 'progress' ? 'progress' : 'edition' }
+  view = 'seriestest'
+  render(true)
+}
+function answerSeries(qi, oi) {
+  const { id } = seriesTest
+  update((s) => {
+    const entry = s.series.done[id]
+    const answers = [...entry.answers]
+    answers[qi] = oi
+    return { ...s, series: { ...s.series, done: { ...s.series.done, [id]: { ...entry, answers } } } }
+  })
+}
+function finishSeriesTest() {
+  const { id } = seriesTest
+  const questions = seriesQuestions(id)
+  const { answers } = state.series.done[id]
+  const results = questions.map((entry, i) => ({ id: entry.reviewId, correct: answers[i] === entry.question.answer }))
+  update((s) => ({
+    ...s,
+    series: { ...s.series, done: { ...s.series.done, [id]: { ...s.series.done[id], score: [results.filter((r) => r.correct).length, results.length] } } },
+    // De antwoorden tellen ook mee voor de dagelijkse herhaling.
+    log: pruneLog(applyReviews(s.log, results.filter((r) => r.id), today), today),
+  }), true)
+}
+
+// De knop naar de reekstoets, met de stand: nog te doen, half af of gedaan.
+function seriesTestButton(id) {
+  const entry = state.series.done[id]
+  const total = seriesById(id).parts.length
+  if (entry.score) return el('button', { type: 'button', class: 'btn btn--ghost', onclick: () => openSeriesTest(id) }, 'Reekstoets bekijken')
+  const started = entry.answers.some(Number.isInteger)
+  return el('button', { type: 'button', class: 'btn', onclick: () => openSeriesTest(id) }, started ? 'Reekstoets afmaken' : `Reekstoets: ${total} vragen`)
+}
+
+// Het blok op het klaar-scherm als de verdieping van vandaag bij een reeks hoort.
+function seriesBlock() {
+  const info = edition.series
+  if (!info) return null
+  const head = el('p', {}, el('strong', {}, `Reeks: ${info.title}`))
+  if (info.part + 1 < info.total) {
+    return el(
+      'div',
+      { class: 'done__series' },
+      head,
+      el('p', {}, `Dag ${info.part + 1} van ${info.total} gedaan. Volgende keer: ${info.next}.`),
+    )
+  }
+  const entry = state.series.done[info.id]
+  return el(
+    'div',
+    { class: 'done__series' },
+    head,
+    el('p', {}, entry?.score ? `Reeks afgerond. Reekstoets gedaan: ${entry.score[0]} van ${entry.score[1]} goed.` : `Reeks afgerond: alle ${info.total} dagen gelezen. Wat weet je er nog van?`),
+    entry && seriesTestButton(info.id),
+  )
+}
+
+function seriesTestView() {
+  const { id, from } = seriesTest
+  const entry = seriesTestEntry()
+  const questions = seriesQuestions(id)
+  const allAnswered = questions.every((_, i) => Number.isInteger(entry.answers[i]))
+  const back = () => ((view = from), render(true))
+  return el(
+    'section',
+    { class: 'week' },
+    entry.score && el('p', { class: 'week__score', role: 'status' }, 'Je score', el('strong', {}, `${entry.score[0]} van ${entry.score[1]}`)),
+    // Na het afronden staan de antwoorden vast.
+    quizView({ kicker: 'Reekstoets', title: seriesById(id).title }, questions, entry.answers, entry.score ? () => {} : answerSeries),
+    el(
+      'div',
+      { class: 'week__actions' },
+      el('button', { type: 'button', class: 'btn btn--ghost', onclick: back }, entry.score ? 'Terug' : 'Later verder'),
+      !entry.score && el('button', { type: 'button', class: 'btn', disabled: !allAnswered, onclick: finishSeriesTest }, 'Reekstoets afronden'),
+    ),
+  )
+}
+
+// Op het voortgangsscherm: alle reeksen met hun stand.
+function seriesList() {
+  if (series.length === 0) return null
+  return [
+    el('h3', {}, 'Leerreeksen'),
+    el(
+      'ul',
+      { class: 'serieslist', role: 'list' },
+      series.map((item) => {
+        const total = item.parts.length
+        const current = state.series.current?.id === item.id ? state.series.current : null
+        const startsToday = !current && edition?.series?.id === item.id && !progress().completed
+        const entry = state.series.done[item.id]
+        const running = current || startsToday
+        const status = running
+          ? current
+            ? `${current.part} van ${total} dagen gelezen`
+            : 'Begint vandaag'
+          : entry
+            ? `Afgerond op ${formatShortDate(entry.day)}${entry.score ? ` · toets ${entry.score[0]} van ${entry.score[1]}` : ''}`
+            : 'Nog niet begonnen'
+        return el(
+          'li',
+          { class: running ? 'is-running' : entry ? 'is-done' : '' },
+          el('span', { class: 'serieslist__title' }, item.title),
+          el('span', { class: 'serieslist__status' }, status),
+          !running && entry && seriesTestButton(item.id),
+        )
+      }),
+    ),
+    el('p', { class: 'progress__note' }, 'Een reeks start vanzelf, binnen je gekozen onderwerpen, en gaat verder zodra je de editie van die dag afrondt.'),
+  ]
+}
+
 const MILESTONES = [7, 30, 100] // dagen op rij
 
 // De laatste weekquizzen, nieuwste eerst.
@@ -1411,6 +1656,7 @@ function progressView() {
           : el('li', {}, `${goal} dagen op rij: nog ${goal - streak} ${goal - streak === 1 ? 'dag' : 'dagen'}`),
       ),
     ),
+    seriesList(),
     weekScores(),
     el('p', { class: 'progress__note' }, 'De app houdt dit bij sinds deze versie; eerdere quizscores zijn niet bewaard. Alles staat alleen in je browser.'),
     el('button', { type: 'button', class: 'btn', onclick: () => ((view = 'edition'), render(true)) }, 'Terug naar de editie'),
@@ -1613,7 +1859,7 @@ function errorView() {
         ? el(
             'div',
             { class: 'error__wipe' },
-            el('p', {}, 'Hiermee verdwijnen je dagreeks, voortgang, weekscores en bewaarde kaarten van dit apparaat. Dat kan niet ongedaan worden gemaakt.'),
+            el('p', {}, 'Hiermee verdwijnen je dagreeks, voortgang, weekscores, leerreeksen en bewaarde kaarten van dit apparaat. Dat kan niet ongedaan worden gemaakt.'),
             el('button', { type: 'button', class: 'btn', onclick: wipe }, 'Ja, wis mijn gegevens'),
             el('button', { type: 'button', class: 'btn btn--ghost', onclick: () => ((fatal.confirmWipe = false), render()) }, 'Annuleren'),
           )
@@ -1651,6 +1897,7 @@ function render(toTop = false) {
     else if (view === 'topics') content = [topicsView()]
     else if (view === 'progress') content = [progressView()]
     else if (view === 'week' && thisWeek()) content = [weekView()]
+    else if (view === 'seriestest' && seriesTestEntry()) content = [seriesTestView()]
     else if (fatal) content = [errorView()]
     else if (!edition) content = [el('p', { class: 'loading' }, 'Editie laden…')]
     else content = editionView()
@@ -1687,7 +1934,7 @@ async function start() {
     // verdieping aan de beurt zijn, zodat de editie gelijk blijft als je de app opnieuw opent.
     const patch = {}
     if (progress().reviews === null) patch.reviews = pickReviews(state.log, today)
-    if (!progress().picks) patch.picks = pickContent(today, state.topics)
+    if (!progress().picks) patch.picks = pickContent(today, state.topics, state.series)
     if (progress().short == null) patch.short = state.length === 'short'
     if (Object.keys(patch).length > 0) {
       state = { ...state, progress: { [today]: { ...progress(), ...patch } } }

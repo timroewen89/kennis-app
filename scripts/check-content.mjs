@@ -1,6 +1,7 @@
 // Controleert de eigen inhoud op vormfouten. Draai met: node scripts/check-content.mjs
 import { deepdives } from '../content/deepdives.js'
 import { facts } from '../content/facts.js'
+import { series } from '../content/series.js'
 import { TOPICS } from '../content/topics.js'
 
 const MIN_PER_TOPIC = 3 // zodat een thema niet na een paar dagen in herhaling valt
@@ -59,12 +60,37 @@ for (const item of deepdives) {
   })
 }
 
+// Leerreeksen: elk deel is een bestaande verdieping, en een verdieping hoort bij hooguit één reeks.
+const SERIES_PARTS = 5
+const deepdiveIds = new Set(deepdives.map((item) => item.id))
+const usedIn = new Map()
+const seriesIds = new Set()
+for (const item of series) {
+  const fail = (message) => problems.push(`reeks "${item.id ?? item.title}": ${message}`)
+  if (!/^[a-z0-9-]{1,60}$/.test(item.id ?? '')) fail('id ontbreekt of bevat andere tekens dan kleine letters, cijfers en streepjes')
+  if (seriesIds.has(item.id)) fail('id komt twee keer voor')
+  seriesIds.add(item.id)
+  if (!topicIds.has(item.topic)) fail(`onbekend thema "${item.topic}"`)
+  if (!item.title?.trim()) fail('heeft geen titel')
+  if (!item.intro?.trim()) fail('heeft geen inleiding')
+  if (!Array.isArray(item.parts) || item.parts.length !== SERIES_PARTS) {
+    fail(`heeft geen ${SERIES_PARTS} delen`)
+    continue
+  }
+  if (new Set(item.parts).size !== item.parts.length) fail('noemt een verdieping twee keer')
+  for (const part of item.parts) {
+    if (!deepdiveIds.has(part)) fail(`deel "${part}" bestaat niet in content/deepdives.js`)
+    else if (usedIn.has(part) && usedIn.get(part) !== item.id) fail(`deel "${part}" zit ook al in reeks "${usedIn.get(part)}"`)
+    usedIn.set(part, item.id)
+  }
+}
+
 if (problems.length > 0) {
   for (const problem of problems) console.error(`✗ ${problem}`)
   process.exit(1)
 }
 
-console.log(`✓ ${facts.length} weetjes en ${deepdives.length} verdiepingen in orde\n`)
+console.log(`✓ ${facts.length} weetjes, ${deepdives.length} verdiepingen en ${series.length} leerreeksen in orde (${deepdives.length - usedIn.size} verdiepingen los)\n`)
 console.log('Per thema (weetjes / verdiepingen):')
 for (const topic of TOPICS) {
   const count = (list) => list.filter((item) => item.topic === topic.id).length

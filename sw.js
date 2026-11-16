@@ -3,8 +3,8 @@
 // Let op: alle projecten onder hetzelfde GitHub Pages-adres delen één opslag. Daarom blijft deze
 // service worker strikt binnen zijn eigen cache en ruimt hij alleen zijn eigen oude versies op.
 const PREFIX = 'kennis-'
-const CACHE = `${PREFIX}v6`
-const SHELL = ['./', 'styles.css', 'app.js', 'content/topics.js', 'content/facts.js', 'content/deepdives.js', 'manifest.webmanifest', 'icons/icon.svg']
+const CACHE = `${PREFIX}v7`
+const SHELL = ['./', 'styles.css', 'app.js', 'content/topics.js', 'content/facts.js', 'content/deepdives.js', 'content/series.js', 'manifest.webmanifest', 'icons/icon.svg']
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

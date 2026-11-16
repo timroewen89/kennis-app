@@ -59,8 +59,10 @@ const { SHOTS: out } = require('./lib.cjs')
   console.log('== Volgende dagen volgen de keuze')
   const seen = []
   for (let d = 1; d <= 7; d++) { await open(d); const x = await picks(); seen.push(x); if (d === 1) await finishDay() }
-  ok('7 dagen alleen Nederland', seen.every((x) => topicOf(x.fact, facts) === 'nederland' && topicOf(x.deepdive, deepdives) === 'nederland'), seen.map((x) => x.fact).join(', '))
-  ok('elke dag een ander weetje; verdieping wisselt', new Set(seen.map((x) => x.fact)).size === 7 && new Set(seen.map((x) => x.deepdive)).size === 7, seen.map((x) => x.deepdive).join(', '))
+  ok('7 dagen alleen weetjes over Nederland, elke dag een ander', seen.every((x) => topicOf(x.fact, facts) === 'nederland') && new Set(seen.map((x) => x.fact)).size === 7, seen.map((x) => x.fact).join(', '))
+  // De leerreeks over de natuur liep al: die maak je eerst af, ook nu Natuur uit staat. Dag 1 is
+  // afgerond, de dagen erna niet, dus daar wacht het volgende deel.
+  ok('de lopende leerreeks loopt door en wacht op een afgeronde dag', seen.every((x) => x.series?.id === 'natuur-en-geschiedenis') && seen.map((x) => x.series.part).join('') === '1222222' && seen[0].deepdive === 'aardbeving-lissabon' && seen[6].deepdive === 'jaar-zonder-zomer', seen.map((x) => `${x.deepdive}/${x.series?.part}`).join(', '))
   await p.locator('#toggle-topics').tap()
   for (const name of ['Wereldgeschiedenis', 'Wetenschap & techniek', 'Natuur & aarde', 'Taal & cultuur']) await p.locator('.topic', { hasText: name }).locator('input').check()
   ok('alles weer aan = geen filter', (await state()).topics === null)

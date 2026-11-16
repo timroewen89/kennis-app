@@ -11,6 +11,13 @@ alinea als kop en de titel van de verdieping erboven. Elke stap kun je los bewar
 Het eindscherm sluit af met **Vandaag geleerd**: het historische feit, het weetje en de verdieping
 met haar vier kernzinnen, in een paar regels onder elkaar.
 
+**Leerreeksen** bouwen kennis op over vijf dagen: vijf verdiepingen die op elkaar aansluiten, één per
+dag. De app start een reeks vanzelf, binnen je gekozen onderwerpen. Een reeks wacht op je: het
+volgende deel komt pas als je de editie van die dag hebt afgerond, ook als je een dag overslaat. Na
+het vijfde deel kun je een **reekstoets** doen (vijf vragen, één per dag; vrijwillig). Daarna volgen
+twee dagen met een losse verdieping en dan de volgende reeks. Zijn alle reeksen gedaan, dan komt de
+oudste na zestig dagen terug. Op het voortgangsscherm zie je per reeks hoe ver je bent.
+
 Het weetje en de geschiedeniskaart beginnen met een vraag: **eerst raden, dan lezen**. Je kiest een
 antwoord of "Geen idee", en dan draait de kaart om.
 
@@ -47,7 +54,7 @@ op de kaart zelf en in de ruimte eronder.
 Op een computer zijn er knoppen en werken de pijltjestoetsen.
 
 De app bestaat uit `index.html`, `styles.css` en `app.js`, zonder bouwstap. Geen account, geen betaalde diensten;
-dagreeks, voortgang, weekscores, bewaarde kaarten, gekozen onderwerpen en de vragen voor de herhaling
+dagreeks, voortgang, weekscores, leerreeksen, bewaarde kaarten, gekozen onderwerpen en de vragen voor de herhaling
 staan lokaal in je browser.
 
 ## Bekijken via GitHub Pages
@@ -82,7 +89,7 @@ winter, een uur later in de zomer) en zet het terug in de repo; Pages publiceert
 | Kort nieuws | NOS binnenland en buitenland, RTV Drenthe | Vijf koppen met link, zonder samenvatting; uit hetzelfde `news.json` |
 | Geschiedenis en tijdlijn | Engelse Wikipedia, On this day (vertaald) | Rechtstreeks vanuit de app; de Nederlandse variant van deze API bestaat niet |
 | Weetje | `content/facts.js` (nl) | Elke dag het volgende uit de lijst, binnen je gekozen onderwerpen |
-| Verdieping | `content/deepdives.js` (nl) | Elke dag de volgende uit de lijst, binnen je gekozen onderwerpen |
+| Verdieping | `content/deepdives.js` (nl), `content/series.js` | Het volgende deel van de lopende leerreeks, of een losse verdieping binnen je gekozen onderwerpen |
 | Mini-quiz | De kaarten van vandaag en van eerdere dagen | Twee vragen over de verdieping, drie herhalingsvragen |
 
 Is een bron onbereikbaar, dan meldt de app dat en is de rest van de editie gewoon compleet.
@@ -136,6 +143,23 @@ Een kernzin is een volledige bewering van hooguit 72 tekens, zonder punt aan het
 wat in de eigen alinea staat. Houdt de alinea een slag om de arm ("geldt als", "naar schatting"), dan de
 kernzin ook. De 144 kernzinnen zijn naast hun alinea gelegd door een onafhankelijke controle.
 
+### Een leerreeks toevoegen
+
+De reeksen staan in `content/series.js`. Een reeks verwijst naar vijf bestaande verdiepingen:
+
+```js
+{
+  id: 'korte-unieke-naam', // kleine letters, cijfers en streepjes
+  topic: 'natuur', // de reeks start alleen als dit thema bij de gekozen onderwerpen hoort
+  title: 'De titel van de reeks',
+  intro: 'Eén zin die op de eerste dag boven de verdieping staat.',
+  parts: ['id-van-verdieping-1', 'id-2', 'id-3', 'id-4', 'id-5'], // in leesvolgorde
+},
+```
+
+Een verdieping hoort bij hooguit één reeks. Verdiepingen buiten de reeksen (nu elf) komen op de losse
+dagen tussen twee reeksen. De reekstoets gebruikt van elk deel de eerste vraag (`question`).
+
 De lijsten lopen rond (nu 65 weetjes en 36 verdiepingen) en wisselen de thema's af; de app husselt
 de antwoorden per dag. Voeg je een item toe, dan schuift de volgorde voor de dagen erna op.
 
@@ -154,6 +178,7 @@ vormfouten en laat zien hoeveel items elk thema heeft.
 | `styles.css` | De opmaak: één donker ontwerp; de kleuren staan bovenin als variabelen |
 | `app.js` | De hele werking: schermen, raden, tijdlijn, herhaling, onderwerpen, voortgang, dagreeks, bewaren, quiz |
 | `content/facts.js`, `content/deepdives.js` | Eigen weetjes en verdiepingen, met thema, bron en quizvraag |
+| `content/series.js` | Leerreeksen: vijf verdiepingen die op elkaar aansluiten |
 | `content/topics.js` | De thema's waaruit je kunt kiezen |
 | `news.json` | De nieuwspunten van vandaag (automatisch ververst) |
 | `scripts/fetch-news.mjs` | Haalt de RSS-feeds op; de lijst met feeds staat bovenin |
@@ -216,7 +241,7 @@ Bij elke wijziging op `main` draait de workflow `.github/workflows/controle.yml`
 
 - **Inhoud** (enkele seconden): zijn de inhoudsbestanden en de code geldig, en klopt de vorm van elk
   weetje en elke verdieping?
-- **Browser** (een minuut of tien): de hele app in een nagebootste telefoon. Zestien reeksen in
+- **Browser** (een minuut of tien): de hele app in een nagebootste telefoon. Zeventien testreeksen in
   `tests/browser/`, onder meer een editie over meerdere dagen, vegen, tijdlijn, weekquiz, instellingen,
   gebruik zonder verbinding, een hele editie met alleen het toetsenbord en een toegankelijkheidscontrole.
 
