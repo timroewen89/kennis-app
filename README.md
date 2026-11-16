@@ -20,6 +20,10 @@ edities die je eerder hebt afgerond.
 - Heb je een vraag twee keer achter elkaar goed, of is hij ouder dan 45 dagen, dan verdwijnt hij uit de herhaling.
 - De eerste dagen valt er nog niets te herhalen; dan vullen de vragen van vandaag de quiz aan.
 
+Op zondag is er na de editie een **weekquiz**: tien vragen uit de edities die je in de afgelopen zeven
+dagen hebt afgerond, met een weekscore. De antwoorden tellen mee voor de herhaling. Heb je die week
+te weinig gelezen, dan is er geen weekquiz.
+
 Tik op het vlammetje met je dagreeks voor je **voortgang**: je reeks, het aantal afgeronde edities,
 je gemiddelde quizscore, een kalender van de laatste vijf weken en mijlpalen bij 7, 30 en 100 dagen
 op rij. Er zijn geen punten of ranglijsten.
@@ -29,11 +33,13 @@ techniek, Natuur & aarde en Taal & cultuur. De keuze bepaalt welk weetje en welk
 krijgt. Een wijziging geldt meteen als je de editie van vandaag nog niet hebt afgerond, anders vanaf
 morgen.
 
-Bladeren doe je door te vegen: naar links voor de volgende kaart, naar rechts voor de vorige.
+Bladeren doe je door te vegen: naar links voor de volgende kaart, naar rechts voor de vorige. Dat kan
+op de kaart zelf en in de ruimte eronder.
 Op een computer zijn er knoppen en werken de pijltjestoetsen.
 
 De app is één `index.html` zonder bouwstap. Geen account, geen betaalde diensten;
-dagreeks, bewaarde kaarten, gekozen onderwerpen en de vragen voor de herhaling staan lokaal in je browser.
+dagreeks, voortgang, weekscores, bewaarde kaarten, gekozen onderwerpen en de vragen voor de herhaling
+staan lokaal in je browser.
 
 ## Bekijken via GitHub Pages
 

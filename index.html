@@ -337,6 +337,54 @@ button:disabled {
   font-weight: 400;
 }
 
+/* Weekquiz op zondag. */
+.week__score {
+  margin: 0 0 1rem;
+  padding: 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  border-radius: 1rem;
+  text-align: center;
+}
+.week__score strong {
+  display: block;
+  font-family: var(--serif);
+  font-size: 2rem;
+  line-height: 1.2;
+}
+.week__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-top: 1.25rem;
+}
+.done__week {
+  margin: 0 0 1.5rem;
+  padding: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+}
+.done__week p {
+  margin: 0 0 0.8rem;
+  color: var(--muted);
+}
+.done__week p:last-child {
+  margin-bottom: 0;
+}
+.weekscores {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.weekscores li {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-top: 1px solid var(--line);
+}
+
 /* Voortgang: cijfers, kalender en mijlpalen. */
 .progress h2 {
   margin: 0 0 1rem;
@@ -573,8 +621,12 @@ button:disabled {
 main {
   overflow-x: clip; /* een wegschuivende kaart mag de pagina niet breder maken */
 }
-.swipe {
+/* Het veegvlak vult de ruimte tussen de voortgangsbalk en de onderrand. */
+.stage {
+  flex: 1;
   touch-action: pan-y;
+}
+.swipe {
   will-change: transform;
 }
 .swipe.is-settling {
@@ -831,6 +883,8 @@ function loadState() {
     saved: Array.isArray(saved.saved) ? saved.saved : [],
     // Vragen uit edities die je hebt afgerond; hieruit komt de herhaling in de quiz.
     log: Array.isArray(saved.log) ? saved.log : [],
+    // Weekquizzen, per zondag: { items, answers, done, score: [goed, totaal] }.
+    weeks: saved.weeks && typeof saved.weeks === 'object' ? saved.weeks : {},
     // De gekozen thema's (lijst van id's), of null als alle thema's aan staan.
     topics: Array.isArray(saved.topics) ? saved.topics : null,
   }
@@ -1126,6 +1180,35 @@ function pickReviews(log, day) {
   return picked.map(({ id, day, type, question }) => ({ id, day, type, question }))
 }
 
+// ---------- Weekquiz ----------
+// Op zondag: tien vragen uit de edities die je de afgelopen zeven dagen hebt afgerond.
+const WEEK_QUIZ_SIZE = 10
+const WEEK_QUIZ_MIN = 4 // met minder vragen is er geen weekquiz
+const WEEKS_KEPT = 12
+const isSunday = (day) => toDate(day).getDay() === 0
+
+// Om de beurt één vraag per dag, zodat de hele week aan bod komt; per dag eerst wat je fout had.
+function pickWeekItems(log, day) {
+  const now = dayNumber(day)
+  const byDay = new Map()
+  for (const item of log) {
+    const age = now - dayNumber(item.day)
+    if (age < 0 || age > 6) continue
+    if (!byDay.has(item.day)) byDay.set(item.day, [])
+    byDay.get(item.day).push(item)
+  }
+  const groups = [...byDay.keys()]
+    .sort()
+    .map((key) => byDay.get(key).sort((a, b) => Number(b.wrong) - Number(a.wrong) || a.id.localeCompare(b.id)))
+  const picked = []
+  for (let round = 0; picked.length < WEEK_QUIZ_SIZE && groups.some((group) => group[round]); round++) {
+    for (const group of groups) {
+      if (group[round] && picked.length < WEEK_QUIZ_SIZE) picked.push(group[round])
+    }
+  }
+  return picked.map(({ id, day: itemDay, type, question }) => ({ id, day: itemDay, type, question }))
+}
+
 // Verwerkt de uitslag van herhalingsvragen ({ id, correct }) in de lijst met onthouden vragen.
 function applyReviews(log, results, day) {
   return log.map((item) => {
@@ -1271,7 +1354,7 @@ const today = dayKey()
 let state = loadState()
 let edition = null
 let sources = null // nieuws, geschiedenis en tijdlijn van vandaag
-let view = 'edition' // 'edition' | 'saved' | 'topics' | 'progress'
+let view = 'edition' // 'edition' | 'saved' | 'topics' | 'progress' | 'week'
 let navigate = {} // wat 'vorige' en 'volgende' op dit moment doen (voor de pijltjestoetsen)
 let flipped = null // id van de kaart die net is omgedraaid (voor de animatie)
 let timelinePick = { id: null, order: [] } // welke gebeurtenissen je al hebt aangetikt, in volgorde
@@ -1591,11 +1674,18 @@ function cardView(card, { day = today, savedOn = null, choice = null } = {}) {
   )
 }
 
-function quizView(card, questions, answers) {
+function answerDaily(qi, oi) {
+  const next = [...progress().answers]
+  next[qi] = oi
+  setProgress({ answers: next })
+}
+
+// onAnswer(vraagnummer, keuze) legt een antwoord vast; standaard is dat de dagquiz.
+function quizView(card, questions, answers, onAnswer = answerDaily) {
   return el(
     'article',
     { class: 'card card--quiz' },
-    el('header', { class: 'card__head' }, el('span', { class: 'card__kicker' }, LABELS.quiz)),
+    el('header', { class: 'card__head' }, el('span', { class: 'card__kicker' }, card.kicker ?? LABELS.quiz)),
     el('h2', { class: 'card__title' }, card.title),
     questions.map(({ label, question }, qi) => {
       const chosen = answers[qi]
@@ -1618,11 +1708,7 @@ function quizView(card, questions, answers) {
                 disabled: answered,
                 'aria-pressed': String(chosen === oi),
                 // Een antwoord staat vast zodra je het kiest.
-                onclick: () => {
-                  const next = [...answers]
-                  next[qi] = oi
-                  setProgress({ answers: next })
-                },
+                onclick: () => onAnswer(qi, oi),
               },
               option + mark,
             )
@@ -1656,6 +1742,7 @@ function doneView(questions, answers) {
       stat('Geraden', `${guessed.right} van ${guessed.total}`),
       stat('Quiz', `${score} van ${questions.length}`),
     ),
+    isSunday(today) && weekBlock(),
     el(
       'div',
       { class: 'done__actions' },
@@ -1758,7 +1845,108 @@ function topicsView() {
   )
 }
 
+const thisWeek = () => state.weeks[today] ?? null
+
+function openWeekQuiz() {
+  view = 'week'
+  if (thisWeek()) return render(true)
+  // De vragen één keer kiezen en vastleggen, zodat de quiz gelijk blijft als je later terugkomt.
+  update((s) => ({ ...s, weeks: { ...s.weeks, [today]: { items: pickWeekItems(s.log, today), answers: [], done: false, score: null } } }), true)
+}
+function weekQuestions() {
+  const weekday = (day) => (day === today ? 'vandaag' : new Intl.DateTimeFormat('nl-NL', { weekday: 'long' }).format(toDate(day)))
+  return thisWeek().items.map((item, i) => {
+    const name = TYPE_NAMES[item.type]
+    return {
+      label: `${name[0].toUpperCase()}${name.slice(1)} van ${weekday(item.day)}`,
+      question: present(item.question, today, 20 + i),
+      reviewId: item.id,
+    }
+  })
+}
+function answerWeek(qi, oi) {
+  update((s) => {
+    const week = s.weeks[today]
+    const answers = [...week.answers]
+    answers[qi] = oi
+    return { ...s, weeks: { ...s.weeks, [today]: { ...week, answers } } }
+  })
+}
+function finishWeek() {
+  const questions = weekQuestions()
+  const { answers } = thisWeek()
+  const results = questions.map((entry, i) => ({ id: entry.reviewId, correct: answers[i] === entry.question.answer }))
+  update((s) => {
+    const weeks = { ...s.weeks, [today]: { ...s.weeks[today], done: true, score: [results.filter((r) => r.correct).length, results.length] } }
+    // Alleen de laatste weken bewaren.
+    for (const key of Object.keys(weeks).sort().slice(0, -WEEKS_KEPT)) delete weeks[key]
+    // De antwoorden tellen ook mee voor de dagelijkse herhaling.
+    return { ...s, weeks, log: pruneLog(applyReviews(s.log, results, today), today) }
+  }, true)
+}
+
+// Het blok op het klaar-scherm van zondag.
+function weekBlock() {
+  const week = thisWeek()
+  const available = week ? week.items.length : pickWeekItems(state.log, today).length
+  if (week?.done) {
+    return el(
+      'div',
+      { class: 'done__week' },
+      el('p', {}, `Weekquiz gedaan: ${week.score[0]} van ${week.score[1]} goed.`),
+      el('button', { type: 'button', class: 'btn btn--ghost', onclick: openWeekQuiz }, 'Weekquiz bekijken'),
+    )
+  }
+  if (available < WEEK_QUIZ_MIN) {
+    return el('div', { class: 'done__week' }, el('p', {}, 'Voor de weekquiz heb je deze week nog te weinig gelezen. Volgende zondag is er weer een.'))
+  }
+  return el(
+    'div',
+    { class: 'done__week' },
+    el('p', {}, 'Het is zondag: wat weet je nog van deze week?'),
+    el(
+      'button',
+      { type: 'button', class: 'btn', onclick: openWeekQuiz },
+      week ? 'Weekquiz afmaken' : `Weekquiz: ${available} vragen over deze week`,
+    ),
+  )
+}
+
+function weekView() {
+  const week = thisWeek()
+  const questions = weekQuestions()
+  const allAnswered = questions.every((_, i) => Number.isInteger(week.answers[i]))
+  const back = () => ((view = 'edition'), render(true))
+  return el(
+    'section',
+    { class: 'week' },
+    week.done &&
+      el('p', { class: 'week__score', role: 'status' }, 'Je weekscore', el('strong', {}, `${week.score[0]} van ${week.score[1]}`)),
+    quizView({ kicker: 'Weekquiz', title: 'Wat weet je nog van deze week?' }, questions, week.answers, answerWeek),
+    el(
+      'div',
+      { class: 'week__actions' },
+      el('button', { type: 'button', class: 'btn btn--ghost', onclick: back }, week.done ? 'Terug' : 'Later verder'),
+      !week.done && el('button', { type: 'button', class: 'btn', disabled: !allAnswered, onclick: finishWeek }, 'Weekquiz afronden'),
+    ),
+  )
+}
+
 const MILESTONES = [7, 30, 100] // dagen op rij
+
+// De laatste weekquizzen, nieuwste eerst.
+function weekScores() {
+  const done = Object.entries(state.weeks).filter(([, week]) => week.done).sort(([a], [b]) => b.localeCompare(a)).slice(0, 4)
+  if (done.length === 0) return null
+  return [
+    el('h3', {}, 'Weekquizzen'),
+    el(
+      'ul',
+      { class: 'weekscores' },
+      done.map(([day, week]) => el('li', {}, el('span', {}, `Zondag ${formatShortDate(day)}`), el('strong', {}, `${week.score[0]} van ${week.score[1]}`))),
+    ),
+  ]
+}
 
 // Voortgang: wat je hebt afgerond, zonder punten of ranglijsten.
 function progressView() {
@@ -1815,14 +2003,16 @@ function progressView() {
           : el('li', {}, `${goal} dagen op rij: nog ${goal - streak} ${goal - streak === 1 ? 'dag' : 'dagen'}`),
       ),
     ),
+    weekScores(),
     el('p', { class: 'progress__note' }, 'De app houdt dit bij sinds deze versie; eerdere quizscores zijn niet bewaard. Alles staat alleen in je browser.'),
     el('button', { type: 'button', class: 'btn', onclick: () => ((view = 'edition'), render(true)) }, 'Terug naar de editie'),
   )
 }
 
-// Maakt een kaart veegbaar: naar links = volgende, naar rechts = vorige.
+// Maakt een kaart veegbaar: naar links = volgende, naar rechts = vorige. Je kunt de veeg overal
+// in 'area' beginnen (ook in de lege ruimte onder een korte kaart); 'node' is de kaart die meebeweegt.
 // onNext/onPrev zijn null als die richting (nog) niet mag; de kaart veert dan terug.
-function makeSwipeable(node, { onNext, onPrev }) {
+function makeSwipeable(area, node, { onNext, onPrev }) {
   let start = null
   let dragging = false
   let dx = 0
@@ -1836,14 +2026,14 @@ function makeSwipeable(node, { onNext, onPrev }) {
   }
 
   node.classList.add('swipe')
-  node.addEventListener('pointerdown', (event) => {
+  area.addEventListener('pointerdown', (event) => {
     // Met de muis blijft slepen tekst selecteren; daar zijn de knoppen en pijltjestoetsen voor.
     if (event.pointerType === 'mouse' || !event.isPrimary) return
     start = { x: event.clientX, y: event.clientY, time: event.timeStamp }
     dragging = false
     dx = 0
   })
-  node.addEventListener('pointermove', (event) => {
+  area.addEventListener('pointermove', (event) => {
     if (!start) return
     dx = event.clientX - start.x
     const dy = event.clientY - start.y
@@ -1852,7 +2042,7 @@ function makeSwipeable(node, { onNext, onPrev }) {
       else if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy) * 1.2) {
         dragging = true
         node.classList.remove('is-settling', 'enter-left', 'enter-right', 'flip-in')
-        node.setPointerCapture(event.pointerId)
+        area.setPointerCapture(event.pointerId)
       }
       if (!dragging) return
     }
@@ -1878,14 +2068,14 @@ function makeSwipeable(node, { onNext, onPrev }) {
       settle('', '')
     }
   }
-  node.addEventListener('pointerup', end)
-  node.addEventListener('pointercancel', end)
+  area.addEventListener('pointerup', end)
+  area.addEventListener('pointercancel', end)
   // Tijdens een horizontale veeg de aanraking zelf afhandelen. Anders ziet de browser een snelle
   // veeg als 'uitrollen' en slikt hij de eerstvolgende tik in (bijvoorbeeld op een antwoord).
-  node.addEventListener('touchmove', (event) => dragging && event.cancelable && event.preventDefault(), { passive: false })
+  area.addEventListener('touchmove', (event) => dragging && event.cancelable && event.preventDefault(), { passive: false })
   // Na een veeg mag de knop onder je vinger niet ook nog afgaan.
-  node.addEventListener('click', (event) => suppressClick && (event.stopPropagation(), event.preventDefault()), true)
-  return node
+  area.addEventListener('click', (event) => suppressClick && (event.stopPropagation(), event.preventDefault()), true)
+  return area
 }
 
 // Vanaf welke kant de volgende kaart het beeld in schuift ('left', 'right' of null).
@@ -1922,9 +2112,9 @@ function editionView() {
         : needsGuess
           ? guessView(card)
           : cardView(card, { choice: card.guess ? guesses[card.id] : null })
-  const cardNode = makeSwipeable(content, { onNext, onPrev })
-  if (flipped === card.id) cardNode.classList.add('flip-in')
-  else if (enterFrom) cardNode.classList.add(`enter-${enterFrom}`)
+  const stage = makeSwipeable(el('div', { class: 'stage' }, content), content, { onNext, onPrev })
+  if (flipped === card.id) content.classList.add('flip-in')
+  else if (enterFrom) content.classList.add(`enter-${enterFrom}`)
   flipped = null
   enterFrom = null
   const hint = needsGuess ? (card.type === 'timeline' ? ' · zet ze eerst op volgorde' : ' · kies eerst een antwoord') : index === 0 ? ' · veeg naar links voor de volgende' : null
@@ -1936,7 +2126,7 @@ function editionView() {
       cards.map((_, i) => el('li', { class: i < index ? 'is-done' : i === index ? 'is-current' : '' })),
     ),
     index === 0 && edition.notes.map((note) => el('p', { class: 'notice' }, note)),
-    cardNode,
+    stage,
     el(
       'nav',
       { class: 'pager' },
@@ -1970,6 +2160,7 @@ function render(toTop = false) {
   if (view === 'saved') content = [savedView()]
   else if (view === 'topics') content = [topicsView()]
   else if (view === 'progress') content = [progressView()]
+  else if (view === 'week' && thisWeek()) content = [weekView()]
   else if (!edition) content = [el('p', { class: 'loading' }, 'Editie laden…')]
   else content = editionView()
   main.replaceChildren(...content.flat().filter(Boolean))
