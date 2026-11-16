@@ -327,6 +327,38 @@ button:disabled {
   font-weight: 400;
 }
 
+/* Kort nieuws: een lijst koppen. */
+.brief {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.brief li {
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--line);
+}
+.brief__label {
+  display: block;
+  margin-bottom: 0.15rem;
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.brief a {
+  color: inherit;
+  font-family: var(--serif);
+  font-size: 1.12rem;
+  line-height: 1.3;
+  text-decoration: none;
+}
+.brief a:hover {
+  text-decoration: underline;
+}
+
 /* Onderwerpen kiezen. */
 .topics h2 {
   margin: 0 0 0.4rem;
@@ -674,7 +706,7 @@ function dayNumber(key) {
 
 // ---------- Opslag (alleen in deze browser; geen account, geen server) ----------
 const STATE_KEY = 'kennis:v1'
-const EDITION_KEY = 'kennis:edition:v8'
+const EDITION_KEY = 'kennis:edition:v9'
 const TRANSLATION_KEY = 'kennis:vertaling:v1'
 // Voortgang van vandaag. guesses: je gok per kaart (-1 = 'Geen idee'); answers: je quizantwoorden;
 // reviews: de herhalingsvragen die voor vandaag gekozen zijn (null = nog niet gekozen);
@@ -807,11 +839,12 @@ async function translateCard(card) {
 // Nieuws: news.json wordt dagelijks ververst door een GitHub Action (scripts/fetch-news.mjs),
 // omdat nieuwsfeeds niet rechtstreeks vanuit een browser opgehaald mogen worden.
 const NEWS_MAX_AGE_HOURS = 36
-const NEWS_MAX_ITEMS = 4 // NOS, RTV Drenthe, BBC News, The Guardian
+const NEWS_MAX_ITEMS = 6 // twee van NOS, twee van RTV Drenthe, BBC News en The Guardian
+const BRIEF_MAX_ITEMS = 5 // koppen op de kaart 'Kort nieuws'
 async function fetchNews() {
   const res = await fetch('news.json', { cache: 'no-cache' })
   if (!res.ok) throw new Error(`news.json gaf status ${res.status}`)
-  const { generatedAt, items } = await res.json()
+  const { generatedAt, items, brief } = await res.json()
   if (!Array.isArray(items) || items.length === 0) throw new Error('news.json is leeg')
   const age = (Date.now() - new Date(generatedAt).getTime()) / 3_600_000
   return {
@@ -825,6 +858,11 @@ async function fetchNews() {
       body: item.summary ? [String(item.summary)] : [],
       source: { name: String(item.source), url: safeUrl(item.url) },
     }))),
+    // Koppen voor de kaart 'Kort nieuws'; alleen wat een geldige link heeft.
+    brief: (Array.isArray(brief) ? brief : [])
+      .map((item) => ({ title: String(item.title), label: String(item.label ?? ''), source: String(item.source), url: safeUrl(item.url) }))
+      .filter((item) => item.title && item.url)
+      .slice(0, BRIEF_MAX_ITEMS),
   }
 }
 
@@ -1000,9 +1038,11 @@ async function getSources(day) {
   // Per onderdeel: het verse resultaat, anders wat vandaag al eerder is opgehaald (bijvoorbeeld
   // als je nu geen verbinding hebt), en pas als laatste de terugvalkaart.
   let news = FALLBACK_NEWS
+  let brief = []
   let newsNote = 'Het nieuws kon niet worden geladen.'
   if (newsResult.status === 'fulfilled') {
     news = newsResult.value.cards
+    brief = newsResult.value.brief
     newsNote = null
     if (newsResult.value.stale) {
       const when = new Intl.DateTimeFormat('nl-NL', { day: 'numeric', month: 'long' }).format(newsResult.value.stale)
@@ -1010,6 +1050,7 @@ async function getSources(day) {
     }
   } else if (cached?.newsOk) {
     news = cached.news
+    brief = cached.brief ?? []
     newsNote = cached.newsNote
   }
 
@@ -1032,6 +1073,7 @@ async function getSources(day) {
     day,
     notes,
     news,
+    brief,
     history,
     newsNote,
     newsOk: news !== FALLBACK_NEWS,
@@ -1054,7 +1096,7 @@ function pickContent(day, topics) {
 }
 
 // Stelt de editie samen uit de bronnen van vandaag en de gekozen eigen inhoud.
-function assembleEdition({ day, notes, news, history }, picks) {
+function assembleEdition({ day, notes, news, brief, history }, picks) {
   const fact = facts.find((item) => item.id === picks?.fact) ?? pickForDay(facts, day)
   const deepdive = deepdives.find((item) => item.id === picks?.deepdive) ?? pickForDay(deepdives, day)
   const toCard = ({ question, ...item }, type) => ({ ...item, id: `${type}-${item.id}`, type })
@@ -1063,6 +1105,8 @@ function assembleEdition({ day, notes, news, history }, picks) {
     notes,
     cards: [
       ...news,
+      // Vervalt als de koppen ontbreken (bijvoorbeeld bij een oudere news.json).
+      brief?.length > 0 && { id: `brief-${day}`, type: 'brief', items: brief },
       // 'guess' is de vraag op de voorkant van de kaart: eerst raden, dan lezen.
       { ...history.card, guess: history.question },
       history.timeline, // vervalt als Wikipedia onbereikbaar is of te weinig gebeurtenissen heeft
@@ -1084,6 +1128,7 @@ const LABELS = {
   timeline: 'Tijdlijn',
   fact: 'Weetje',
   deepdive: 'Verdieping',
+  brief: 'Kort nieuws',
   quiz: 'Mini-quiz',
 }
 
@@ -1232,6 +1277,28 @@ function finish() {
       progress: { [today]: { ...progressOf(s), index: total, completed: true } },
     }
   }, true)
+}
+
+// Kort nieuws: vijf koppen met een link naar het bericht, zonder samenvatting.
+function briefView(card) {
+  return el(
+    'article',
+    { class: 'card card--brief' },
+    el('header', { class: 'card__head' }, el('span', { class: 'card__kicker' }, LABELS.brief)),
+    el('h2', { class: 'card__title' }, 'Verder in het nieuws'),
+    el(
+      'ul',
+      { class: 'brief' },
+      card.items.map((item) =>
+        el(
+          'li',
+          {},
+          el('span', { class: 'brief__label' }, [item.label, item.source].filter(Boolean).join(' · ')),
+          el('a', { href: item.url, target: '_blank', rel: 'noopener noreferrer' }, `${item.title} ↗`),
+        ),
+      ),
+    ),
+  )
 }
 
 // De voorkant van een raadkaart: eerst een gok, dan pas de inhoud.
@@ -1660,8 +1727,10 @@ function editionView() {
   const content =
     card.type === 'quiz'
       ? quizView(card, questions, answers)
-      : card.type === 'timeline'
-        ? timelineView(card, guesses[card.id])
+      : card.type === 'brief'
+        ? briefView(card)
+        : card.type === 'timeline'
+          ? timelineView(card, guesses[card.id])
         : needsGuess
           ? guessView(card)
           : cardView(card, { choice: card.guess ? guesses[card.id] : null })

@@ -1,25 +1,25 @@
 {
-  "generatedAt": "2026-11-15T22:31:13.166Z",
+  "generatedAt": "2026-11-16T05:52:05.985Z",
   "items": [
     {
       "id": "nos-1",
       "source": "NOS",
       "lang": "nl",
       "label": null,
-      "title": "Veel te weinig hulpgoederen komen Gaza binnen, geeft nu ook het Israëlische leger toe",
-      "summary": "Slechts de helft van de afgesproken hoeveelheid hulpgoederen komt in Gaza terecht. Dat schrijft de Israëlische krant Haaretz op basis van opgevraagde data van het Israëlische leger.",
-      "url": "https://nos.nl/l/2639648",
-      "publishedAt": "2026-11-15T21:32:11.000Z"
+      "title": "Aantal incidenten met nepagenten weer fors toegenomen, babbeltrucs steeds slimmer",
+      "summary": "Het aantal incidenten met nepagenten blijft maar toenemen. De politie telde dit jaar tot nu toe ruim 14.000 incidenten, blijkt uit cijfers die de NOS opvroeg. Dat zijn nu al meer incidenten dan heel vorig jaar.",
+      "url": "https://nos.nl/l/2639662",
+      "publishedAt": "2026-11-16T05:00:02.000Z"
     },
     {
       "id": "rtvdrenthe-1",
       "source": "RTV Drenthe",
       "lang": "nl",
       "label": "Nieuws uit Drenthe",
-      "title": "Lodewijk Osse maakte van Assen de grootste Sinterklaasintocht: 'Ik kijk er naar uit'",
-      "summary": "Lodewijk Osse (75) zag 35 jaar geleden de Sinterklaasintocht in Assen en dacht dat moet anders. Op zijn manier blies hij de intocht in Assen nieuw leven in en niet zonder succes. Hij durft wel te stellen dat Assen de grootste intocht heeft.",
-      "url": "https://www.rtvdrenthe.nl/nieuws/18942801/lodewijk-osse-maakte-van-assen-de-grootste-sinterklaasintocht-ik-kijk-er-naar-uit",
-      "publishedAt": "2026-11-15T18:00:01.000Z"
+      "title": "Asser raadsleden gaan helpen met schoonpoetsen van struikelstenen",
+      "summary": "'Niet lullen maar poetsen', zei één van de raadsleden. En daar komt het dus wel op neer, met de belofte om één keer in het jaar zelf de mouwen op te stropen om de 420 herinneringsstenen schoon te maken.",
+      "url": "https://www.rtvdrenthe.nl/nieuws/18946095/asser-raadsleden-gaan-helpen-met-schoonpoetsen-van-struikelstenen",
+      "publishedAt": "2026-11-16T05:00:02.000Z"
     },
     {
       "id": "bbc-1",
@@ -40,6 +40,63 @@
       "summary": "After a month-long investigation it was concluded that Kundizeza’s story The Blue Fighter, which won the £10,000 Caine prize, was ‘human-written’",
       "url": "https://www.theguardian.com/books/2026/nov/12/zimbabwean-author-simbarashe-kundizeza-cleared-ai-caine-prize-winning-story",
       "publishedAt": "2026-11-12T13:14:38.000Z"
+    },
+    {
+      "id": "nos-2",
+      "source": "NOS",
+      "lang": "nl",
+      "label": null,
+      "title": "'Derde Amerikaanse vliegdekschip, USS Theodore Roosevelt, aangekomen in Golfregio'",
+      "summary": "Een derde Amerikaans vliegdekschip is aangekomen in de Golfregio. Dat melden de nieuwszender Al Jazeera en een journalist van de Amerikaanse nieuwswebsite Axios op basis van Amerikaanse ingewijden. Het Amerikaanse leger heeft de berichten nog niet bevestigd.",
+      "url": "https://nos.nl/l/2639661",
+      "publishedAt": "2026-11-16T04:16:48.000Z"
+    },
+    {
+      "id": "rtvdrenthe-2",
+      "source": "RTV Drenthe",
+      "lang": "nl",
+      "label": "Nieuws uit Drenthe",
+      "title": "Nepagenten blijven groeiend probleem, politie neemt uitzonderlijke maatregel",
+      "summary": "Vooral 70-plussers zijn het slachtoffer. De jongeren die zich aan de deur voordoen als agent nemen vaak geld en sieraden mee.",
+      "url": "https://www.rtvdrenthe.nl/nieuws/18945678/nepagenten-blijven-groeiend-probleem-politie-neemt-uitzonderlijke-maatregel",
+      "publishedAt": "2026-11-16T05:00:01.000Z"
+    }
+  ],
+  "brief": [
+    {
+      "id": "binnenland-1",
+      "source": "NOS",
+      "label": "Binnenland",
+      "title": "'Jamming' in luchtruim rond Schiphol: 'We zijn beide gps-systemen kwijt'",
+      "url": "https://nos.nl/l/2639642"
+    },
+    {
+      "id": "binnenland-2",
+      "source": "NOS",
+      "label": "Binnenland",
+      "title": "Ook Duitse overheden tegen kerncentrales in Eemshaven",
+      "url": "https://nos.nl/l/2639613"
+    },
+    {
+      "id": "buitenland-3",
+      "source": "NOS",
+      "label": "Buitenland",
+      "title": "Mexico’s eerste kartelbaas Félix Gallardo op 80-jarige leeftijd overleden",
+      "url": "https://nos.nl/l/2639660"
+    },
+    {
+      "id": "buitenland-4",
+      "source": "NOS",
+      "label": "Buitenland",
+      "title": "Vrouw van vermoorde Haïtiaanse president wil nu zelf president worden",
+      "url": "https://nos.nl/l/2639659"
+    },
+    {
+      "id": "drenthe-5",
+      "source": "RTV Drenthe",
+      "label": "Drenthe",
+      "title": "Lodewijk Osse maakte van Assen de grootste Sinterklaasintocht: 'Ik kijk er naar uit'",
+      "url": "https://www.rtvdrenthe.nl/nieuws/18942801/lodewijk-osse-maakte-van-assen-de-grootste-sinterklaasintocht-ik-kijk-er-naar-uit"
     }
   ]
 }

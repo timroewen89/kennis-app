@@ -1,8 +1,8 @@
 # Kennis
 
-Een dagelijkse kennisfeed tegen doomscrollen. Elke dag één eindige editie van 9 kaarten:
-4 nieuwspunten (landelijk, Drenthe, wereld), 1 "vandaag in de geschiedenis", 1 tijdlijn, 1 weetje,
-1 verdieping en een mini-quiz.
+Een dagelijkse kennisfeed tegen doomscrollen. Elke dag één eindige editie van 12 kaarten:
+6 nieuwskaarten (landelijk, Drenthe, wereld), 1 kaart "Kort nieuws" met vijf koppen, 1 "vandaag in de
+geschiedenis", 1 tijdlijn, 1 weetje, 1 verdieping en een mini-quiz.
 Daarna: klaar voor vandaag.
 
 Het weetje en de geschiedeniskaart beginnen met een vraag: **eerst raden, dan lezen**. Je kiest een
@@ -41,7 +41,7 @@ Op je telefoon kun je hem daarna via het browsermenu op je beginscherm zetten ("
 
 ## Nieuws dagelijks verversen
 
-`news.json` bevat de vier nieuwspunten, één per bron. De workflow `.github/workflows/nieuws.yml` ververst dat
+`news.json` bevat de zes nieuwskaarten en de vijf koppen voor "Kort nieuws". De workflow `.github/workflows/nieuws.yml` ververst dat
 bestand elke ochtend rond 05:00 en zet het terug in de repo; Pages publiceert het daarna vanzelf.
 
 - Geplande runs werken alleen vanaf de standaard-branch (`main`). De workflow moet dus op `main` staan.
@@ -52,7 +52,8 @@ bestand elke ochtend rond 05:00 en zet het terug in de repo; Pages publiceert he
 
 | Onderdeel | Bron | Hoe |
 | --- | --- | --- |
-| Nieuws | NOS, RTV Drenthe, BBC News (vertaald), The Guardian (vertaald) | `scripts/fetch-news.mjs` schrijft `news.json`; de feeds staan geen directe browser-aanroep toe |
+| Nieuws | NOS (2), RTV Drenthe (2), BBC News en The Guardian (vertaald) | `scripts/fetch-news.mjs` schrijft `news.json`; de feeds staan geen directe browser-aanroep toe |
+| Kort nieuws | NOS binnenland en buitenland, RTV Drenthe | Vijf koppen met link, zonder samenvatting; uit hetzelfde `news.json` |
 | Geschiedenis en tijdlijn | Engelse Wikipedia, On this day (vertaald) | Rechtstreeks vanuit de app; de Nederlandse variant van deze API bestaat niet |
 | Weetje | `content/facts.js` (nl) | Elke dag het volgende uit de lijst, binnen je gekozen onderwerpen |
 | Verdieping | `content/deepdives.js` (nl) | Elke dag de volgende uit de lijst, binnen je gekozen onderwerpen |
