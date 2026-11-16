@@ -186,6 +186,10 @@ Wat openstaat:
 - Zit er een fout in een inhoudsbestand (bijvoorbeeld een vergeten komma), dan toont de app
   "De inhoud kon niet worden geladen" met de naam van het bestand en de foutmelding.
 - Staat de app nog open van gisteren, dan laadt hij de editie van vandaag zodra je terugkomt.
+- Na een update zie je de nieuwe versie zodra je de app opnieuw opent of herlaadt. De app vraagt
+  bij elke keer openen aan de server of er iets nieuwers is, ook al zegt GitHub Pages dat een
+  bestand tien minuten bewaard mag worden. Alleen de allereerste keer na een wijziging van `sw.js`
+  zelf kan het nodig zijn de app twee keer te openen.
 - De pagina mag alleen eigen bestanden laden en alleen verbinding maken met Wikipedia en de
   vertaaldienst. Voeg je een nieuwe bron toe die vanuit de app wordt opgehaald, zet het adres dan ook
   in de regel `Content-Security-Policy` bovenin `index.html`.
@@ -196,7 +200,7 @@ Bij elke wijziging op `main` draait de workflow `.github/workflows/controle.yml`
 
 - **Inhoud** (enkele seconden): zijn de inhoudsbestanden en de code geldig, en klopt de vorm van elk
   weetje en elke verdieping?
-- **Browser** (een minuut of tien): de hele app in een nagebootste telefoon. Dertien reeksen in
+- **Browser** (een minuut of tien): de hele app in een nagebootste telefoon. Veertien reeksen in
   `tests/browser/`, onder meer een editie over meerdere dagen, vegen, tijdlijn, weekquiz, instellingen,
   gebruik zonder verbinding, een hele editie met alleen het toetsenbord en een toegankelijkheidscontrole.
 
