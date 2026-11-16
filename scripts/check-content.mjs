@@ -44,6 +44,21 @@ function check(list, name, minParagraphs, questionKeys) {
 check(facts, 'weetje', 1, ['question'])
 check(deepdives, 'verdieping', 3, ['question', 'question2'])
 
+// Elke alinea van een verdieping is een eigen kaart, met een kernzin ('heads') als kop.
+const HEAD_MAX = 72 // tekens; langer past niet als kop op een smal scherm
+for (const item of deepdives) {
+  const fail = (message) => problems.push(`verdieping "${item.id}": ${message}`)
+  if (!Array.isArray(item.heads) || item.heads.length !== item.body?.length) {
+    fail(`heeft niet voor elke alinea een kernzin (${item.heads?.length ?? 0} kernzinnen, ${item.body?.length ?? 0} alinea's)`)
+    continue
+  }
+  item.heads.forEach((head, i) => {
+    if (typeof head !== 'string' || !head.trim()) fail(`kernzin ${i + 1} is leeg`)
+    else if (head.length > HEAD_MAX) fail(`kernzin ${i + 1} is ${head.length} tekens (hooguit ${HEAD_MAX})`)
+    else if (/[.!?]$/.test(head)) fail(`kernzin ${i + 1} eindigt op een leesteken; een kop heeft dat niet`)
+  })
+}
+
 if (problems.length > 0) {
   for (const problem of problems) console.error(`✗ ${problem}`)
   process.exit(1)

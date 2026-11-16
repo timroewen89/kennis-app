@@ -63,7 +63,7 @@ async function phone(browser, { wiki = true, translate = true, news = true } = {
   }
   // Veegt door tot de kaart met deze selector in beeld is.
   const swipeTo = async (selector) => {
-    for (let i = 0; i < 16; i++) {
+    for (let i = 0; i < 20; i++) {
       if (await page.locator(selector).count()) return
       await swipe()
     }

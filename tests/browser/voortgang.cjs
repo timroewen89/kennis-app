@@ -10,7 +10,7 @@ const { SHOTS: out } = require('./lib.cjs')
     await swipeTo('.card--history')
     await p.locator('.option', { hasText: '1760' }).tap(); await wait(450); await swipe()
     await p.locator('.skip').tap(); await wait(450); await swipe()
-    await p.locator('.skip').tap(); await wait(450); await swipe(); await swipe()
+    await p.locator('.skip').tap(); await wait(450); await swipeTo('.card--quiz')
     for (const q of await p.locator('.question').all()) await q.locator('.option').first().tap()
     await swipe()
   }

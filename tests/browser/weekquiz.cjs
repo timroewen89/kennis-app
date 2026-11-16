@@ -11,7 +11,7 @@ const { SHOTS: out } = require('./lib.cjs')
     await swTo('.card--history, .card--fact')
     if (await page.locator('.card--history.card--guess').count()) { await page.locator('.option', { hasText: '1760' }).tap(); await wait(450); await sw(); await page.locator('.skip').tap(); await wait(450); await sw() }
     else if (await page.locator('.card--history').count()) await sw()
-    await page.locator('.skip').tap(); await wait(450); await sw(); await sw()
+    await page.locator('.skip').tap(); await wait(450); await swTo('.card--quiz')
     for (const q of await page.locator('.question').all()) await q.locator('.option').first().tap()
     await sw()
   }

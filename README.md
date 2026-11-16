@@ -1,9 +1,12 @@
 # Kennis
 
-Een dagelijkse kennisfeed tegen doomscrollen. Elke dag één eindige editie van 14 kaarten:
+Een dagelijkse kennisfeed tegen doomscrollen. Elke dag één eindige editie van 17 kaarten:
 6 nieuwskaarten (landelijk, Drenthe, wereld), 1 kaart Tech, 1 kaart AI, 1 kaart "Kort nieuws" met vijf
-koppen, 1 "vandaag in de geschiedenis", 1 tijdlijn, 1 weetje, 1 verdieping en een mini-quiz.
-Daarna: klaar voor vandaag.
+koppen, 1 "vandaag in de geschiedenis", 1 tijdlijn, 1 weetje, 1 verdieping in vier stappen en een
+mini-quiz. Daarna: klaar voor vandaag.
+
+De **verdieping** lees je in vier korte kaarten: elke kaart heeft één alinea, met de kern van die
+alinea als kop en de titel van de verdieping erboven. Elke stap kun je los bewaren.
 
 Het weetje en de geschiedeniskaart beginnen met een vraag: **eerst raden, dan lezen**. Je kiest een
 antwoord of "Geen idee", en dan draait de kaart om.
@@ -28,8 +31,8 @@ Tik op het vlammetje met je dagreeks voor je **voortgang**: je reeks, het aantal
 je gemiddelde quizscore, een kalender van de laatste vijf weken en mijlpalen bij 7, 30 en 100 dagen
 op rij. Er zijn geen punten of ranglijsten.
 
-Via het tandwiel rechtsboven kies je de **lengte**: uitgebreid (zes nieuwskaarten, 14 kaarten) of kort
-(vier nieuwskaarten, 12 kaarten). De kaarten Tech en AI horen bij beide.
+Via het tandwiel rechtsboven kies je de **lengte**: uitgebreid (zes nieuwskaarten, 17 kaarten) of kort
+(vier nieuwskaarten, 15 kaarten). De kaarten Tech en AI horen bij beide.
 
 Op hetzelfde scherm kies je je **onderwerpen**: Nederland, Wereldgeschiedenis, Wetenschap &
 techniek, Natuur & aarde en Taal & cultuur. De keuze bepaalt welk weetje en welke verdieping je
@@ -118,7 +121,17 @@ erbij en pas het aan:
 },
 ```
 
-Een verdieping heeft daarnaast een tweede vraag, `question2`, in dezelfde vorm.
+Een verdieping heeft daarnaast een tweede vraag, `question2`, in dezelfde vorm, en `heads`: voor elke
+alinea één kernzin, in dezelfde volgorde als `body`. Dat wordt de kop van de stapkaart:
+
+```js
+  body: ['Eerste alinea.', 'Tweede alinea.', 'Derde alinea.', 'Vierde alinea.'],
+  heads: ['Kern van de eerste alinea', 'Kern van de tweede', 'Kern van de derde', 'Kern van de vierde'],
+```
+
+Een kernzin is een volledige bewering van hooguit 72 tekens, zonder punt aan het eind, en zegt alleen
+wat in de eigen alinea staat. Houdt de alinea een slag om de arm ("geldt als", "naar schatting"), dan de
+kernzin ook. De 144 kernzinnen zijn naast hun alinea gelegd door een onafhankelijke controle.
 
 De lijsten lopen rond (nu 65 weetjes en 36 verdiepingen) en wisselen de thema's af; de app husselt
 de antwoorden per dag. Voeg je een item toe, dan schuift de volgorde voor de dagen erna op.
@@ -200,7 +213,7 @@ Bij elke wijziging op `main` draait de workflow `.github/workflows/controle.yml`
 
 - **Inhoud** (enkele seconden): zijn de inhoudsbestanden en de code geldig, en klopt de vorm van elk
   weetje en elke verdieping?
-- **Browser** (een minuut of tien): de hele app in een nagebootste telefoon. Veertien reeksen in
+- **Browser** (een minuut of tien): de hele app in een nagebootste telefoon. Vijftien reeksen in
   `tests/browser/`, onder meer een editie over meerdere dagen, vegen, tijdlijn, weekquiz, instellingen,
   gebruik zonder verbinding, een hele editie met alleen het toetsenbord en een toegankelijkheidscontrole.
 

@@ -32,7 +32,7 @@ const axeSource = fs.readFileSync(process.env.AXE || require.resolve('axe-core/a
     await check('tijdlijn: gekozen')
     await p.locator('.timeline__actions .btn').click(); await check('tijdlijn: uitslag'); await next()
     await p.locator('.skip').click(); await check('weetje: omgedraaid'); await p.locator('.save').click(); await next()
-    await check('verdieping'); await next()
+    await check('verdieping: stap'); for (let i = 0; i < 4; i++) await next()
     await check('quiz: leeg')
     for (const q of await p.locator('.question').all()) await q.locator('.option').first().click()
     await check('quiz: beantwoord')

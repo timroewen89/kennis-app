@@ -12,7 +12,7 @@ const { chromium, devices, BASE, wait, phone, mockWiki, mockTranslate, ok, failu
     await p.locator('.option', { hasText: history }).tap(); await wait(450); await swipe()
     await p.locator('.skip').tap(); await wait(450); await swipe() // tijdlijn
     await (fact === 'skip' ? p.locator('.skip') : p.locator('.card--guess .option').first()).tap(); await wait(450)
-    await swipe(); await swipe()
+    await swipeTo('.card--quiz') // langs de vier stappen van de verdieping
   }
   const doQuiz = async (answerFor = () => null) => {
     const labels = []
@@ -27,17 +27,17 @@ const { chromium, devices, BASE, wait, phone, mockWiki, mockTranslate, ok, failu
 
   console.log('== Dag 1')
   await open(0)
-  ok('14 kaarten', await p.locator('.steps li').count() === 14)
+  ok('17 kaarten', await p.locator('.steps li').count() === 17)
   await swipeTo('.card--history')
-  ok('kaart 5 is raadkaart geschiedenis; jaartal en bewaarknop verborgen', await pos() === '10 / 14' && await p.locator('.card--guess.card--history').count() === 1 && await p.locator('.card__year').count() === 0 && await p.locator('.save').count() === 0)
-  await swipe(); ok('vegen geblokkeerd tot gok', await pos() === '10 / 14')
+  ok('kaart 5 is raadkaart geschiedenis; jaartal en bewaarknop verborgen', await pos() === '10 / 17' && await p.locator('.card--guess.card--history').count() === 1 && await p.locator('.card__year').count() === 0 && await p.locator('.save').count() === 0)
+  await swipe(); ok('vegen geblokkeerd tot gok', await pos() === '10 / 17')
   await p.locator('.option', { hasText: '1859' }).tap(); await wait(500)
   ok('uitslag fout getoond; achterkant compleet', (await p.innerText('.result')).includes('Niet geraden — het was: 1760') && await p.innerText('.card__year') === '1760' && await p.locator('.save').count() === 1)
   await swipe(); await p.locator('.skip').tap(); await wait(450); await swipe()
-  ok('weetje: vraag, 3 opties en Geen idee', await pos() === '12 / 14' && await p.locator('.card--guess .option').count() === 3 && await p.locator('.skip').count() === 1)
+  ok('weetje: vraag, 3 opties en Geen idee', await pos() === '12 / 17' && await p.locator('.card--guess .option').count() === 3 && await p.locator('.skip').count() === 1)
   await p.locator('.skip').tap(); await wait(450)
   ok('Geen idee: neutrale uitslag', await p.locator('.result.is-neutral').count() === 1)
-  await p.locator('.save').tap(); await swipe(); await swipe()
+  await p.locator('.save').tap(); await swipeTo('.card--quiz')
   let labels = await doQuiz()
   ok('dag 1: quiz = 2x verdieping + 2x weet je het nog', labels.length === 4 && labels.slice(0, 2).every((l) => l.includes('VANDAAG')) && labels.slice(2).every((l) => l.includes('WEET JE HET NOG')), JSON.stringify(labels))
   await swipe(); ok('afgerond', await pos() === 'KLAAR')
@@ -48,7 +48,7 @@ const { chromium, devices, BASE, wait, phone, mockWiki, mockTranslate, ok, failu
   await p.locator('text=Editie teruglezen').tap(); await p.waitForSelector('.card')
   await swipeTo('.card--history')
   ok('teruglezen: geschiedenis direct omgedraaid', await p.locator('.card--guess').count() === 0 && await p.locator('.result').count() === 1)
-  for (let i = 0; i < 4; i++) await swipe()
+  await swipeTo('.card--quiz')
   ok('teruglezen: quiz al beantwoord', await p.locator('.option:disabled').count() === 12)
   await p.locator('.btn--finish').tap(); await p.waitForSelector('.done')
   ok('opnieuw afronden voegt niets dubbel toe', (await state()).log.length === 4 && (await state()).streak.count === 1)
@@ -107,7 +107,7 @@ const { chromium, devices, BASE, wait, phone, mockWiki, mockTranslate, ok, failu
   await p.reload(); await p.waitForSelector('.done')
   await p.locator('text=Editie teruglezen').tap(); await p.waitForSelector('.card')
   // Op deze gesimuleerde dag is het nieuws 'verouderd'; ook dan moet de editie zonder verbinding compleet zijn.
-  ok('offline herladen en teruglezen werkt, ook met verouderd nieuws', await pos() === '1 / 14' && (await p.locator('.notice').allInnerTexts()).join(' ').includes('niet van vandaag') && await p.locator('.notice').count() === 1 && !(await p.innerText('.card__title')).includes('kon niet'), (await p.locator('.notice').allInnerTexts()).join(' / '))
+  ok('offline herladen en teruglezen werkt, ook met verouderd nieuws', await pos() === '1 / 17' && (await p.locator('.notice').allInnerTexts()).join(' ').includes('niet van vandaag') && await p.locator('.notice').count() === 1 && !(await p.innerText('.card__title')).includes('kon niet'), (await p.locator('.notice').allInnerTexts()).join(' / '))
   await p.locator('#toggle-topics').tap()
   ok('onderwerpen-scherm werkt offline', await p.locator('.topic').count() === 7)
   await ctx.setOffline(false)
@@ -116,22 +116,22 @@ const { chromium, devices, BASE, wait, phone, mockWiki, mockTranslate, ok, failu
   await mockWiki(ctx)
   await p.evaluate((k) => localStorage.setItem('kennis:v1', JSON.stringify({ streak: { count: 3, best: 5, lastCompleted: k }, progress: { [k]: { index: 7, answers: [0, 1, 2], completed: true } }, saved: [] })), key(69))
   await p.reload(); await p.waitForSelector('.card')
-  ok('oudste opslag: start bij kaart 1, reeks behouden', await pos() === '1 / 14' && await p.innerText('#streak') === '3')
+  ok('oudste opslag: start bij kaart 1, reeks behouden', await pos() === '1 / 17' && await p.innerText('#streak') === '3')
   await p.evaluate((k) => localStorage.setItem('kennis:v1', JSON.stringify({ streak: { count: 3, best: 5, lastCompleted: null }, progress: { [k]: { v: 2, index: 2, guesses: {}, answers: [], reviews: [], completed: false } }, saved: [], log: [] })), key(69))
   await p.reload(); await p.waitForSelector('.card')
-  ok('opslag van gisteren (zonder keuze weetje): gaat verder op kaart 3 en kiest inhoud', await pos() === '3 / 14' && !!Object.values((await state()).progress)[0].picks)
+  ok('opslag van gisteren (zonder keuze weetje): gaat verder op kaart 3 en kiest inhoud', await pos() === '3 / 17' && !!Object.values((await state()).progress)[0].picks)
 
   console.log('== Terugval: alle bronnen onbereikbaar')
   const { ctx: c2, page: p2, errors: e2 } = await phone(b, { wiki: false })
   await c2.route(/wikimedia|news\.json/, (r) => r.abort())
   await p2.goto(BASE); await p2.waitForSelector('.card')
   const next = async () => { await p2.keyboard.press('ArrowRight'); await wait(60) }
-  ok('5 kaarten met twee meldingen', await p2.locator('.steps li').count() === 5 && await p2.locator('.notice').count() === 2)
+  ok('8 kaarten met twee meldingen', await p2.locator('.steps li').count() === 8 && await p2.locator('.notice').count() === 2)
   await next()
   ok('geschiedenis zonder vraag verschijnt direct', await p2.locator('.card--history:not(.card--guess)').count() === 1)
   await next(); await next()
-  ok('pijltjestoets geblokkeerd op raadkaart', (await p2.innerText('.pager__count')).startsWith('3 / 5'))
-  await p2.locator('.skip').tap(); await next(); await next()
+  ok('pijltjestoets geblokkeerd op raadkaart', (await p2.innerText('.pager__count')).startsWith('3 / 8'))
+  await p2.locator('.skip').tap(); for (let i = 0; i < 5; i++) await next() // weetje, vier stappen verdieping
   for (const q of await p2.locator('.question').all()) await q.locator('.option').first().tap()
   await p2.locator('.btn--finish').tap(); await p2.waitForSelector('.done')
   ok('quiz met 3 vragen, afronden werkt, 3 vragen onthouden', (await p2.innerText('.stats')).includes('van 3') && (await p2.evaluate(() => JSON.parse(localStorage.getItem('kennis:v1')).log.length)) === 3, (await p2.innerText('.stats')).replace(/\n+/g, ' | '))

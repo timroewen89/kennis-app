@@ -83,7 +83,10 @@ const isText = (value) => typeof value === 'string'
 const count = (value, max) => (Number.isInteger(value) ? Math.min(Math.max(value, 0), max) : 0)
 const validQuestion = (q) =>
   isObject(q) && isText(q.q) && Array.isArray(q.options) && q.options.length > 0 && q.options.every(isText) && Number.isInteger(q.answer)
-const validCard = (card) => isObject(card) && isText(card.id) && isText(card.type) && isText(card.title) && Array.isArray(card.body) && card.body.every(isText)
+const optionalText = (value) => value === undefined || value === null || isText(value)
+const validCard = (card) =>
+  isObject(card) && isText(card.id) && isText(card.type) && isText(card.title) && Array.isArray(card.body) && card.body.every(isText) &&
+  optionalText(card.kicker) && optionalText(card.kickerShort) && optionalText(card.context)
 // Een onthouden vraag (voor de herhaling en de weekquiz).
 const validItem = (item) => isObject(item) && isText(item.id) && isDay(item.day) && isText(item.type) && validQuestion(item.question)
 const scoreOrNull = (value) => (Array.isArray(value) && value.length === 2 && value.every(Number.isInteger) ? value : null)
@@ -594,6 +597,22 @@ function pickContent(day, topics) {
   return { fact: pickForDay(allowed(facts), day).id, deepdive: pickForDay(allowed(deepdives), day).id }
 }
 
+// De verdieping in stappen: één kaart per alinea, met de kernzin van die alinea als kop en de
+// titel van de verdieping erboven. Zonder kernzinnen blijft het één kaart.
+function deepdiveSteps({ question, question2, heads, title, body, ...item }) {
+  if (!Array.isArray(heads) || heads.length !== body.length) return [{ ...item, title, body, id: `deepdive-${item.id}`, type: 'deepdive' }]
+  return body.map((text, i) => ({
+    ...item,
+    id: `deepdive-${item.id}-${i + 1}`,
+    type: 'deepdive',
+    kicker: `${LABELS.deepdive} · ${i + 1} van ${body.length}`,
+    kickerShort: `${LABELS.deepdive} ${i + 1}/${body.length}`, // voor heel smalle schermen
+    context: title,
+    title: heads[i],
+    body: [text],
+  }))
+}
+
 // Stelt de editie samen uit de bronnen van vandaag en de gekozen eigen inhoud.
 function assembleEdition({ day, notes, news, topics, brief, history }, picks, short = false) {
   const fact = facts.find((item) => item.id === picks?.fact) ?? pickForDay(facts, day)
@@ -611,7 +630,7 @@ function assembleEdition({ day, notes, news, topics, brief, history }, picks, sh
       { ...history.card, guess: history.question },
       history.timeline, // vervalt als Wikipedia onbereikbaar is of te weinig gebeurtenissen heeft
       { ...toCard(fact, 'fact'), guess: present(fact.question, day, 1) },
-      toCard(deepdive, 'deepdive'),
+      ...deepdiveSteps(deepdive),
       { id: `quiz-${day}`, type: 'quiz', title: 'Wat weet je nog?' },
     ].filter(Boolean),
     // De vragen bij de kaarten van vandaag, zoals ze in de inhoud staan. De quiz wordt hier
@@ -958,7 +977,14 @@ function cardView(card, { day = today, savedOn = null, choice = null } = {}) {
     el(
       'header',
       { class: 'card__head' },
-      el('span', { class: 'card__kicker' }, card.kicker ?? LABELS[card.type]),
+      // Een lang label heeft een korte vorm voor smalle schermen; schermlezers krijgen altijd de lange.
+      el(
+        'span',
+        { class: 'card__kicker' },
+        card.kickerShort
+          ? [el('span', { class: 'kicker__long' }, card.kicker), el('span', { class: 'kicker__short', 'aria-hidden': 'true' }, card.kickerShort)]
+          : (card.kicker ?? LABELS[card.type]),
+      ),
       el(
         'button',
         { type: 'button', class: 'save', 'aria-pressed': String(saved), onclick: () => toggleSave(card, day) },
@@ -971,6 +997,7 @@ function cardView(card, { day = today, savedOn = null, choice = null } = {}) {
       'div',
       { lang: card.lang },
       card.year && el('p', { class: 'card__year' }, card.year),
+      card.context && el('p', { class: 'card__context' }, card.context),
       el('h2', { class: 'card__title' }, card.title),
       card.body.map((text) => el('p', { class: 'card__body' }, text)),
     ),
@@ -1140,8 +1167,8 @@ function topicsView() {
       'div',
       { class: 'topics__list', role: 'radiogroup', 'aria-label': 'Lengte van de editie' },
       [
-        ['long', 'Uitgebreid', 'Zes nieuwskaarten, plus Tech en AI; 14 kaarten in totaal'],
-        ['short', 'Kort', 'Vier nieuwskaarten, plus Tech en AI; 12 kaarten in totaal'],
+        ['long', 'Uitgebreid', 'Zes nieuwskaarten, plus Tech en AI; 17 kaarten in totaal'],
+        ['short', 'Kort', 'Vier nieuwskaarten, plus Tech en AI; 15 kaarten in totaal'],
       ].map(([value, name, detail]) =>
         el(
           'label',
@@ -1637,6 +1664,11 @@ async function start() {
       writeJson(STATE_KEY, state)
     }
     edition = assembleEdition(sources, progress().picks, progress().short === true)
+    // Een afgeronde dag opent op het eindscherm, ook als de editie sinds een update meer kaarten telt.
+    if (progress().completed && progress().index < edition.cards.length) {
+      state = { ...state, progress: { [today]: { ...progress(), index: edition.cards.length } } }
+      writeJson(STATE_KEY, state)
+    }
   } catch (error) {
     fatal = { title: 'De editie kon niet worden opgebouwd', detail: `Melding: ${error.message}`, canWipe: true }
   }
