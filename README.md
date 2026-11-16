@@ -12,7 +12,7 @@ Na de geschiedeniskaart volgt de **tijdlijn**: drie andere gebeurtenissen van de
 aantikt van vroegst naar laatst. Daarna zie je de juiste volgorde met de jaartallen. Is Wikipedia
 onbereikbaar, dan vervalt deze kaart die dag.
 
-De mini-quiz heeft drie vragen: één over de verdieping van vandaag en twee **herhalingsvragen** uit
+De mini-quiz heeft vijf vragen: twee over de verdieping van vandaag en drie **herhalingsvragen** uit
 edities die je eerder hebt afgerond.
 
 - Een vraag komt op zijn vroegst twee dagen later terug, en daarna hooguit eens per vijf dagen.
@@ -57,7 +57,7 @@ bestand elke ochtend rond 05:00 en zet het terug in de repo; Pages publiceert he
 | Geschiedenis en tijdlijn | Engelse Wikipedia, On this day (vertaald) | Rechtstreeks vanuit de app; de Nederlandse variant van deze API bestaat niet |
 | Weetje | `content/facts.js` (nl) | Elke dag het volgende uit de lijst, binnen je gekozen onderwerpen |
 | Verdieping | `content/deepdives.js` (nl) | Elke dag de volgende uit de lijst, binnen je gekozen onderwerpen |
-| Mini-quiz | De kaarten van vandaag en van eerdere dagen | Eén vraag over de verdieping, twee herhalingsvragen |
+| Mini-quiz | De kaarten van vandaag en van eerdere dagen | Twee vragen over de verdieping, drie herhalingsvragen |
 
 Is een bron onbereikbaar, dan meldt de app dat en is de rest van de editie gewoon compleet.
 Een complete editie wordt per dag vastgelegd, zodat hij niet verspringt en zonder verbinding werkt.
@@ -97,6 +97,8 @@ erbij en pas het aan:
   },
 },
 ```
+
+Een verdieping heeft daarnaast een tweede vraag, `question2`, in dezelfde vorm.
 
 De lijsten lopen rond (nu 45 weetjes en 24 verdiepingen) en wisselen de thema's af; de app husselt
 de antwoorden per dag. Voeg je een item toe, dan schuift de volgorde voor de dagen erna op.

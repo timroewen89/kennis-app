@@ -996,8 +996,8 @@ function shuffleQuestion(question, day, salt) {
 const present = (question, day, salt) => (question.ordered ? question : shuffleQuestion(question, day, salt))
 
 // ---------- Herhaling ----------
-// Elke dag komen er twee vragen terug uit edities die je eerder hebt afgerond.
-const REVIEW_COUNT = 2
+// Elke dag komen er drie vragen terug uit edities die je eerder hebt afgerond.
+const REVIEW_COUNT = 3
 const REVIEW_MIN_AGE = 2 // op zijn vroegst twee dagen later
 const REVIEW_GAP = 5 // dezelfde vraag hooguit eens per vijf dagen
 const REVIEW_MAX_AGE = 45 // daarna verdwijnt een vraag uit de herhaling
@@ -1019,11 +1019,30 @@ function pickReviews(log, day) {
       dayNumber(a.day) - dayNumber(b.day) ||
       a.id.localeCompare(b.id),
   )
-  const picked = due.slice(0, 1)
-  // De tweede vraag liefst uit een andere editie dan de eerste.
-  const second = due.find((item) => item.day !== picked[0]?.day) ?? due[1]
-  if (second) picked.push(second)
-  return picked.slice(0, REVIEW_COUNT).map(({ id, day, type, question }) => ({ id, day, type, question }))
+  // Liefst elke vraag uit een andere editie; pas daarna meerdere van dezelfde dag.
+  const picked = []
+  for (const item of due) {
+    if (picked.length < REVIEW_COUNT && !picked.some((other) => other.day === item.day)) picked.push(item)
+  }
+  for (const item of due) {
+    if (picked.length < REVIEW_COUNT && !picked.includes(item)) picked.push(item)
+  }
+  return picked.map(({ id, day, type, question }) => ({ id, day, type, question }))
+}
+
+// Verwerkt de uitslag van herhalingsvragen ({ id, correct }) in de lijst met onthouden vragen.
+function applyReviews(log, results, day) {
+  return log.map((item) => {
+    const result = results.find((entry) => entry.id === item.id)
+    if (!result) return item
+    const { correct } = result
+    return { ...item, wrong: !correct, streak: correct ? item.streak + 1 : 0, reviews: item.reviews + 1, lastReview: day }
+  })
+}
+// Wat je onthouden hebt of wat te oud is, hoeft niet meer terug te komen.
+function pruneLog(log, day) {
+  const now = dayNumber(day)
+  return log.filter((item) => item.streak < REVIEW_DONE_STREAK && now - dayNumber(item.day) <= REVIEW_MAX_AGE)
 }
 
 // Wat van buiten komt (nieuws, geschiedenis, tijdlijn) wordt één keer per dag opgehaald en vastgelegd.
@@ -1116,12 +1135,12 @@ function assembleEdition({ day, notes, news, brief, history }, picks) {
     ].filter(Boolean),
     // De vragen bij de kaarten van vandaag, zoals ze in de inhoud staan. De quiz wordt hier
     // later uit samengesteld (zie quizQuestions), samen met de herhaling.
-    questions: { fact: fact.question, history: history.question, deepdive: deepdive.question },
+    questions: { fact: fact.question, history: history.question, deepdive: deepdive.question, deepdive2: deepdive.question2 ?? null },
   }
 }
 
 // ---------- Scherm ----------
-const TYPE_NAMES = { fact: 'weetje', history: 'geschiedenis', deepdive: 'verdieping' }
+const TYPE_NAMES = { fact: 'weetje', history: 'geschiedenis', deepdive: 'verdieping', deepdive2: 'verdieping' }
 const LABELS = {
   news: 'Nieuws',
   history: 'Vandaag in de geschiedenis',
@@ -1191,12 +1210,16 @@ function guess(card, choice) {
   setProgress({ guesses: { ...progress().guesses, [card.id]: choice } })
 }
 
-// De vragen van de mini-quiz: één over de verdieping van vandaag en twee herhalingsvragen.
+// De vragen van de mini-quiz: twee over de verdieping van vandaag en drie herhalingsvragen.
 // Valt er nog niets te herhalen, dan vullen de vragen van vandaag de lege plekken.
 function quizQuestions() {
-  const { fact, history, deepdive } = edition.questions
+  const { fact, history, deepdive, deepdive2 } = edition.questions
   const reviews = progress().reviews ?? []
-  const list = [{ label: 'Vandaag · verdieping', question: present(deepdive, today, 2) }]
+  // 'todayType' markeert een vraag over vandaag die na afloop wordt onthouden voor de herhaling.
+  const list = [
+    { label: 'Vandaag · verdieping', question: present(deepdive, today, 2), todayType: 'deepdive' },
+    deepdive2 && { label: 'Vandaag · verdieping', question: present(deepdive2, today, 6), todayType: 'deepdive2' },
+  ].filter(Boolean)
   reviews.forEach((item, i) => {
     list.push({
       label: `Herhaling · ${TYPE_NAMES[item.type]} van ${formatShortDate(item.day)}`,
@@ -1245,31 +1268,29 @@ function finish() {
 
   const { answers, guesses } = progress()
   const questions = quizQuestions()
-  const now = dayNumber(today)
+  const isRight = (i) => answers[i] === questions[i].question.answer
   update((s) => {
     // 1. Uitslag van de herhalingsvragen bijwerken.
-    let log = s.log.map((item) => {
-      const i = questions.findIndex((entry) => entry.reviewId === item.id)
-      if (i < 0) return item
-      const correct = answers[i] === questions[i].question.answer
-      return { ...item, wrong: !correct, streak: correct ? item.streak + 1 : 0, reviews: item.reviews + 1, lastReview: today }
-    })
+    const results = questions.map((entry, i) => entry.reviewId && { id: entry.reviewId, correct: isRight(i) }).filter(Boolean)
+    let log = applyReviews(s.log, results, today)
     // 2. De vragen van vandaag onthouden voor later (één keer per dag).
     if (!log.some((item) => item.day === today)) {
       const guessedWrong = (type) => {
         const card = edition.cards.find((c) => c.type === type)
         return guesses[card.id] !== card.guess.answer
       }
-      const { fact, history, deepdive } = edition.questions
       const entry = (type, question, wrong) => ({
         id: `${today}:${type}`, day: today, type, question, wrong, streak: 0, reviews: 0, lastReview: null,
       })
+      const { fact, history } = edition.questions
       if (fact) log.push(entry('fact', fact, guessedWrong('fact')))
       if (history) log.push(entry('history', history, guessedWrong('history')))
-      log.push(entry('deepdive', deepdive, answers[0] !== questions[0].question.answer))
+      questions.forEach((item, i) => {
+        if (item.todayType) log.push(entry(item.todayType, edition.questions[item.todayType], !isRight(i)))
+      })
     }
-    // 3. Opruimen: wat je onthouden hebt of wat te oud is, hoeft niet meer terug te komen.
-    log = log.filter((item) => item.streak < REVIEW_DONE_STREAK && now - dayNumber(item.day) <= REVIEW_MAX_AGE)
+    // 3. Opruimen.
+    log = pruneLog(log, today)
     return {
       ...s,
       streak: completeDay(s.streak, today),

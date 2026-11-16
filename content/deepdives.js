@@ -2,6 +2,7 @@
 // Elke dag komt de volgende aan de beurt; na de laatste begint de lijst opnieuw.
 // De volgorde wisselt de thema's af. 'topic' is een thema uit content/topics.js.
 // 'answer' is de positie van het goede antwoord in 'options', geteld vanaf 0.
+// Elke verdieping heeft twee vragen: 'question' en 'question2'.
 import { wiki } from './topics.js'
 
 export const deepdives = [
@@ -23,6 +24,13 @@ export const deepdives = [
       answer: 1,
       explain: 'De Afsluitdijk was er al sinds 1932; de Deltawerken volgden op 1953.',
     },
+    // Tweede vraag voor de mini-quiz, over dezelfde tekst.
+    question2: {
+      q: 'Waardoor kwam het water in 1953 zo hoog?',
+      options: ['Een noordwesterstorm viel samen met springtij', 'De rivieren traden buiten hun oevers', 'Door een aardbeving op zee'],
+      answer: 0,
+      explain: 'De storm stuwde het zeewater op terwijl het al springtij was.',
+    },
   },
   {
     id: 'zwarte-dood',
@@ -40,6 +48,13 @@ export const deepdives = [
       options: ['Ongeveer een twintigste', 'Ongeveer een tiende', 'Een derde tot de helft'],
       answer: 2,
       explain: 'Schattingen lopen uiteen van een derde tot de helft van de bevolking.',
+    },
+    // Tweede vraag voor de mini-quiz, over dezelfde tekst.
+    question2: {
+      q: 'Waar komt het gebruik van de quarantaine vandaan?',
+      options: ['Schepen moesten in Venetië veertig dagen wachten', 'Zieken werden veertig dagen opgesloten in kloosters', 'Het was een straf voor smokkelaars'],
+      answer: 0,
+      explain: 'Schepen mochten in Venetië pas na veertig dagen aanleggen.',
     },
   },
   {
@@ -59,6 +74,13 @@ export const deepdives = [
       answer: 0,
       explain: 'Vloedgolven verwoestten de kusten van Java en Sumatra.',
     },
+    // Tweede vraag voor de mini-quiz, over dezelfde tekst.
+    question2: {
+      q: 'Tot hoe ver was de knal van de Krakatau te horen?',
+      options: ['Bijna 4.800 kilometer', 'Ongeveer 500 kilometer', 'Ongeveer 50 kilometer'],
+      answer: 0,
+      explain: 'Tot op het eiland Rodrigues bij Mauritius.',
+    },
   },
   {
     id: 'boekdrukkunst',
@@ -76,6 +98,13 @@ export const deepdives = [
       options: ['Losse, herbruikbare metalen letters', 'Papier in plaats van perkament', 'Drukken in kleur'],
       answer: 0,
       explain: 'Met losse metalen letters, die snel gegoten, gezet en opnieuw gebruikt konden worden. Nieuw voor Europa; in Korea bestond het al.',
+    },
+    // Tweede vraag voor de mini-quiz, over dezelfde tekst.
+    question2: {
+      q: 'In hoeveel exemplaren verscheen de Bijbel van Gutenberg ongeveer?',
+      options: ['Ongeveer 180', 'Ongeveer 18', 'Ongeveer 18.000'],
+      answer: 0,
+      explain: 'Ongeveer 180 exemplaren, voltooid rond 1455.',
     },
   },
   {
@@ -95,6 +124,13 @@ export const deepdives = [
       answer: 0,
       explain: 'Er was niet één ramp: de bibliotheek raakte over eeuwen in verval.',
     },
+    // Tweede vraag voor de mini-quiz, over dezelfde tekst.
+    question2: {
+      q: 'Wat berekende Eratosthenes in Alexandrië?',
+      options: ['De omtrek van de aarde', 'De afstand tot de maan', 'De hoogte van de piramides'],
+      answer: 0,
+      explain: 'Hij kwam opvallend dicht bij de werkelijke omtrek van de aarde.',
+    },
   },
   // ---------- ronde 2 ----------
   {
@@ -113,6 +149,13 @@ export const deepdives = [
       options: ['De Vrede van Utrecht', 'De Vrede van Münster', 'De Unie van Utrecht'],
       answer: 1,
       explain: 'De Vrede van Münster in 1648; de Unie van Utrecht (1579) was een verbond tussen gewesten.',
+    },
+    // Tweede vraag voor de mini-quiz, over dezelfde tekst.
+    question2: {
+      q: 'Wat verklaarden de opstandige gewesten in 1581 met het Plakkaat van Verlatinghe?',
+      options: ['Dat Filips II zijn recht om te regeren had verspeeld', 'Dat ze zich bij Frankrijk aansloten', 'Dat de oorlog voorbij was'],
+      answer: 0,
+      explain: 'Een vorst die zijn onderdanen onderdrukt, hoeft niet gehoorzaamd te worden.',
     },
   },
   {
@@ -136,6 +179,13 @@ export const deepdives = [
       answer: 2,
       explain: 'Spanje was neutraal en had geen oorlogscensuur, dus daar kwam het nieuws vandaan.',
     },
+    // Tweede vraag voor de mini-quiz, over dezelfde tekst.
+    question2: {
+      q: 'Welke groep werd door de Spaanse griep opvallend zwaar getroffen?',
+      options: ['Gezonde volwassenen tussen de twintig en veertig', 'Vooral mensen boven de zeventig', 'Vooral baby’s'],
+      answer: 0,
+      explain: 'Anders dan bij een gewone griep stierven juist veel jonge volwassenen.',
+    },
   },
   {
     id: 'jaar-zonder-zomer',
@@ -153,6 +203,13 @@ export const deepdives = [
       options: ['De uitbarsting van de Tambora', 'Een inslag van een komeet', 'Een verandering in de golfstroom'],
       answer: 0,
       explain: 'Zwavel van de Tambora hield wereldwijd zonlicht tegen.',
+    },
+    // Tweede vraag voor de mini-quiz, over dezelfde tekst.
+    question2: {
+      q: 'Welk boek ontstond in de sombere zomer van 1816?',
+      options: ['Frankenstein', 'Dracula', 'Moby Dick'],
+      answer: 0,
+      explain: 'Mary Shelley begon eraan aan het Meer van Genève.',
     },
   },
   {
@@ -172,6 +229,13 @@ export const deepdives = [
       answer: 0,
       explain: 'Van vacca, koe: de eerste inenting gebruikte koepokken.',
     },
+    // Tweede vraag voor de mini-quiz, over dezelfde tekst.
+    question2: {
+      q: 'In welk jaar verklaarde de WHO de pokken uitgeroeid?',
+      options: ['1980', '1945', '2001'],
+      answer: 0,
+      explain: 'In 1980, drie jaar na het laatste natuurlijke geval in Somalië.',
+    },
   },
   {
     id: 'steen-van-rosette',
@@ -189,6 +253,13 @@ export const deepdives = [
       options: ['Dezelfde tekst staat er ook in het Grieks op', 'Er staat een woordenlijst op', 'Het is de oudste tekst ter wereld'],
       answer: 0,
       explain: 'Het Grieks konden geleerden lezen en naast de hiërogliefen leggen.',
+    },
+    // Tweede vraag voor de mini-quiz, over dezelfde tekst.
+    question2: {
+      q: 'Wie toonde in 1822 aan dat hiërogliefen ook klanken weergeven?',
+      options: ['Jean-François Champollion', 'Thomas Young', 'Napoleon Bonaparte'],
+      answer: 0,
+      explain: 'De Fransman Champollion, die voortbouwde op het werk van Young.',
     },
   },
   // ---------- ronde 3 ----------
@@ -213,6 +284,13 @@ export const deepdives = [
       answer: 1,
       explain: 'Ondervoeding vóór de geboorte bleek tientallen jaren later nog door te werken.',
     },
+    // Tweede vraag voor de mini-quiz, over dezelfde tekst.
+    question2: {
+      q: 'Hoe kwam er vanaf eind april 1945 voedsel in West-Nederland?',
+      options: ['Bommenwerpers wierpen voedselpakketten af', 'Met treinen uit Duitsland', 'Met schepen over de Noordzee'],
+      answer: 0,
+      explain: 'Geallieerde bommenwerpers wierpen de pakketten af, kort voor de bevrijding.',
+    },
   },
   {
     id: 'berlijnse-muur',
@@ -230,6 +308,13 @@ export const deepdives = [
       options: ['1961', '1989', '1991'],
       answer: 1,
       explain: 'Op 9 november 1989; in 1961 werd hij gebouwd.',
+    },
+    // Tweede vraag voor de mini-quiz, over dezelfde tekst.
+    question2: {
+      q: 'Wat gebeurde er op 3 oktober 1990?',
+      options: ['Duitsland werd herenigd', 'De Muur werd gebouwd', 'De eerste grenspost ging open'],
+      answer: 0,
+      explain: 'Minder dan een jaar na de val van de Muur was Duitsland weer één land.',
     },
   },
   {
@@ -249,6 +334,13 @@ export const deepdives = [
       answer: 0,
       explain: 'Ratten, varkens en apen plunderden de nesten op de grond.',
     },
+    // Tweede vraag voor de mini-quiz, over dezelfde tekst.
+    question2: {
+      q: 'Op welk eiland leefde de dodo?',
+      options: ['Mauritius', 'Madagaskar', 'Nieuw-Zeeland'],
+      answer: 0,
+      explain: 'Alleen op Mauritius, in de Indische Oceaan.',
+    },
   },
   {
     id: 'maanlanding',
@@ -267,6 +359,13 @@ export const deepdives = [
       answer: 1,
       explain: 'Twaalf, bij zes landingen tussen 1969 en 1972.',
     },
+    // Tweede vraag voor de mini-quiz, over dezelfde tekst.
+    question2: {
+      q: 'Wie bleef bij Apollo 11 in een baan om de maan terwijl de anderen landden?',
+      options: ['Michael Collins', 'Buzz Aldrin', 'Neil Armstrong'],
+      answer: 0,
+      explain: 'Collins bleef achter; Armstrong en Aldrin landden met de Eagle.',
+    },
   },
   {
     id: 'statenvertaling',
@@ -284,6 +383,13 @@ export const deepdives = [
       options: ['De Staten-Generaal betaalden de vertaling', 'Ze werd in de Statenzaal gedrukt', 'De eerste drukker heette Staten'],
       answer: 0,
       explain: 'De Staten-Generaal gaven de opdracht en betaalden het werk.',
+    },
+    // Tweede vraag voor de mini-quiz, over dezelfde tekst.
+    question2: {
+      q: 'Welke kerkvergadering besloot dat er een nieuwe bijbelvertaling moest komen?',
+      options: ['De Synode van Dordrecht', 'Het Concilie van Trente', 'De Unie van Utrecht'],
+      answer: 0,
+      explain: 'De Synode van Dordrecht, in 1618 en 1619.',
     },
   },
   // ---------- ronde 4 ----------
@@ -304,6 +410,13 @@ export const deepdives = [
       answer: 1,
       explain: 'De eigenaren kregen in Suriname 300 gulden per vrijgemaakte persoon.',
     },
+    // Tweede vraag voor de mini-quiz, over dezelfde tekst.
+    question2: {
+      q: 'Wat betekent Keti Koti?',
+      options: ['Verbroken ketenen', 'Eerste juli', 'Nieuw begin'],
+      answer: 0,
+      explain: 'Keti Koti betekent ‘verbroken ketenen’ en wordt op 1 juli gevierd.',
+    },
   },
   {
     id: 'franse-revolutie',
@@ -321,6 +434,13 @@ export const deepdives = [
       options: ['De bestorming van de Bastille', 'De terechtstelling van de koning', 'De kroning van Napoleon'],
       answer: 0,
       explain: '14 juli is nog altijd de Franse nationale feestdag.',
+    },
+    // Tweede vraag voor de mini-quiz, over dezelfde tekst.
+    question2: {
+      q: 'Wie greep in 1799 de macht in Frankrijk?',
+      options: ['Napoleon Bonaparte', 'Lodewijk XVI', 'De paus'],
+      answer: 0,
+      explain: 'Generaal Napoleon Bonaparte maakte een einde aan de revolutiejaren.',
     },
   },
   {
@@ -340,6 +460,13 @@ export const deepdives = [
       answer: 0,
       explain: 'Pombal liet in het hele land vragenlijsten over de beving invullen.',
     },
+    // Tweede vraag voor de mini-quiz, over dezelfde tekst.
+    question2: {
+      q: 'Op welke dag trof de aardbeving Lissabon?',
+      options: ['Op Allerheiligen', 'Op eerste kerstdag', 'Op Goede Vrijdag'],
+      answer: 0,
+      explain: 'Op 1 november 1755, terwijl de kerken vol zaten.',
+    },
   },
   {
     id: 'tsjernobyl',
@@ -358,6 +485,13 @@ export const deepdives = [
       answer: 0,
       explain: 'Pas na het alarm in Zweden gaf de Sovjet-Unie het ongeluk toe.',
     },
+    // Tweede vraag voor de mini-quiz, over dezelfde tekst.
+    question2: {
+      q: 'Welke maatregel gold in Nederland kort na de ramp in Tsjernobyl?',
+      options: ['Een verbod op de verkoop van verse spinazie', 'Een verbod op autorijden', 'Een avondklok'],
+      answer: 0,
+      explain: 'In mei 1986 mocht korte tijd geen verse spinazie worden verkocht.',
+    },
   },
   {
     id: 'spijkerschrift',
@@ -375,6 +509,13 @@ export const deepdives = [
       options: ['Voor boekhouding', 'Voor gebeden', 'Voor verhalen'],
       answer: 0,
       explain: 'Om voorraden graan, vee en bier bij te houden.',
+    },
+    // Tweede vraag voor de mini-quiz, over dezelfde tekst.
+    question2: {
+      q: 'Waaraan dankt het spijkerschrift zijn naam?',
+      options: ['Aan de wigvormige putjes in de klei', 'Aan spijkers waarmee de tabletten werden opgehangen', 'Aan de naam van de ontdekker'],
+      answer: 0,
+      explain: 'Een rietstengel liet wigvormige indrukken achter in de natte klei.',
     },
   },
   // ---------- ronde 5 ----------
@@ -395,6 +536,13 @@ export const deepdives = [
       answer: 0,
       explain: 'Een brede strook land werd onder water gezet.',
     },
+    // Tweede vraag voor de mini-quiz, over dezelfde tekst.
+    question2: {
+      q: 'Wat gebeurde er op 20 augustus 1672 in Den Haag?',
+      options: ['De broers De Witt werden door een menigte vermoord', 'Willem III werd tot koning gekroond', 'De vrede met Frankrijk werd getekend'],
+      answer: 0,
+      explain: 'Johan en Cornelis de Witt werden door een menigte vermoord.',
+    },
   },
   {
     id: 'eerste-wereldoorlog',
@@ -412,6 +560,13 @@ export const deepdives = [
       options: ['Nederland', 'België', 'Italië'],
       answer: 0,
       explain: 'België werd binnengevallen en Italië ging in 1915 meevechten.',
+    },
+    // Tweede vraag voor de mini-quiz, over dezelfde tekst.
+    question2: {
+      q: 'Wat was de directe aanleiding voor de Eerste Wereldoorlog?',
+      options: ['De moord op troonopvolger Frans Ferdinand in Sarajevo', 'De Duitse inval in Polen', 'De Russische Revolutie'],
+      answer: 0,
+      explain: 'Gavrilo Princip schoot Frans Ferdinand op 28 juni 1914 dood.',
     },
   },
   {
@@ -431,6 +586,13 @@ export const deepdives = [
       answer: 0,
       explain: 'De staking volgde op de eerste razzia’s in Amsterdam.',
     },
+    // Tweede vraag voor de mini-quiz, over dezelfde tekst.
+    question2: {
+      q: 'Bij welk beeld wordt de Februaristaking elk jaar herdacht?',
+      options: ['De Dokwerker', 'Het Nationaal Monument op de Dam', 'Het Homomonument'],
+      answer: 0,
+      explain: 'Bij De Dokwerker in Amsterdam, op 25 februari.',
+    },
   },
   {
     id: 'apartheid',
@@ -448,6 +610,13 @@ export const deepdives = [
       options: ['7 jaar', '17 jaar', '27 jaar'],
       answer: 2,
       explain: 'Van 1962 tot 1990, grotendeels op Robbeneiland.',
+    },
+    // Tweede vraag voor de mini-quiz, over dezelfde tekst.
+    question2: {
+      q: 'Wat betekent het woord apartheid?',
+      options: ['Gescheidenheid', 'Vrijheid', 'Eenheid'],
+      answer: 0,
+      explain: 'Het is een Afrikaans woord voor ‘gescheidenheid’.',
     },
   },
 ]

@@ -7,7 +7,7 @@ const MIN_PER_TOPIC = 3 // zodat een thema niet na een paar dagen in herhaling v
 const topicIds = new Set(TOPICS.map((topic) => topic.id))
 const problems = []
 
-function check(list, name, minParagraphs) {
+function check(list, name, minParagraphs, questionKeys) {
   const seen = new Set()
   for (const item of list) {
     const where = `${name} "${item.id ?? item.title}"`
@@ -23,13 +23,16 @@ function check(list, name, minParagraphs) {
       fail('heeft een lege alinea')
     }
     if (!item.source?.name || !/^https:\/\//.test(item.source?.url ?? '')) fail('heeft geen bron met https-link')
-    const q = item.question
-    if (!q?.q?.trim()) fail('heeft geen quizvraag')
-    else {
-      if (!Array.isArray(q.options) || q.options.length !== 3) fail('quizvraag heeft geen 3 opties')
-      else if (new Set(q.options).size !== 3) fail('quizvraag heeft dubbele opties')
-      if (!Number.isInteger(q.answer) || q.answer < 0 || q.answer > 2) fail('answer moet 0, 1 of 2 zijn')
-      if (!q.explain?.trim()) fail('quizvraag heeft geen uitleg')
+    // Een weetje heeft één vraag; een verdieping heeft er twee ('question' en 'question2').
+    for (const key of questionKeys) {
+      const q = item[key]
+      if (!q?.q?.trim()) fail(`heeft geen quizvraag (${key})`)
+      else {
+        if (!Array.isArray(q.options) || q.options.length !== 3) fail(`${key} heeft geen 3 opties`)
+        else if (new Set(q.options).size !== 3) fail(`${key} heeft dubbele opties`)
+        if (!Number.isInteger(q.answer) || q.answer < 0 || q.answer > 2) fail(`${key}: answer moet 0, 1 of 2 zijn`)
+        if (!q.explain?.trim()) fail(`${key} heeft geen uitleg`)
+      }
     }
   }
   for (const topic of TOPICS) {
@@ -38,8 +41,8 @@ function check(list, name, minParagraphs) {
   }
 }
 
-check(facts, 'weetje', 1)
-check(deepdives, 'verdieping', 3)
+check(facts, 'weetje', 1, ['question'])
+check(deepdives, 'verdieping', 3, ['question', 'question2'])
 
 if (problems.length > 0) {
   for (const problem of problems) console.error(`✗ ${problem}`)
