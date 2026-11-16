@@ -28,7 +28,10 @@ Tik op het vlammetje met je dagreeks voor je **voortgang**: je reeks, het aantal
 je gemiddelde quizscore, een kalender van de laatste vijf weken en mijlpalen bij 7, 30 en 100 dagen
 op rij. Er zijn geen punten of ranglijsten.
 
-Via het tandwiel rechtsboven kies je je **onderwerpen**: Nederland, Wereldgeschiedenis, Wetenschap &
+Via het tandwiel rechtsboven kies je de **lengte**: uitgebreid (zes nieuwskaarten, 12 kaarten) of kort
+(vier nieuwskaarten, 10 kaarten).
+
+Op hetzelfde scherm kies je je **onderwerpen**: Nederland, Wereldgeschiedenis, Wetenschap &
 techniek, Natuur & aarde en Taal & cultuur. De keuze bepaalt welk weetje en welke verdieping je
 krijgt. Een wijziging geldt meteen als je de editie van vandaag nog niet hebt afgerond, anders vanaf
 morgen.

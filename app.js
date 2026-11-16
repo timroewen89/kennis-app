@@ -56,8 +56,10 @@ const EDITION_KEY = 'kennis:edition:v9'
 const TRANSLATION_KEY = 'kennis:vertaling:v1'
 // Voortgang van vandaag. guesses: je gok per kaart (-1 = 'Geen idee'); answers: je quizantwoorden;
 // reviews: de herhalingsvragen die voor vandaag gekozen zijn (null = nog niet gekozen);
-// picks: welk weetje en welke verdieping vandaag aan de beurt zijn (null = nog niet gekozen).
-const NO_PROGRESS = { v: 2, index: 0, guesses: {}, answers: [], reviews: null, picks: null, completed: false }
+// picks: welk weetje en welke verdieping vandaag aan de beurt zijn (null = nog niet gekozen);
+// short: of de editie van vandaag de korte vorm heeft (null = nog niet vastgelegd).
+const NO_PROGRESS = { v: 2, index: 0, guesses: {}, answers: [], reviews: null, picks: null, short: null, completed: false }
+const NEWS_ITEMS_SHORT = 4 // nieuwskaarten in de korte editie (uitgebreid: alle zes)
 
 function readJson(key) {
   try {
@@ -93,6 +95,8 @@ function loadState() {
     weeks: saved.weeks && typeof saved.weeks === 'object' ? saved.weeks : {},
     // De gekozen thema's (lijst van id's), of null als alle thema's aan staan.
     topics: Array.isArray(saved.topics) ? saved.topics : null,
+    // Lengte van de editie: 'long' (zes nieuwskaarten) of 'short' (vier).
+    length: saved.length === 'short' ? 'short' : 'long',
   }
 }
 
@@ -510,7 +514,7 @@ function pickContent(day, topics) {
 }
 
 // Stelt de editie samen uit de bronnen van vandaag en de gekozen eigen inhoud.
-function assembleEdition({ day, notes, news, brief, history }, picks) {
+function assembleEdition({ day, notes, news, brief, history }, picks, short = false) {
   const fact = facts.find((item) => item.id === picks?.fact) ?? pickForDay(facts, day)
   const deepdive = deepdives.find((item) => item.id === picks?.deepdive) ?? pickForDay(deepdives, day)
   const toCard = ({ question, ...item }, type) => ({ ...item, id: `${type}-${item.id}`, type })
@@ -518,7 +522,7 @@ function assembleEdition({ day, notes, news, brief, history }, picks) {
     day,
     notes,
     cards: [
-      ...news,
+      ...(short ? news.slice(0, NEWS_ITEMS_SHORT) : news),
       // Vervalt als de koppen ontbreken (bijvoorbeeld bij een oudere news.json).
       brief?.length > 0 && { id: `brief-${day}`, type: 'brief', items: brief },
       // 'guess' is de vraag op de voorkant van de kaart: eerst raden, dan lezen.
@@ -1009,7 +1013,29 @@ function setTopics(ids) {
     progress: applyNow ? { [today]: { ...current, picks: pickContent(today, topics) } } : state.progress,
   }
   writeJson(STATE_KEY, state)
-  if (applyNow) edition = assembleEdition(sources, progress().picks)
+  if (applyNow) edition = assembleEdition(sources, progress().picks, progress().short === true)
+  render()
+}
+
+// Legt de lengte van de editie vast ('long' of 'short'). Net als bij de onderwerpen geldt de
+// wijziging meteen als de editie van vandaag nog niet is afgerond.
+function setLength(length) {
+  const current = progress()
+  const applyNow = sources && !current.completed
+  if (!applyNow) {
+    state = { ...state, length }
+    writeJson(STATE_KEY, state)
+    return render()
+  }
+  // De kaart waar je bent gebleven terugvinden in de nieuwe editie; bestaat die niet meer
+  // (een nieuwskaart die wegvalt), dan verder bij de eerste kaart na het nieuws.
+  const currentId = edition.cards[Math.min(current.index, edition.cards.length - 1)]?.id
+  const next = assembleEdition(sources, current.picks, length === 'short')
+  let index = current.index >= edition.cards.length ? next.cards.length : next.cards.findIndex((card) => card.id === currentId)
+  if (index < 0) index = next.cards.findIndex((card) => card.type !== 'news')
+  state = { ...state, length, progress: { [today]: { ...current, short: length === 'short', index } } }
+  writeJson(STATE_KEY, state)
+  edition = next
   render()
 }
 
@@ -1019,7 +1045,28 @@ function topicsView() {
   return el(
     'section',
     { class: 'topics' },
-    el('h2', {}, 'Onderwerpen'),
+    el('h2', {}, 'Instellingen'),
+    el('h3', {}, 'Lengte van de editie'),
+    el(
+      'ul',
+      { class: 'topics__list', role: 'radiogroup', 'aria-label': 'Lengte van de editie' },
+      [
+        ['long', 'Uitgebreid', 'Zes nieuwskaarten; 12 kaarten in totaal'],
+        ['short', 'Kort', 'Vier nieuwskaarten; 10 kaarten in totaal'],
+      ].map(([value, name, detail]) =>
+        el(
+          'li',
+          {},
+          el(
+            'label',
+            { class: 'topic' },
+            el('input', { type: 'radio', name: 'length', value, checked: state.length === value, onchange: () => setLength(value) }),
+            el('span', {}, el('span', { class: 'topic__name' }, name), el('span', { class: 'topic__count' }, detail)),
+          ),
+        ),
+      ),
+    ),
+    el('h3', {}, 'Onderwerpen'),
     el('p', {}, 'Kies waarover je weetjes en verdiepingen wilt krijgen. Het nieuws, de geschiedeniskaart en de tijdlijn blijven zoals ze zijn.'),
     el(
       'ul',
@@ -1416,11 +1463,12 @@ async function start() {
     const patch = {}
     if (progress().reviews === null) patch.reviews = pickReviews(state.log, today)
     if (!progress().picks) patch.picks = pickContent(today, state.topics)
+    if (progress().short == null) patch.short = state.length === 'short'
     if (Object.keys(patch).length > 0) {
       state = { ...state, progress: { [today]: { ...progress(), ...patch } } }
       writeJson(STATE_KEY, state)
     }
-    edition = assembleEdition(sources, progress().picks)
+    edition = assembleEdition(sources, progress().picks, progress().short === true)
   } catch (error) {
     fatal = { title: 'De editie kon niet worden opgebouwd', detail: `Melding: ${error.message}` }
   }
