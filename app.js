@@ -636,6 +636,13 @@ function assembleEdition({ day, notes, news, topics, brief, history }, picks, sh
     // De vragen bij de kaarten van vandaag, zoals ze in de inhoud staan. De quiz wordt hier
     // later uit samengesteld (zie quizQuestions), samen met de herhaling.
     questions: { fact: fact.question, history: history.question, deepdive: deepdive.question, deepdive2: deepdive.question2 ?? null },
+    // De kern van de dag, voor 'Vandaag geleerd' op het eindscherm. De geschiedenis vervalt als
+    // Wikipedia onbereikbaar was (dan is er geen jaartal).
+    recap: [
+      history.card.year && { label: LABELS.history, text: `${history.card.year}: ${clip(history.card.title, 160)}`, lang: history.card.lang },
+      { label: LABELS.fact, text: fact.title },
+      { label: LABELS.deepdive, text: deepdive.title, points: Array.isArray(deepdive.heads) ? deepdive.heads : [] },
+    ].filter(Boolean),
   }
 }
 
@@ -1061,6 +1068,28 @@ function quizView(card, questions, answers, onAnswer = answerDaily) {
   )
 }
 
+// De kern van de dag in een paar regels: wat je vandaag gelezen hebt, om het te laten beklijven.
+function learnedBlock() {
+  return el(
+    'section',
+    { class: 'learned', 'aria-labelledby': 'learned-title' },
+    el('h3', { id: 'learned-title' }, 'Vandaag geleerd'),
+    el(
+      'ul',
+      { class: 'learned__list', role: 'list' },
+      edition.recap.map((item) =>
+        el(
+          'li',
+          {},
+          el('span', { class: 'learned__label' }, item.label),
+          el('p', { class: 'learned__text', lang: item.lang }, item.text),
+          item.points?.length > 0 && el('ul', { class: 'learned__points', role: 'list' }, item.points.map((point) => el('li', {}, point))),
+        ),
+      ),
+    ),
+  )
+}
+
 function doneView(questions, answers) {
   const streak = currentStreak(state.streak, today)
   const score = questions.filter((entry, i) => answers[i] === entry.question.answer).length
@@ -1079,6 +1108,7 @@ function doneView(questions, answers) {
       stat('Geraden', `${guessed.right} van ${guessed.total}`),
       stat('Quiz', `${score} van ${questions.length}`),
     ),
+    learnedBlock(),
     isSunday(today) && weekBlock(),
     el(
       'div',

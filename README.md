@@ -8,6 +8,9 @@ mini-quiz. Daarna: klaar voor vandaag.
 De **verdieping** lees je in vier korte kaarten: elke kaart heeft één alinea, met de kern van die
 alinea als kop en de titel van de verdieping erboven. Elke stap kun je los bewaren.
 
+Het eindscherm sluit af met **Vandaag geleerd**: het historische feit, het weetje en de verdieping
+met haar vier kernzinnen, in een paar regels onder elkaar.
+
 Het weetje en de geschiedeniskaart beginnen met een vraag: **eerst raden, dan lezen**. Je kiest een
 antwoord of "Geen idee", en dan draait de kaart om.
 
@@ -213,7 +216,7 @@ Bij elke wijziging op `main` draait de workflow `.github/workflows/controle.yml`
 
 - **Inhoud** (enkele seconden): zijn de inhoudsbestanden en de code geldig, en klopt de vorm van elk
   weetje en elke verdieping?
-- **Browser** (een minuut of tien): de hele app in een nagebootste telefoon. Vijftien reeksen in
+- **Browser** (een minuut of tien): de hele app in een nagebootste telefoon. Zestien reeksen in
   `tests/browser/`, onder meer een editie over meerdere dagen, vegen, tijdlijn, weekquiz, instellingen,
   gebruik zonder verbinding, een hele editie met alleen het toetsenbord en een toegankelijkheidscontrole.
 

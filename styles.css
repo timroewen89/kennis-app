@@ -852,6 +852,64 @@ main {
   font-size: 1.15rem;
   font-weight: 700;
 }
+/* 'Vandaag geleerd': de kern van de dag, links uitgelijnd binnen het gecentreerde eindscherm. */
+.learned {
+  margin: 0 0 1.5rem;
+  padding: 1rem 1.1rem;
+  text-align: left;
+  background: #171a23;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.1rem;
+}
+.learned h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+.learned ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.learned__list > li {
+  padding: 0.7rem 0;
+  border-top: 1px solid var(--line);
+}
+.learned__list > li:last-child {
+  padding-bottom: 0;
+}
+.learned__label {
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.learned__text {
+  margin: 0.15rem 0 0;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.learned .learned__points {
+  margin-top: 0.45rem;
+}
+.learned__points li {
+  position: relative;
+  padding: 0.2rem 0 0.2rem 1rem;
+  color: #d4d8e3;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+.learned__points li::before {
+  content: '';
+  position: absolute;
+  left: 0.1rem;
+  top: 0.75em;
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 50%;
+  background: var(--accent);
+}
 .done__actions {
   display: flex;
   flex-wrap: wrap;
