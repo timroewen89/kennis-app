@@ -135,7 +135,7 @@ vormfouten en laat zien hoeveel items elk thema heeft.
 | Bestand | Wat het doet |
 | --- | --- |
 | `index.html` | De pagina zelf, met de beveiligingsregels (Content-Security-Policy) |
-| `styles.css` | De opmaak |
+| `styles.css` | De opmaak: één donker ontwerp; de kleuren staan bovenin als variabelen |
 | `app.js` | De hele werking: schermen, raden, tijdlijn, herhaling, onderwerpen, voortgang, dagreeks, bewaren, quiz |
 | `content/facts.js`, `content/deepdives.js` | Eigen weetjes en verdiepingen, met thema, bron en quizvraag |
 | `content/topics.js` | De thema's waaruit je kunt kiezen |
@@ -176,7 +176,9 @@ Wat openstaat:
 - De hele editie is met het toetsenbord te doen: pijltjestoetsen om te bladeren, Tab en Enter voor de rest.
 - Na bladeren staat de focus op de kop van de nieuwe kaart en wordt de positie voorgelezen
   ("Kaart 5 van 12"); na raden staat de focus op de uitslag.
-- Alle schermen zijn nagelopen met een geautomatiseerde controle (axe) in lichte en donkere weergave.
+- De app heeft één donker ontwerp, ongeacht de instelling van je toestel. Het contrast van alle
+  kleurparen is nagerekend.
+- Alle schermen zijn nagelopen met een geautomatiseerde controle (axe).
   Met een echte schermlezer is niet getest.
 
 ## Als er iets misgaat

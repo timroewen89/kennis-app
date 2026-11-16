@@ -624,7 +624,7 @@ function assembleEdition({ day, notes, news, topics, brief, history }, picks, sh
 const TYPE_NAMES = { fact: 'weetje', history: 'geschiedenis', deepdive: 'verdieping', deepdive2: 'verdieping' }
 const LABELS = {
   news: 'Nieuws',
-  history: 'Vandaag in de geschiedenis',
+  history: 'Op deze dag', // kort, zodat het naast de bewaarknop op één regel past
   timeline: 'Tijdlijn',
   fact: 'Weetje',
   deepdive: 'Verdieping',

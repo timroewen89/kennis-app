@@ -1,34 +1,22 @@
 :root {
-  color-scheme: light dark;
-  --bg: #f6f1e7;
-  --surface: #fffdf8;
-  --ink: #1d1c17;
-  --muted: #6a665a;
-  --line: #e2dccd;
-  --accent: #1f4d3f;
-  --on-accent: #fffdf8;
-  --good: #1f6b45;
-  --good-bg: #dcefe2;
-  --bad: #a3322a;
-  --bad-bg: #f6dedb;
-  --serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
-  --sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #16150f;
-    --surface: #211f18;
-    --ink: #ece7d9;
-    --muted: #a39d8c;
-    --line: #37342a;
-    --accent: #8fcdb4;
-    --on-accent: #10231c;
-    --good: #8fd6ac;
-    --good-bg: #1d3a2a;
-    --bad: #f0a59e;
-    --bad-bg: #44211e;
-  }
+  /* Eén donker ontwerp ('Nacht'), ongeacht de instelling van het toestel. */
+  color-scheme: dark;
+  --bg: #0c0e13;
+  --surface: #171a23;
+  --ink: #f1f3f8;
+  --muted: #9aa2b5;
+  --line: #262b39;
+  --accent: #7df0c6;
+  --on-accent: #06261b;
+  --good: #7ee6ad;
+  --good-bg: #123528;
+  --bad: #ff9f95;
+  --bad-bg: #3f1d1a;
+  --sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  /* Het lettertype voor koppen; in dit ontwerp hetzelfde als de rest. */
+  --serif: var(--sans);
+  /* Het kleurverloop van knoppen, de voortgangsbalk en het vinkje. */
+  --glow: linear-gradient(120deg, #7df0c6, #62b8ff);
 }
 
 * {
@@ -42,6 +30,18 @@ body {
   font-family: var(--sans);
   line-height: 1.55;
   -webkit-text-size-adjust: 100%;
+}
+/* Zachte gloed achter de inhoud. Als vast vlak, zodat hij bij het scrollen niet meebeweegt
+   (background-attachment: fixed werkt op telefoons slecht). */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(900px 520px at 85% -8%, #1b2b47 0%, rgba(27, 43, 71, 0) 62%),
+    radial-gradient(700px 480px at -10% 105%, #1a3a33 0%, rgba(26, 58, 51, 0) 60%);
+  pointer-events: none;
 }
 
 .app {
@@ -83,8 +83,10 @@ main {
 .top h1 {
   margin: 0;
   font-family: var(--serif);
-  font-size: 1.6rem;
+  font-size: 1.7rem;
   line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.035em;
 }
 .top__date {
   margin: 0.15rem 0 0;
@@ -128,12 +130,12 @@ main {
 }
 .steps li {
   flex: 1;
-  height: 4px;
-  border-radius: 2px;
-  background: var(--line);
+  height: 5px;
+  border-radius: 3px;
+  background: #232836;
 }
 .steps li.is-done {
-  background: var(--accent);
+  background: var(--glow);
 }
 .steps li.is-current {
   background: var(--accent);
@@ -143,7 +145,7 @@ main {
 .notice {
   margin: 0 0 1rem;
   padding: 0.6rem 0.8rem;
-  border: 1px dashed var(--line);
+  border: 1px dashed rgba(255, 255, 255, 0.18);
   border-radius: 0.6rem;
   color: var(--muted);
   font-size: 0.9rem;
@@ -154,10 +156,11 @@ main {
 
 /* Kaart */
 .card {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 1rem;
-  padding: 1.25rem;
+  background: linear-gradient(180deg, #1c202b 0%, #141720 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
 }
 .card__head {
   display: flex;
@@ -169,10 +172,18 @@ main {
 }
 .card__kicker {
   color: var(--accent);
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.07em;
   text-transform: uppercase;
+  padding: 0.3rem 0.65rem;
+  border: 1px solid rgba(125, 240, 198, 0.35);
+  border-radius: 999px;
+  /* Het label blijft op één regel; past het niet, dan wordt het afgekapt in plaats van gebroken. */
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .card__year {
   margin: 0;
@@ -180,13 +191,33 @@ main {
   font-size: 2.6rem;
   line-height: 1;
   color: var(--accent);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+/* Het jaartal in het kleurverloop, waar de browser dat kan; anders blijft het de accentkleur. */
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .card__year {
+    display: inline-block;
+    background: var(--glow);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+@media (forced-colors: active) {
+  .card__year {
+    background: none;
+    color: CanvasText;
+  }
 }
 .card__title {
   margin: 0.3rem 0 0.8rem;
   font-family: var(--serif);
-  font-size: 1.55rem;
-  line-height: 1.2;
+  font-size: 1.65rem;
+  line-height: 1.18;
   text-wrap: balance;
+  font-weight: 750;
+  letter-spacing: -0.025em;
 }
 .card--history .card__title {
   font-size: 1.3rem;
@@ -196,11 +227,15 @@ main {
 .card__body {
   margin: 0 0 0.9rem;
   font-size: 1.05rem;
+  font-family: var(--sans);
+  line-height: 1.62;
+  color: #d4d8e3;
 }
 .card--deepdive .card__body {
-  font-family: var(--serif);
-  font-size: 1.12rem;
-  line-height: 1.65;
+  font-family: var(--sans);
+  font-size: 1.05rem;
+  line-height: 1.62;
+  color: #d4d8e3;
 }
 .card__foot {
   display: flex;
@@ -234,19 +269,20 @@ button:disabled {
 .btn {
   min-height: 2.75rem;
   padding: 0.55rem 1.2rem;
-  border: 1px solid var(--accent);
-  border-radius: 999px;
-  background: var(--accent);
+  border: 0;
+  border-radius: 0.9rem;
+  background: var(--glow);
   color: var(--on-accent);
-  font-weight: 600;
+  font-weight: 750;
 }
 .btn:disabled {
   opacity: 0.4;
 }
 .btn--ghost {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.04);
   border-color: var(--line);
   color: var(--ink);
+  border: 1px solid var(--line);
 }
 .btn--small {
   min-height: 2.25rem;
@@ -259,9 +295,10 @@ button:disabled {
   padding: 0.3rem 0.7rem;
   border: 1px solid var(--line);
   border-radius: 999px;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.04);
   font-size: 0.88rem;
   white-space: nowrap;
+  border-color: rgba(255, 255, 255, 0.14);
 }
 .save[aria-pressed='true'] {
   border-color: var(--accent);
@@ -310,9 +347,9 @@ button:disabled {
   color: var(--good);
 }
 .result.is-neutral {
-  background: none;
-  border: 1px solid var(--line);
-  color: var(--muted);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: var(--ink);
 }
 .swipe.flip-in {
   animation: flip-in 0.35s ease-out;
@@ -340,9 +377,9 @@ button:disabled {
 .week__score {
   margin: 0 0 1rem;
   padding: 1.25rem;
-  background: var(--surface);
-  border: 1px solid var(--accent);
-  border-radius: 1rem;
+  background: #171a23;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.1rem;
   text-align: center;
 }
 .week__score strong {
@@ -361,9 +398,9 @@ button:disabled {
 .done__week {
   margin: 0 0 1.5rem;
   padding: 1rem;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 1rem;
+  background: #171a23;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.1rem;
 }
 .done__week p {
   margin: 0 0 0.8rem;
@@ -389,6 +426,8 @@ button:disabled {
   margin: 0 0 1rem;
   font-family: var(--serif);
   font-size: 1.55rem;
+  font-weight: 750;
+  letter-spacing: -0.025em;
 }
 .progress h3 {
   margin: 1.5rem 0 0.6rem;
@@ -424,11 +463,12 @@ button:disabled {
   border-radius: 0.6rem;
   font-size: 0.9rem;
   font-variant-numeric: tabular-nums;
+  border-color: rgba(255, 255, 255, 0.1);
 }
 .calendar__day.is-done {
-  border-color: var(--accent);
-  background: var(--accent);
-  color: var(--on-accent);
+  border-color: transparent;
+  background: var(--glow);
+  color: #06261b;
   font-weight: 700;
 }
 .calendar__day.is-today {
@@ -447,9 +487,9 @@ button:disabled {
 }
 .milestones li {
   padding: 0.6rem 0.9rem;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 0.8rem;
+  background: #171a23;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.1rem;
 }
 .milestones li.is-done {
   border-color: var(--good);
@@ -506,6 +546,8 @@ button:disabled {
   margin: 0 0 0.4rem;
   font-family: var(--serif);
   font-size: 1.55rem;
+  font-weight: 750;
+  letter-spacing: -0.025em;
 }
 .topics p {
   margin: 0 0 1rem;
@@ -524,9 +566,9 @@ button:disabled {
   gap: 0.8rem;
   min-height: 3.25rem;
   padding: 0.6rem 0.9rem;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 0.8rem;
+  background: #171a23;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.1rem;
   cursor: pointer;
 }
 .topic input {
@@ -571,7 +613,7 @@ button:disabled {
   place-items: center;
   width: 1.7rem;
   height: 1.7rem;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   font-size: 0.9rem;
   font-weight: 700;
@@ -704,9 +746,10 @@ main {
   min-height: 2.75rem;
   padding: 0.55rem 0.9rem;
   border: 1px solid var(--line);
-  border-radius: 0.7rem;
-  background: transparent;
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.04);
   text-align: left;
+  border-color: rgba(255, 255, 255, 0.1);
 }
 .option.is-correct {
   border-color: var(--good);
@@ -742,15 +785,18 @@ main {
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--glow);
   color: var(--on-accent);
   font-size: 2rem;
   line-height: 1;
+  box-shadow: 0 0 40px rgba(125, 240, 198, 0.35);
 }
 .done h2 {
   margin: 0;
   font-family: var(--serif);
   font-size: 2rem;
+  font-weight: 750;
+  letter-spacing: -0.025em;
 }
 .done__lead {
   margin: 0.5rem 0 1.5rem;
@@ -764,9 +810,9 @@ main {
 }
 .stats div {
   padding: 0.8rem 0.4rem;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 0.8rem;
+  background: #171a23;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.1rem;
 }
 .stats dt {
   color: var(--muted);
