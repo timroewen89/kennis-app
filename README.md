@@ -49,13 +49,18 @@ staan lokaal in je browser.
 
 Op je telefoon kun je hem daarna via het browsermenu op je beginscherm zetten ("Toevoegen aan startscherm").
 
-## Nieuws dagelijks verversen
+## Nieuws verversen
 
-`news.json` bevat de zes nieuwskaarten en de vijf koppen voor "Kort nieuws". De workflow `.github/workflows/nieuws.yml` ververst dat
-bestand elke ochtend rond 05:00 en zet het terug in de repo; Pages publiceert het daarna vanzelf.
+`news.json` bevat de zes nieuwskaarten en de vijf koppen voor "Kort nieuws". De workflow
+`.github/workflows/nieuws.yml` ververst dat bestand twee keer per dag (rond 05:15 en 12:15 in de
+winter, een uur later in de zomer) en zet het terug in de repo; Pages publiceert het daarna vanzelf.
 
-- Geplande runs werken alleen vanaf de standaard-branch (`main`). De workflow moet dus op `main` staan.
-- Handmatig starten kan via **Actions → Nieuws verversen → Run workflow**.
+- Per bron kiest het script het eerste bericht van de laatste 24 uur. Agenda's, live-uitzendingen,
+  liveblogs en podcasts worden overgeslagen.
+- Geplande runs werken alleen vanaf de standaard-branch (`main`) en kunnen bij GitHub vertraagd zijn.
+  Of een run is gelukt, zie je onder **Actions → Nieuws verversen**; daar kun je hem ook handmatig starten.
+- Open je de app vóór de ochtendverversing, dan zie je het nieuws van de vorige avond. Bij de volgende
+  keer openen haalt de app het nieuwe nieuws op, tenzij je de editie al had afgerond.
 - Is het nieuws ouder dan anderhalve dag, dan meldt de app dat bovenaan de editie.
 
 ## Bronnen
@@ -129,6 +134,7 @@ vormfouten en laat zien hoeveel items elk thema heeft.
 | `content/topics.js` | De thema's waaruit je kunt kiezen |
 | `news.json` | De nieuwspunten van vandaag (automatisch ververst) |
 | `scripts/fetch-news.mjs` | Haalt de RSS-feeds op; de lijst met feeds staat bovenin |
+| `scripts/news-lib.mjs` | Kiest en schoont de berichten op; getest in `tests/news-lib.test.mjs` |
 | `scripts/check-content.mjs` | Controleert de eigen inhoud |
 | `.github/workflows/nieuws.yml` | Draait het nieuws-script elke ochtend |
 | `manifest.webmanifest`, `sw.js`, `icons/` | Installeren op je telefoon en gebruik zonder verbinding |

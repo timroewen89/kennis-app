@@ -1,10 +1,13 @@
-# Ververst elke ochtend news.json met het nieuws van de dag.
+# Ververst twee keer per dag news.json met het nieuws van de dag.
 # Geplande runs werken alleen vanaf de standaard-branch (main).
 name: Nieuws verversen
 
 on:
   schedule:
-    - cron: '0 4 * * *' # 04:00 UTC = 05:00 (winter) of 06:00 (zomer) in Nederland
+    # Bewust niet op het hele uur: dan is het bij GitHub het drukst en worden geplande runs
+    # vertraagd of overgeslagen. Tijden in UTC; Nederland is één (winter) of twee (zomer) uur later.
+    - cron: '17 4 * * *' # 's ochtends vroeg
+    - cron: '17 11 * * *' # rond het middaguur
   workflow_dispatch: # ook handmatig te starten via het tabblad Actions
 
 permissions:
@@ -30,6 +33,12 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add news.json
-          git diff --cached --quiet && echo "Geen wijzigingen" && exit 0
+          if git diff --cached --quiet; then echo "Geen wijzigingen"; exit 0; fi
           git commit -m "Nieuws van $(date -u +%Y-%m-%d)"
-          git push
+          # Is main intussen veranderd, dan eerst bijwerken en opnieuw proberen. Bij een botsing
+          # in news.json wint de versie van deze run ('theirs' is bij een rebase de eigen commit).
+          for poging in 1 2 3; do
+            if git pull --rebase -X theirs origin "$GITHUB_REF_NAME" && git push origin "HEAD:$GITHUB_REF_NAME"; then exit 0; fi
+            echo "Poging $poging mislukt; opnieuw"; sleep 5
+          done
+          echo "Pushen is drie keer mislukt"; exit 1

@@ -999,6 +999,8 @@ async function fetchNews() {
   const age = (Date.now() - new Date(generatedAt).getTime()) / 3_600_000
   return {
     stale: !(age < NEWS_MAX_AGE_HOURS) ? new Date(generatedAt) : null,
+    // Van vóór vandaag (de verversing van vanochtend is nog niet geweest): wel tonen, later opnieuw ophalen.
+    early: dayKey(new Date(generatedAt)) !== dayKey(),
     cards: await Promise.all(items.slice(0, NEWS_MAX_ITEMS).map((item) => translateCard({
       id: `news-${item.id}`,
       type: 'news',
@@ -1225,22 +1227,27 @@ function pruneLog(log, day) {
 }
 
 // Wat van buiten komt (nieuws, geschiedenis, tijdlijn) wordt één keer per dag opgehaald en vastgelegd.
-async function getSources(day) {
+// 'refresh: false' (de editie van vandaag is al afgerond) laat staan wat er staat.
+async function getSources(day, { refresh = true } = {}) {
   const stored = readJson(EDITION_KEY)
   const cached = stored?.day === day ? stored : null
   // Compleet en van vandaag: niet opnieuw ophalen, zodat de editie niet verspringt.
-  if (cached?.complete) return cached
+  if (cached && (cached.complete || !refresh)) return cached
 
-  const [newsResult, historyResult] = await Promise.allSettled([fetchNews(), fetchHistory(day)])
+  // De geschiedenis van vandaag verandert niet meer: als die al goed binnen is, niet opnieuw ophalen.
+  const historyDone = cached?.historyOk && ![cached.history.card, cached.history.timeline].some((card) => card?.untranslated)
+  const [newsResult, historyResult] = await Promise.allSettled([fetchNews(), historyDone ? cached.history : fetchHistory(day)])
 
   // Per onderdeel: het verse resultaat, anders wat vandaag al eerder is opgehaald (bijvoorbeeld
   // als je nu geen verbinding hebt), en pas als laatste de terugvalkaart.
   let news = FALLBACK_NEWS
   let brief = []
+  let newsEarly = false
   let newsNote = 'Het nieuws kon niet worden geladen.'
   if (newsResult.status === 'fulfilled') {
     news = newsResult.value.cards
     brief = newsResult.value.brief
+    newsEarly = newsResult.value.early
     newsNote = null
     if (newsResult.value.stale) {
       const when = new Intl.DateTimeFormat('nl-NL', { day: 'numeric', month: 'long' }).format(newsResult.value.stale)
@@ -1249,6 +1256,7 @@ async function getSources(day) {
   } else if (cached?.newsOk) {
     news = cached.news
     brief = cached.brief ?? []
+    newsEarly = Boolean(cached.newsEarly)
     newsNote = cached.newsNote
   }
 
@@ -1274,10 +1282,12 @@ async function getSources(day) {
     brief,
     history,
     newsNote,
+    newsEarly,
     newsOk: news !== FALLBACK_NEWS,
     historyOk: history !== FALLBACK_HISTORY,
     // Niet compleet (bron onbereikbaar, nieuws verouderd, vertaling mislukt): volgende keer opnieuw proberen.
-    complete: notes.length === 0,
+    // Hetzelfde geldt voor nieuws van vóór vandaag: na de ochtendverversing komt er nieuwer.
+    complete: notes.length === 0 && !newsEarly,
   }
   writeJson(EDITION_KEY, sources)
   return sources
@@ -2168,7 +2178,7 @@ function render(toTop = false) {
 }
 
 render()
-getSources(today).then((result) => {
+getSources(today, { refresh: !progress().completed }).then((result) => {
   sources = result
   // Eén keer per dag kiezen en vastleggen welke herhalingsvragen, welk weetje en welke
   // verdieping aan de beurt zijn, zodat de editie gelijk blijft als je de app opnieuw opent.
