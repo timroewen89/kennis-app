@@ -1,35 +1,35 @@
 {
-  "generatedAt": "2026-11-16T21:24:19.196Z",
+  "generatedAt": "2026-11-17T13:26:16.455Z",
   "items": [
     {
       "id": "nos-1",
       "source": "NOS",
       "lang": "nl",
       "label": null,
-      "title": "Lobby voor terugkeer Huang, maar top Nvidia zou er niets voor voelen",
-      "url": "https://nos.nl/l/2639784",
-      "summary": "De topman van Nvidia Jensen Huang werkt aan een mogelijke terugkeer bij het chipbedrijf. Dat schrijft de Britse krant Financial Times (FT) op basis van ingewijden.",
-      "publishedAt": "2026-11-16T20:46:45.000Z"
+      "title": "Twee mannen opgepakt in groot onderzoek naar malafide klusjesmannen",
+      "url": "https://nos.nl/l/2639868",
+      "summary": "De politie heeft twee mannen opgepakt in een groot onderzoek naar malafide klusjesmannen. Het gaat om een 22-jarige en 24-jarige uit Almere. De twee worden ervan verdacht honderden mensen te hebben opgelicht voor grote geldbedragen.",
+      "publishedAt": "2026-11-17T12:05:38.000Z"
     },
     {
       "id": "rtvdrenthe-1",
       "source": "RTV Drenthe",
       "lang": "nl",
       "label": "Nieuws uit Drenthe",
-      "title": "Nieuw-Roden krijgt plek voor natuurbegraven: 'Maar wel allemaal vlak naast elkaar'",
-      "url": "https://www.rtvdrenthe.nl/nieuws/18952623/nieuw-roden-krijgt-plek-voor-natuurbegraven-maar-wel-allemaal-vlak-naast-elkaar",
-      "summary": "Op de begraafplaats in Nieuw-Roden komt plek voor 170 nieuwe graven, waarvan 135 voor natuurbegraven.",
-      "publishedAt": "2026-11-16T20:41:57.000Z"
+      "title": "Nieuw leven voor failliete Primera's in Emmen en Coevorden",
+      "url": "https://www.rtvdrenthe.nl/nieuws/18955506/nieuw-leven-voor-failliete-primeras-in-emmen-en-coevorden",
+      "summary": "De onlangs failliet verklaarde Primera's in Coevorden en Emmen krijgen een doorstart. De vestiging in Emmen wordt een Bruna, terwijl de vestiging in Coevorden een Primera blijft.",
+      "publishedAt": "2026-11-17T12:20:56.000Z"
     },
     {
       "id": "bbc-1",
       "source": "BBC News",
       "lang": "en",
       "label": null,
-      "title": "Five EU countries announce migrant deportation centre in Rwanda",
-      "url": "https://www.bbc.co.uk/news/articles/cw987343352go?at_medium=RSS&at_campaign=rss",
-      "summary": "Germany, Denmark, Austria, Greece and the Netherlands have announced a \"return hub\" for failed asylum seekers.",
-      "publishedAt": "2026-11-16T16:27:24.000Z"
+      "title": "Putin's Crimea bridge partly collapses as Zelensky hails 'unprecedented' attack by Ukraine",
+      "url": "https://www.bbc.co.uk/news/articles/cw772jk4rvmxo?at_medium=RSS&at_campaign=rss",
+      "summary": "Ukraine says the attack took weeks to plan, while the Kremlin vows to rebuild the strategic bridge.",
+      "publishedAt": "2026-11-17T13:01:11.000Z"
     },
     {
       "id": "guardian-1",
@@ -39,27 +39,27 @@
       "title": "Five EU states announce plans for immigration ‘return hubs’ in Rwanda",
       "url": "https://www.theguardian.com/world/2026/nov/16/eu-states-immigration-return-hubs-rwanda",
       "summary": "Germany, Austria, Netherlands, Denmark and Greece likely to face challenges to policy criticised as ‘grave moral failing’",
-      "publishedAt": "2026-11-16T16:21:40.000Z"
+      "publishedAt": "2026-11-17T01:10:59.000Z"
     },
     {
       "id": "nos-2",
       "source": "NOS",
       "lang": "nl",
       "label": null,
-      "title": "Spotgoedkope boodschappen door 'budgetmerkenoorlog', maar prijzen gaan weer stijgen",
-      "url": "https://nos.nl/l/2639778",
-      "summary": "Een pak stroopwafels voor 28 eurocent, een pot rode kool voor 26 cent en een pak zilvervliesrijst voor 45 cent? Sommige boodschappen zijn in de afgelopen maanden spotgoedkoop geworden. Hoe kan dat, terwijl de energieprijzen en inflatie wel stijgen?",
-      "publishedAt": "2026-11-16T20:17:44.000Z"
+      "title": "Opnieuw politie-inval bij Turkse oppositiezender, dit keer bij Sözcu TV",
+      "url": "https://nos.nl/l/2639858",
+      "summary": "In Turkije is vanochtend een politie-inval geweest bij oppositiezender Sözcü TV. De Turkse autoriteiten hebben een bewindvoerder aangesteld.",
+      "publishedAt": "2026-11-17T10:35:26.000Z"
     },
     {
       "id": "rtvdrenthe-2",
       "source": "RTV Drenthe",
       "lang": "nl",
       "label": "Nieuws uit Drenthe",
-      "title": "ANWB en vakbonden zijn het eens over nieuwe cao",
-      "url": "https://www.rtvdrenthe.nl/nieuws/18953412/anwb-en-vakbonden-zijn-het-eens-over-nieuwe-cao",
-      "summary": "Er zijn onder meer afspraken gemaakt voor de medewerkers van de Alarmcentrale in Assen.",
-      "publishedAt": "2026-11-16T19:59:23.000Z"
+      "title": "Verdachte schietpartij Hoogeveen langer vast",
+      "url": "https://www.rtvdrenthe.nl/nieuws/18955446/verdachte-schietpartij-hoogeveen-langer-vast",
+      "summary": "De verdachte die zaterdag werd opgepakt vanwege een schietpartij in Hoogeveen, blijft twee weken langer vastzitten.",
+      "publishedAt": "2026-11-17T11:47:23.000Z"
     }
   ],
   "topics": [
@@ -78,10 +78,10 @@
       "source": "TechCrunch",
       "lang": "en",
       "label": "AI",
-      "title": "California state AG sues OpenAI over rogue agent incidents",
-      "url": "https://techcrunch.com/2026/11/16/california-state-ag-sues-openai-over-rogue-agent-incidents/",
-      "summary": "The California lawsuit represents one of the first attempts to hold an AI lab legally accountable for a rogue agent incident",
-      "publishedAt": "2026-11-16T20:07:13.000Z"
+      "title": "Cybersecurity AI startup Corma reaches $1B valuation in about 3 months",
+      "url": "https://techcrunch.com/2026/11/16/cybersecurity-ai-startup-corma-reaches-1b-valuation-in-about-3-months/",
+      "summary": "Three months since introducing its product, AI cybersecurity startup Corba has raised a $125 million Series A at a $1 billion valuation led by NEA.",
+      "publishedAt": "2026-11-16T23:32:32.000Z"
     }
   ],
   "brief": [
@@ -89,36 +89,36 @@
       "id": "binnenland-1",
       "source": "NOS",
       "label": "Binnenland",
-      "title": "Verkiezingen geen optie bij gemeentelijke coalitiecrises: 'Drink een borrel met elkaar'",
-      "url": "https://nos.nl/l/2639769"
+      "title": "Nederland niet aangepast op mensen met beperking: 'Hardnekkige achterstanden'",
+      "url": "https://nos.nl/l/2639856"
     },
     {
       "id": "binnenland-2",
       "source": "NOS",
       "label": "Binnenland",
-      "title": "Koning herdenkt Amerikaans saluut, Sint-Eustatius eert eigen vrijheidsstrijders",
-      "url": "https://nos.nl/l/2639761"
+      "title": "ANWB meldt drukste ochtendspits van het jaar, ruim 1000 kilometer file",
+      "url": "https://nos.nl/l/2639834"
     },
     {
       "id": "buitenland-3",
       "source": "NOS",
       "label": "Buitenland",
-      "title": "Turkse boer in regio Antalya, waar klimaattop is, worstelt met verduurzaming",
-      "url": "https://nos.nl/l/2639776"
+      "title": "Tientallen gewonden bij botsing tussen passagierstreinen in Praag",
+      "url": "https://nos.nl/l/2639854"
     },
     {
       "id": "buitenland-4",
       "source": "NOS",
       "label": "Buitenland",
-      "title": "Gérard Depardieu accepteert straf en biedt excuses aan voor aanrandingen",
-      "url": "https://nos.nl/l/2639774"
+      "title": "Autopsiefoto's van Jeffrey Epstein door forensisch expert online gezet",
+      "url": "https://nos.nl/l/2639853"
     },
     {
       "id": "drenthe-5",
       "source": "RTV Drenthe",
       "label": "Drenthe",
-      "title": "Voor de laatste keer: nieuwe muziek van René Karst",
-      "url": "https://www.rtvdrenthe.nl/nieuws/18951903/voor-de-laatste-keer-nieuwe-muziek-van-rene-karst"
+      "title": "Bezoekers Boerenrock zijn woensdagavond en -nacht niet meer welkom",
+      "url": "https://www.rtvdrenthe.nl/nieuws/18955395/bezoekers-boerenrock-zijn-woensdagavond-en-nacht-niet-meer-welkom"
     }
   ]
 }
