@@ -1,35 +1,35 @@
 {
-  "generatedAt": "2026-11-17T13:26:16.455Z",
+  "generatedAt": "2026-11-17T19:49:48.374Z",
   "items": [
     {
       "id": "nos-1",
       "source": "NOS",
       "lang": "nl",
       "label": null,
-      "title": "Twee mannen opgepakt in groot onderzoek naar malafide klusjesmannen",
-      "url": "https://nos.nl/l/2639868",
-      "summary": "De politie heeft twee mannen opgepakt in een groot onderzoek naar malafide klusjesmannen. Het gaat om een 22-jarige en 24-jarige uit Almere. De twee worden ervan verdacht honderden mensen te hebben opgelicht voor grote geldbedragen.",
-      "publishedAt": "2026-11-17T12:05:38.000Z"
+      "title": "'Lastig om conclusies te trekken over autopsierapport Epstein'",
+      "url": "https://nos.nl/l/2639925",
+      "summary": "Is het mogelijk om conclusies te trekken over de doodsoorzaak van iemand op basis van alleen foto's?",
+      "publishedAt": "2026-11-17T18:55:02.000Z"
     },
     {
       "id": "rtvdrenthe-1",
       "source": "RTV Drenthe",
       "lang": "nl",
       "label": "Nieuws uit Drenthe",
-      "title": "Nieuw leven voor failliete Primera's in Emmen en Coevorden",
-      "url": "https://www.rtvdrenthe.nl/nieuws/18955506/nieuw-leven-voor-failliete-primeras-in-emmen-en-coevorden",
-      "summary": "De onlangs failliet verklaarde Primera's in Coevorden en Emmen krijgen een doorstart. De vestiging in Emmen wordt een Bruna, terwijl de vestiging in Coevorden een Primera blijft.",
-      "publishedAt": "2026-11-17T12:20:56.000Z"
+      "title": "Schoonloo en Gasselternijveen willen zonnestroom delen met hele dorp: 'Minder kwetsbaar voor Poetin'",
+      "url": "https://www.rtvdrenthe.nl/nieuws/18942690/schoonloo-en-gasselternijveen-willen-zonnestroom-delen-met-hele-dorp-minder-kwetsbaar-voor-poetin",
+      "summary": "Inwoners van Schoonloo en Gasselternijveen onderzoeken of ze hun opgewerkte zonnestroom kunnen delen met de rest van het dorp.",
+      "publishedAt": "2026-11-17T19:00:02.000Z"
     },
     {
       "id": "bbc-1",
       "source": "BBC News",
       "lang": "en",
       "label": null,
-      "title": "Putin's Crimea bridge partly collapses as Zelensky hails 'unprecedented' attack by Ukraine",
+      "title": "Putin's Crimean Bridge partly collapses as Zelensky hails 'unprecedented' attack by Ukraine",
       "url": "https://www.bbc.co.uk/news/articles/cw772jk4rvmxo?at_medium=RSS&at_campaign=rss",
-      "summary": "Ukraine says the attack took weeks to plan, while the Kremlin vows to rebuild the strategic bridge.",
-      "publishedAt": "2026-11-17T13:01:11.000Z"
+      "summary": "Ukraine says the missile and drone attack on the strategic bridge in the Russian-annexed Crimea took weeks to plan.",
+      "publishedAt": "2026-11-17T16:56:38.000Z"
     },
     {
       "id": "guardian-1",
@@ -46,42 +46,42 @@
       "source": "NOS",
       "lang": "nl",
       "label": null,
-      "title": "Opnieuw politie-inval bij Turkse oppositiezender, dit keer bij Sözcu TV",
-      "url": "https://nos.nl/l/2639858",
-      "summary": "In Turkije is vanochtend een politie-inval geweest bij oppositiezender Sözcü TV. De Turkse autoriteiten hebben een bewindvoerder aangesteld.",
-      "publishedAt": "2026-11-17T10:35:26.000Z"
+      "title": "Verdachte dodelijke steekpartij Amsterdam tijdens strafzaak aangevallen in rechtszaal",
+      "url": "https://nos.nl/l/2639924",
+      "summary": "In de rechtbank is vandaag een verdachte aangevallen tijdens de behandeling van een strafzaak over een dodelijke steekpartij in Amsterdam. De verdachte werd aangevallen door een nabestaande van het slachtoffer, meldt stadszender AT5.",
+      "publishedAt": "2026-11-17T18:45:58.000Z"
     },
     {
       "id": "rtvdrenthe-2",
       "source": "RTV Drenthe",
       "lang": "nl",
       "label": "Nieuws uit Drenthe",
-      "title": "Verdachte schietpartij Hoogeveen langer vast",
-      "url": "https://www.rtvdrenthe.nl/nieuws/18955446/verdachte-schietpartij-hoogeveen-langer-vast",
-      "summary": "De verdachte die zaterdag werd opgepakt vanwege een schietpartij in Hoogeveen, blijft twee weken langer vastzitten.",
-      "publishedAt": "2026-11-17T11:47:23.000Z"
+      "title": "Jeugd houdt huis in Asser wijk Kloosterveen: 'Ze bekogelen mijn huis met stoeptegels en eieren'",
+      "url": "https://www.rtvdrenthe.nl/nieuws/18951624/jeugd-houdt-huis-in-asser-wijk-kloosterveen-ze-bekogelen-mijn-huis-met-stoeptegels-en-eieren",
+      "summary": "Intimidatie, vernielingen en geblokkeerde doorgangen. Vrouwen die voor 'hoer' worden uitgescholden. Voor enkele bewoners in de Asser wijk Kloosterveen is de maat vol.",
+      "publishedAt": "2026-11-17T17:34:36.000Z"
     }
   ],
   "topics": [
     {
       "id": "tech",
-      "source": "NOS",
-      "lang": "nl",
+      "source": "BBC News",
+      "lang": "en",
       "label": "Tech",
-      "title": "Kleine en middelgrote bedrijven hebben de basis van cybersecurity niet op orde",
-      "url": "https://nos.nl/l/2639736",
-      "summary": "Kleine en middelgrote bedrijven (mkb'ers) lopen een wezenlijk risico slachtoffer te worden van een cyberaanval. Daarvoor waarschuwt de Nationaal Coördinator Terrorisme en Veiligheid (NCTV).",
-      "publishedAt": "2026-11-16T16:07:45.000Z"
+      "title": "How new US chip restrictions on South East Asia will hit China",
+      "url": "https://www.bbc.co.uk/news/articles/cwq6e2qgvmlgo?at_medium=RSS&at_campaign=rss",
+      "summary": "The new rules restrict chip exports and also access to their computing power, which China relies on heavily.",
+      "publishedAt": "2026-11-17T14:25:45.000Z"
     },
     {
       "id": "ai",
       "source": "TechCrunch",
       "lang": "en",
       "label": "AI",
-      "title": "Cybersecurity AI startup Corma reaches $1B valuation in about 3 months",
-      "url": "https://techcrunch.com/2026/11/16/cybersecurity-ai-startup-corma-reaches-1b-valuation-in-about-3-months/",
-      "summary": "Three months since introducing its product, AI cybersecurity startup Corba has raised a $125 million Series A at a $1 billion valuation led by NEA.",
-      "publishedAt": "2026-11-16T23:32:32.000Z"
+      "title": "Model ML raises $250M to automate investment banking grunt work",
+      "url": "https://techcrunch.com/2026/11/17/model-ml-raises-250m-to-automate-investment-banking-grunt-work/",
+      "summary": "The startup says its agents understand the full context of deals that bankers and consultants are working on and can automatically update financial models and presentations when new developments affect their analysis.",
+      "publishedAt": "2026-11-17T19:32:11.000Z"
     }
   ],
   "brief": [
@@ -89,36 +89,36 @@
       "id": "binnenland-1",
       "source": "NOS",
       "label": "Binnenland",
-      "title": "Nederland niet aangepast op mensen met beperking: 'Hardnekkige achterstanden'",
-      "url": "https://nos.nl/l/2639856"
+      "title": "Man die Monument op de Dam bekladde moet gemeente 2000 euro betalen",
+      "url": "https://nos.nl/l/2639923"
     },
     {
       "id": "binnenland-2",
       "source": "NOS",
       "label": "Binnenland",
-      "title": "ANWB meldt drukste ochtendspits van het jaar, ruim 1000 kilometer file",
-      "url": "https://nos.nl/l/2639834"
+      "title": "Rechter zet streep door subsidie voor nachttrein Arriva, verbinding stopt per direct",
+      "url": "https://nos.nl/l/2639916"
     },
     {
       "id": "buitenland-3",
       "source": "NOS",
       "label": "Buitenland",
-      "title": "Tientallen gewonden bij botsing tussen passagierstreinen in Praag",
-      "url": "https://nos.nl/l/2639854"
+      "title": "VK straft Israëlische bouwbedrijven voor bouwen nederzettingen",
+      "url": "https://nos.nl/l/2639915"
     },
     {
       "id": "buitenland-4",
       "source": "NOS",
       "label": "Buitenland",
-      "title": "Autopsiefoto's van Jeffrey Epstein door forensisch expert online gezet",
-      "url": "https://nos.nl/l/2639853"
+      "title": "Dieven stelen racefietsen ter waarde van 100.000 euro zonder in winkel te komen",
+      "url": "https://nos.nl/l/2639913"
     },
     {
       "id": "drenthe-5",
       "source": "RTV Drenthe",
       "label": "Drenthe",
-      "title": "Bezoekers Boerenrock zijn woensdagavond en -nacht niet meer welkom",
-      "url": "https://www.rtvdrenthe.nl/nieuws/18955395/bezoekers-boerenrock-zijn-woensdagavond-en-nacht-niet-meer-welkom"
+      "title": "Emmenaar zit al weken vast in Afrika na dodelijk ongeluk met boorplatform",
+      "url": "https://www.rtvdrenthe.nl/nieuws/18955353/emmenaar-zit-al-weken-vast-in-afrika-na-dodelijk-ongeluk-met-boorplatform"
     }
   ]
 }
