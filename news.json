@@ -1,35 +1,35 @@
 {
-  "generatedAt": "2026-11-20T12:53:24.600Z",
+  "generatedAt": "2026-11-20T19:05:34.508Z",
   "items": [
     {
       "id": "nos-1",
       "source": "NOS",
       "lang": "nl",
       "label": null,
-      "title": "Brand in wooncomplex in Rotterdam, vier etages ontruimd",
-      "url": "https://nos.nl/l/2640287",
-      "summary": "Op de negende verdieping van een woontoren in Rotterdam heeft vanmorgen een brand gewoed. Zo'n zestig bewoners moesten daardoor hun huis uit. Twee mensen zijn naar het ziekenhuis gebracht.",
-      "publishedAt": "2026-11-20T12:36:06.000Z"
+      "title": "Russisch dreigement aan Nederlanders plaatst drone-inslag in ander licht",
+      "url": "https://nos.nl/l/2640333",
+      "summary": "Rusland heeft dreigende taal geuit richting Nederlandse diplomaten in Oekraïne. \"Nederland kan beter het advies aan alle buitenlandse diplomaten serieus nemen om Kyiv te verlaten\", meldt het officiële Russische persbureau Tass.",
+      "publishedAt": "2026-11-20T19:02:37.000Z"
     },
     {
       "id": "rtvdrenthe-1",
       "source": "RTV Drenthe",
       "lang": "nl",
       "label": "Nieuws uit Drenthe",
-      "title": "Cameratoezicht in Kloosterveen moet overlast door jongeren terugdringen",
-      "url": "https://www.rtvdrenthe.nl/nieuws/18964947/cameratoezicht-in-kloosterveen-moet-overlast-door-jongeren-terugdringen",
-      "summary": "In de Asser wijk Kloosterveen is de overlast door jeugd aanleiding om camera's te plaatsen. Intussen proberen jongerenwerkers jeugd en volwassenen met elkaar in gesprek te laten komen.",
-      "publishedAt": "2026-11-20T12:01:00.000Z"
+      "title": "Bert Vastenburg uit Diphoorn helpt familie Babayants vanaf de eerste dag",
+      "url": "https://www.rtvdrenthe.nl/nieuws/18961947/bert-vastenburg-uit-diphoorn-helpt-familie-babayants-vanaf-de-eerste-dag",
+      "summary": "Drentse vrijwilliger is al twee jaar om de week in de kerk in Kampen te vinden om de familie Babayants te steunen. 'Zo lang zij het volhouden, ga ik ook door'.",
+      "publishedAt": "2026-11-20T18:00:01.000Z"
     },
     {
       "id": "bbc-1",
       "source": "BBC News",
       "lang": "en",
       "label": null,
-      "title": "UK and EU to agree youth mobility scheme, BBC understands",
-      "url": "https://www.bbc.co.uk/news/articles/c623j4kpg94go?at_medium=RSS&at_campaign=rss",
-      "summary": "The scheme is expected to be approved at Friday's UK-EU summit, with new deals on food trade and carbon emissions also on the table.",
-      "publishedAt": "2026-11-20T07:14:46.000Z"
+      "title": "UK to explore even closer ties with EU after agreeing deal, says Burnham",
+      "url": "https://www.bbc.co.uk/news/articles/c6jreyqgw4e9o?at_medium=RSS&at_campaign=rss",
+      "summary": "The UK-EU deal agreed on Friday covers British food exports, emissions trading and a youth experience scheme.",
+      "publishedAt": "2026-11-20T17:49:48.000Z"
     },
     {
       "id": "guardian-1",
@@ -46,42 +46,42 @@
       "source": "NOS",
       "lang": "nl",
       "label": null,
-      "title": "BBC: VK begon grote beveiligingsactie na aanvallen op koelsystemen in Europa",
-      "url": "https://nos.nl/l/2640285",
-      "summary": "Terwijl in Nederland, Frankrijk en andere Europese landen de afgelopen maanden temperaturen van vries- en koelsystemen werden aangepast bij cyberaanvallen, is in het Verenigd Koninkrijk een grote beveiligingsoperatie op poten gezet om een vergelijkbare aanval te voorkomen.",
-      "publishedAt": "2026-11-20T12:20:56.000Z"
+      "title": "Ondanks belofte hebben nog niet alle zorgvilla-kinderen een nieuwe plek",
+      "url": "https://nos.nl/l/2640331",
+      "summary": "Zestien zieke en gehandicapte kinderen die zorg krijgen van Villa ExpertCare hebben nog geen nieuwe geschikte plek gevonden. Voor een deel van hen zal niet meer op tijd een andere zorgorganisatie gevonden worden, schrijft minister Sterk (Langdurige Zorg) in een Kamerbrief.",
+      "publishedAt": "2026-11-20T18:27:14.000Z"
     },
     {
       "id": "rtvdrenthe-2",
       "source": "RTV Drenthe",
       "lang": "nl",
       "label": "Nieuws uit Drenthe",
-      "title": "Na jaar nog geen verandering bij Plopsa Indoor: 'Waarom is verplichte begeleiding noodzakelijk?'",
-      "url": "https://www.rtvdrenthe.nl/nieuws/18962514/na-jaar-nog-geen-verandering-bij-plopsa-indoor-waarom-is-verplichte-begeleiding-noodzakelijk",
-      "summary": "Bijna een jaar na de belofte om het beleid aan te passen, moeten bezoekers met autisme bij Plopsa Indoor Coevorden nog altijd een begeleider meenemen in de prikkelarme wachtrij. Stichting Uit met Autisme spreekt van aanhoudende discriminatie.",
-      "publishedAt": "2026-11-20T12:00:02.000Z"
+      "title": "Wat is er dit weekend te doen in Drenthe?",
+      "url": "https://www.rtvdrenthe.nl/nieuws/18963618/wat-is-er-dit-weekend-te-doen-in-drenthe",
+      "summary": "Sinterklaas meert ook dit weekend aan in Drentse plaatsen, hij kan tenslotte niet overal tegelijk komen. Verwennerij dus voor de kinderen, maar ook elders in de provincie worden mensen verwend. En er is meer, veel meer.",
+      "publishedAt": "2026-11-20T16:30:02.000Z"
     }
   ],
   "topics": [
     {
       "id": "tech",
-      "source": "NOS",
-      "lang": "nl",
+      "source": "BBC News",
+      "lang": "en",
       "label": "Tech",
-      "title": "Recordbeursgang voor AI-bedrijf Anthropic, koers stijgt meteen met een derde",
-      "url": "https://nos.nl/l/2640176",
-      "summary": "Het aandeel van AI-bedrijf Anthropic is de eerste uren na de beursgang flink in waarde gestegen. De openingskoers van het bedrijf achter AI-model Claude stond rond 17.45 uur Nederlandse tijd op 111 dollar. Dat is ruim een derde hoger dan de introductieprijs.",
-      "publishedAt": "2026-11-19T16:52:36.000Z"
+      "title": "White House removes cyber-security chief after series of tech outages",
+      "url": "https://www.bbc.co.uk/news/articles/cwz0k3nn5p5mo?at_medium=RSS&at_campaign=rss",
+      "summary": "He has been fired after losing the confidence of new White House chief of staff Stephen Miller, according to reports.",
+      "publishedAt": "2026-11-20T19:03:56.000Z"
     },
     {
       "id": "ai",
       "source": "TechCrunch",
       "lang": "en",
       "label": "AI",
-      "title": "Apple may be developing its own AI agent that runs your Mac",
-      "url": "https://techcrunch.com/2026/11/19/apple-may-be-developing-its-own-ai-agent-that-runs-your-mac/",
-      "summary": "The iPhone maker appears to be building agents that can compete with the likes of Meta Muse, Instinct, Claude, and OpenAI Dots.",
-      "publishedAt": "2026-11-20T00:56:01.000Z"
+      "title": "Chips can survive the space environment — can their financing?",
+      "url": "https://techcrunch.com/2026/11/20/chips-can-survive-the-space-environment-can-their-financing/",
+      "summary": "Lenders don't want SpaceX shooting their collateral into orbit. What does that mean for space data centers writ large?",
+      "publishedAt": "2026-11-20T17:40:01.000Z"
     }
   ],
   "brief": [
@@ -89,36 +89,36 @@
       "id": "binnenland-1",
       "source": "NOS",
       "label": "Binnenland",
-      "title": "17 jaar cel geëist voor fatale MDMA-vergiftiging treinschoonmaker",
-      "url": "https://nos.nl/l/2640280"
+      "title": "NVWA haalt 200 runderen weg bij veehouder in Brabant",
+      "url": "https://nos.nl/l/2640324"
     },
     {
       "id": "binnenland-2",
       "source": "NOS",
       "label": "Binnenland",
-      "title": "Eerste 'bejaardenhuis' voor tbs'ers moet druk op andere instellingen verlichten",
-      "url": "https://nos.nl/l/2640263"
+      "title": "Jason Bhugwandass (28) overleden, boegbeeld van strijd tegen misstanden in jeugdzorg",
+      "url": "https://nos.nl/l/2640323"
     },
     {
       "id": "buitenland-3",
       "source": "NOS",
       "label": "Buitenland",
-      "title": "Dit jaar al twintig doodstraffen uitgevoerd in Florida, nooit eerder zoveel",
-      "url": "https://nos.nl/l/2640281"
+      "title": "Extreemrechtse Britse activist veroordeeld voor leksteken migrantenboot",
+      "url": "https://nos.nl/l/2640325"
     },
     {
       "id": "buitenland-4",
       "source": "NOS",
       "label": "Buitenland",
-      "title": "Polen: objecten uit Rusland drongen luchtruim binnen, mogelijk kruisraket",
-      "url": "https://nos.nl/l/2640275"
+      "title": "Strafrechtelijk onderzoek naar acteur Depardieu voor verkrachting op filmset",
+      "url": "https://nos.nl/l/2640317"
     },
     {
       "id": "drenthe-5",
       "source": "RTV Drenthe",
       "label": "Drenthe",
-      "title": "Dit wordt het weer: winters weer steekt de kop op",
-      "url": "https://www.rtvdrenthe.nl/nieuws/18963807/dit-wordt-het-weer-winters-weer-steekt-de-kop-op"
+      "title": "Prachtige plaatjes van 'eerste winterochtend' in Drenthe",
+      "url": "https://www.rtvdrenthe.nl/nieuws/18965964/prachtige-plaatjes-van-eerste-winterochtend-in-drenthe"
     }
   ]
 }
