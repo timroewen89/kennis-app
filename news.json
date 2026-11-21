@@ -1,25 +1,25 @@
 {
-  "generatedAt": "2026-11-21T12:39:26.970Z",
+  "generatedAt": "2026-11-21T17:57:00.861Z",
   "items": [
     {
       "id": "nos-1",
       "source": "NOS",
       "lang": "nl",
       "label": null,
-      "title": "Oezbeeks gezin uit Kampen kan kerk na twee jaar verlaten door nieuwe procedure",
-      "url": "https://nos.nl/l/2640412",
-      "summary": "Het Oezbeekse gezin dat precies twee jaar kerkasiel kreeg in een kerkgebouw in Kampen, gaat een nieuwe procedure beginnen. De kerkdienst voor de familie Babayants is vandaag beëindigd, omdat die bescherming tegen uitzetting van het gezin niet meer nodig is.",
-      "publishedAt": "2026-11-21T12:00:08.000Z"
+      "title": "Prinses Kate open over kankerdiagnose in docu: 'Het verandert iets in je'",
+      "url": "https://nos.nl/l/2640455",
+      "summary": "De Britse prinses Kate gaat in een nieuwe documentaire in op de invloed die haar kankerdiagnose had op haar leven.",
+      "publishedAt": "2026-11-21T17:55:02.000Z"
     },
     {
       "id": "rtvdrenthe-1",
       "source": "RTV Drenthe",
       "lang": "nl",
       "label": "Nieuws uit Drenthe",
-      "title": "Na twee jaar eindigt kerkasiel van familie Babayants in Kampen",
-      "url": "https://www.rtvdrenthe.nl/nieuws/18966531/na-twee-jaar-eindigt-kerkasiel-van-familie-babayants-in-kampen",
-      "summary": "Vanwege een nieuw gestarte procedure mag het gezin tijdelijk in Nederland verblijven.",
-      "publishedAt": "2026-11-21T11:59:38.000Z"
+      "title": "Zussen Angela en Kimberly uit Ruinen werden binnen 41 minuten moeder: 'Een speciaal moment'",
+      "url": "https://www.rtvdrenthe.nl/nieuws/18968097/zussen-angela-en-kimberly-uit-ruinen-werden-binnen-41-minuten-moeder-een-speciaal-moment",
+      "summary": "Dat gebeurde op de verloskundige afdeling van het Frisius Medisch Centrum in Heerenveen. Angela beviel van zoon Riff, terwijl Kimberly moeder werd van dochter Ot.",
+      "publishedAt": "2026-11-21T17:30:01.000Z"
     },
     {
       "id": "bbc-1",
@@ -29,7 +29,7 @@
       "title": "Zelensky says Crimean Bridge strikes 'fair response' as he meets UK's Streeting",
       "url": "https://www.bbc.co.uk/news/articles/c6wy0qj7w5zqo?at_medium=RSS&at_campaign=rss",
       "summary": "Ukraine's president says Kyiv acted after 109 separate Russian aerial attacks on bridges in Ukraine.",
-      "publishedAt": "2026-11-21T12:20:55.000Z"
+      "publishedAt": "2026-11-21T13:17:38.000Z"
     },
     {
       "id": "guardian-1",
@@ -46,20 +46,20 @@
       "source": "NOS",
       "lang": "nl",
       "label": null,
-      "title": "Na Duitsland is nu Zwitserland in trek bij Nederlandse plofkrakers",
-      "url": "https://nos.nl/l/2640407",
-      "summary": "Nederlandse plofkrakers slaan steeds vaker toe in Zwitserland, ziet de politie. De criminelen kiezen minder vaak voor Duitsland. Meerdere verdachten staan inmiddels voor de rechter of wachten op uitlevering aan Zwitserland.",
-      "publishedAt": "2026-11-21T11:02:09.000Z"
+      "title": "Universiteit Groningen zet mogelijk het mes in een derde van de activiteiten",
+      "url": "https://nos.nl/l/2640452",
+      "summary": "De Rijksuniversiteit Groningen (RUG) gaat mogelijk flink versoberen. Als het aan een adviescommissie ligt, moet een derde van de activiteiten van de universiteit geschrapt of afgeslankt worden.",
+      "publishedAt": "2026-11-21T17:23:34.000Z"
     },
     {
       "id": "rtvdrenthe-2",
       "source": "RTV Drenthe",
       "lang": "nl",
       "label": "Nieuws uit Drenthe",
-      "title": "Eenzijdig ongeluk met bestelbusje in Hollandscheveld eist dode",
-      "url": "https://www.rtvdrenthe.nl/nieuws/18967143/eenzijdig-ongeluk-met-bestelbusje-in-hollandscheveld-eist-dode",
-      "summary": "Bij een ongeluk aan de Rechtuit in Hollandscheveld is een bestuurder ernstig gewond geraakt",
-      "publishedAt": "2026-11-21T11:13:57.000Z"
+      "title": "Auto vat vlam in Beilen",
+      "url": "https://www.rtvdrenthe.nl/nieuws/18967944/auto-vat-vlam-in-beilen",
+      "summary": "Brandweerpersoneel was snel aanwezig om het vuur te doven, maar kon niet voorkomen dat de auto uitbrandde.",
+      "publishedAt": "2026-11-21T16:12:57.000Z"
     }
   ],
   "topics": [
@@ -78,10 +78,10 @@
       "source": "TechCrunch",
       "lang": "en",
       "label": "AI",
-      "title": "Daniel Ek backs AI researcher’s fusion power startup. Here’s what they’re building.",
-      "url": "https://techcrunch.com/2026/11/20/daniel-ek-backs-ai-researchers-fusion-power-startup-heres-what-theyre-building/",
-      "summary": "Spotify founder Daniel Ek is backing Europa Fusion, a fusion power startup founded by an AI researcher. Here's what the startup is building.",
-      "publishedAt": "2026-11-20T19:53:41.000Z"
+      "title": "Here are the top AI agents that can live in your text messages",
+      "url": "https://techcrunch.com/2026/11/21/all-the-ai-agents-that-can-live-in-your-text-messages/",
+      "summary": "We created a list of the most notable AI agents that can live in your text messages, from general assistants to agents designed for families, travel, and work.",
+      "publishedAt": "2026-11-21T17:00:00.000Z"
     }
   ],
   "brief": [
@@ -89,36 +89,36 @@
       "id": "binnenland-1",
       "source": "NOS",
       "label": "Binnenland",
-      "title": "Universiteit Leiden stopt samenwerking met Chinese universiteit na zorgen over lekken data",
-      "url": "https://nos.nl/l/2640396"
+      "title": "Afgebrande school Deurne waarschijnlijk nog maanden dicht",
+      "url": "https://nos.nl/l/2640434"
     },
     {
       "id": "binnenland-2",
       "source": "NOS",
       "label": "Binnenland",
-      "title": "Grote politieactie bij motorclub in Rijswijk, leden verdacht van wapenhandel",
-      "url": "https://nos.nl/l/2640394"
+      "title": "Reacties op overlijden Jason Bhugwandass: 'Er zat zo veel kracht in hem'",
+      "url": "https://nos.nl/l/2640423"
     },
     {
       "id": "buitenland-3",
       "source": "NOS",
       "label": "Buitenland",
-      "title": "Gaat een unieke gebeurtenis hoog boven de polen ons winterweer bezorgen?",
-      "url": "https://nos.nl/l/2640403"
+      "title": "Sonde komt na 8 jaar aan bij Mercurius voor onderzoek naar mysterieuze holtes",
+      "url": "https://nos.nl/l/2640451"
     },
     {
       "id": "buitenland-4",
       "source": "NOS",
       "label": "Buitenland",
-      "title": "'Internationaal Strafhof dreigt lege huls te worden door concessies aan VS'",
-      "url": "https://nos.nl/l/2640368"
+      "title": "Kapitein Costa Concordia-scheepsramp komt vervroegd vrij",
+      "url": "https://nos.nl/l/2640447"
     },
     {
       "id": "drenthe-5",
       "source": "RTV Drenthe",
       "label": "Drenthe",
-      "title": "Sinterklaasjournaal in Dwingeloo",
-      "url": "https://www.rtvdrenthe.nl/nieuws/18959982/sinterklaasjournaal-in-dwingeloo"
+      "title": "Het bijzondere levensverhaal van Daisy Stork: 'Iedereen voelde zich door haar gezien in Dwingeloo'",
+      "url": "https://www.rtvdrenthe.nl/nieuws/18967704/het-bijzondere-levensverhaal-van-daisy-stork-iedereen-voelde-zich-door-haar-gezien-in-dwingeloo"
     }
   ]
 }
