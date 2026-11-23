@@ -1,35 +1,35 @@
 {
-  "generatedAt": "2026-11-23T14:38:45.095Z",
+  "generatedAt": "2026-11-23T22:37:15.476Z",
   "items": [
     {
       "id": "nos-1",
       "source": "NOS",
       "lang": "nl",
       "label": null,
-      "title": "Chipbedrijf Nvidia haalt na affaires afgetreden Jensen Huang terug als topman",
-      "url": "https://nos.nl/l/2640716",
-      "summary": "Jensen Huang keert terug als CEO van chipmaker Nvidia, meldt het bedrijf op zijn website. Huang moest anderhalve week geleden vertrekken na onthullingen over meerdere affaires, onder andere met een mogelijke Chinese spion.",
-      "publishedAt": "2026-11-23T14:08:50.000Z"
+      "title": "NAVO stuurt radarvliegtuig naar Polen na vondst van resten Russische raketten",
+      "url": "https://nos.nl/l/2640773",
+      "summary": "De NAVO stuurt een speciaal radarvliegtuig naar Polen vanwege de Russische schendingen van het Poolse luchtruim vorige week.",
+      "publishedAt": "2026-11-23T21:19:58.000Z"
     },
     {
       "id": "rtvdrenthe-1",
       "source": "RTV Drenthe",
       "lang": "nl",
       "label": "Nieuws uit Drenthe",
-      "title": "Officier van justitie aan het woord: 'Heel veel schreeuwt om uitleg' • Esmée D. blijft stil",
-      "url": "https://www.rtvdrenthe.nl/nieuws/18970545/officier-van-justitie-aan-het-woord-heel-veel-schreeuwt-om-uitleg-esmee-d-blijft-stil",
-      "summary": "Heeft Esmée D. haar vriend Ruben vergiftigd? Of maakte hij zelf een einde aan zijn leven? Officieer van justitie aan het woord Esmée D. blijft stil",
-      "publishedAt": "2026-11-23T14:30:03.000Z"
+      "title": "Brand bij recyclingbedrijf in Emmen",
+      "url": "https://www.rtvdrenthe.nl/nieuws/18975336/brand-bij-recyclingbedrijf-in-emmen",
+      "summary": "Bij een recyclingbedrijf aan de Vasco da Gamastraat in Emmen is vanavond brand uitgebroken. De brand veroorzaakt flinke rookontwikkeling, die al van grote afstand zichtbaar is. De brandweer is met meerdere voertuigen aanwezig om het vuur te bestrijden.",
+      "publishedAt": "2026-11-23T21:53:39.000Z"
     },
     {
       "id": "bbc-1",
       "source": "BBC News",
       "lang": "en",
       "label": null,
-      "title": "Russian warship hit by Ukrainian drones in Libya, Zelensky says",
-      "url": "https://www.bbc.co.uk/news/articles/cr894gjz0j0yo?at_medium=RSS&at_campaign=rss",
-      "summary": "The Kremlin warns of an \"escalation of tensions in the region\", but declines to comment directly on the attacks in Libya.",
-      "publishedAt": "2026-11-23T11:40:01.000Z"
+      "title": "US to blacklist Asian AI firm Megaspeed after Nvidia scandal",
+      "url": "https://www.bbc.co.uk/news/articles/cv98xpg5dg5zo?at_medium=RSS&at_campaign=rss",
+      "summary": "Megaspeed has been accused of funneling AI chips to China after a former executive's affair with Jensen Huang became public.",
+      "publishedAt": "2026-11-23T22:15:26.000Z"
     },
     {
       "id": "guardian-1",
@@ -46,20 +46,20 @@
       "source": "NOS",
       "lang": "nl",
       "label": null,
-      "title": "Jongetje (1) dat van driehoog uit Amsterdamse woning viel, heeft val overleefd",
-      "url": "https://nos.nl/l/2640703",
-      "summary": "Het 1-jarige jongetje dat 30 oktober van driehoog uit een raam van een woning in Amsterdam viel, leeft nog. Dat meldt de politie. Hoe het nu met het kind gaat, wordt niet vermeld.",
-      "publishedAt": "2026-11-23T12:40:22.000Z"
+      "title": "Drie gewonden onder wie een baby bij droneaanval op Colombiaanse politiebasis",
+      "url": "https://nos.nl/l/2640772",
+      "summary": "Drones met daarop explosieven hebben een politiebasis in de stad Cúcuta in het noorden van Colombia geraakt. Drie mensen, onder wie een baby, liepen bij de aanval verwondingen op. Zestig woningen raakten beschadigd.",
+      "publishedAt": "2026-11-23T21:13:34.000Z"
     },
     {
       "id": "rtvdrenthe-2",
       "source": "RTV Drenthe",
       "lang": "nl",
       "label": "Nieuws uit Drenthe",
-      "title": "Nieuwe wolvenkoers: boeren zien doorbraak, dierenactivisten verwachten juridische strijd",
-      "url": "https://www.rtvdrenthe.nl/nieuws/18973131/nieuwe-wolvenkoers-boeren-zien-doorbraak-dierenactivisten-verwachten-juridische-strijd",
-      "summary": "Staatssecretaris Silvio Erkens benadrukt dat de wolf beschermd blijft en dat niet iedereen zomaar op wolven mag gaan jagen.",
-      "publishedAt": "2026-11-23T12:18:03.000Z"
+      "title": "Duitsers zien tol op Autobahn als reële optie",
+      "url": "https://www.rtvdrenthe.nl/nieuws/18974457/duitsers-zien-tol-op-autobahn-als-reele-optie",
+      "summary": "De optie om tol te gaan heffen op de Autobahn ligt weer op tafel. De tol op personenauto's zou een goede manier zijn om de oplopende kosten voor de infrastructuur te betalen",
+      "publishedAt": "2026-11-23T20:00:02.000Z"
     }
   ],
   "topics": [
@@ -68,20 +68,20 @@
       "source": "BBC News",
       "lang": "en",
       "label": "Tech",
-      "title": "GTA 6 hacker released on licence with warning 'don't let this happen again'",
-      "url": "https://www.bbc.co.uk/news/articles/cqpv9kr7pxmro?at_medium=RSS&at_campaign=rss",
-      "summary": "21-year-old Arion Kurtaj pleaded guilty to the Rockstar Games hack and others he carried out when he was a teenager.",
-      "publishedAt": "2026-11-23T14:08:50.000Z"
+      "title": "Nvidia value climbs by almost $1tn and tech stocks rally after Jensen Huang returns",
+      "url": "https://www.bbc.co.uk/news/articles/cq62pn6j42jko?at_medium=RSS&at_campaign=rss",
+      "summary": "The jump in Nvidia shares has also lifted stock markets, with the tech-heavy Nasdaq up 6.5%.",
+      "publishedAt": "2026-11-23T21:23:42.000Z"
     },
     {
       "id": "ai",
       "source": "TechCrunch",
       "lang": "en",
       "label": "AI",
-      "title": "Nvidia reverses course and brings Jensen Huang back as CEO",
-      "url": "https://techcrunch.com/2026/11/23/nvidia-reverses-course-and-brings-jensen-huang-back-as-ceo/",
-      "summary": "The stunning reversal was supported by senior officials in the U.S. government.",
-      "publishedAt": "2026-11-23T14:21:59.000Z"
+      "title": "Anthropic launches Claude Ship, letting AI agents review, fix, and approve code changes",
+      "url": "https://techcrunch.com/2026/11/23/anthropic-launches-claude-ship-letting-ai-agents-review-fix-and-approve-code-changes/",
+      "summary": "As AI-generated code piles up, Anthropic's new developer tools aim to eliminate another bottleneck by letting agents handle routine approvals.",
+      "publishedAt": "2026-11-23T22:05:50.000Z"
     }
   ],
   "brief": [
@@ -89,36 +89,36 @@
       "id": "binnenland-1",
       "source": "NOS",
       "label": "Binnenland",
-      "title": "Strooiwagens Rijkswaterstaat massaal de weg op na nacht met vorst",
-      "url": "https://nos.nl/l/2640702"
+      "title": "Russische ambassade in Den Haag vraagt om opheldering betrokkenheid Destinus-personeel",
+      "url": "https://nos.nl/l/2640770"
     },
     {
       "id": "binnenland-2",
       "source": "NOS",
       "label": "Binnenland",
-      "title": "Vrouw (90) overleden bij woningbrand in Zuidlaren",
-      "url": "https://nos.nl/l/2640692"
+      "title": "Mislukte klimaattop maakt milieustudenten juist strijdbaar: 'Motivatie om door te gaan'",
+      "url": "https://nos.nl/l/2640769"
     },
     {
       "id": "buitenland-3",
       "source": "NOS",
       "label": "Buitenland",
-      "title": "Premier België stelt deadline: vóór 2027 geen begroting is einde regering",
-      "url": "https://nos.nl/l/2640698"
+      "title": "Milieuramp in Straat van Hormuz: 'Effecten olievervuiling over veertig jaar nog zichtbaar'",
+      "url": "https://nos.nl/l/2640760"
     },
     {
       "id": "buitenland-4",
       "source": "NOS",
       "label": "Buitenland",
-      "title": "Bommelding bij honderden Duitse scholen, ook meldingen in Denemarken",
-      "url": "https://nos.nl/l/2640696"
+      "title": "Rusland wil atoomwapen in ruimte brengen, zeggen inlichtingendiensten",
+      "url": "https://nos.nl/l/2640759"
     },
     {
       "id": "drenthe-5",
       "source": "RTV Drenthe",
       "label": "Drenthe",
-      "title": "Nieuwbouw achter historische straat Zuidlaren blijft omstreden: gemeente wijkt niet",
-      "url": "https://www.rtvdrenthe.nl/nieuws/18938862/nieuwbouw-achter-historische-straat-zuidlaren-blijft-omstreden-gemeente-wijkt-niet"
+      "title": "Nieuwe tegels TT Walk of Legends voltooien eerste deel van de route",
+      "url": "https://www.rtvdrenthe.nl/nieuws/18974064/nieuwe-tegels-tt-walk-of-legends-voltooien-eerste-deel-van-de-route"
     }
   ]
 }
