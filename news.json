@@ -1,35 +1,35 @@
 {
-  "generatedAt": "2026-11-25T14:22:26.671Z",
+  "generatedAt": "2026-11-25T20:27:39.585Z",
   "items": [
     {
       "id": "nos-1",
       "source": "NOS",
       "lang": "nl",
       "label": null,
-      "title": "Muziekstreamingdienst Tidal verbiedt AI-muziek en verwijdert bijna 30 miljoen nummers",
-      "url": "https://nos.nl/l/2640977",
-      "summary": "Muziekstreamingdienst Tidal gaat muziek die volledig is gemaakt met AI uit het aanbod verwijderen. Ook laat het bedrijf vanaf 9 december geen muziek meer toe die volledig door kunstmatige intelligentie is gegenereerd. Dat heeft Tidal bekendgemaakt.",
-      "publishedAt": "2026-11-25T14:16:35.000Z"
+      "title": "Schooladviezen vaker naar boven bijgesteld na invoering doorstroomtoets",
+      "url": "https://nos.nl/l/2641019",
+      "summary": "Sinds de invoering van de doorstroomtoets wordt het schooladvies voor leerlingen in groep 8 veel vaker naar boven bijgesteld. Dat blijkt uit cijfers van het Centraal Bureau voor de Statistiek (CBS).",
+      "publishedAt": "2026-11-25T20:06:17.000Z"
     },
     {
       "id": "rtvdrenthe-1",
       "source": "RTV Drenthe",
       "lang": "nl",
       "label": "Nieuws uit Drenthe",
-      "title": "Emmenaar mag Gabon verlaten na dodelijke ramp met boorplatform",
-      "url": "https://www.rtvdrenthe.nl/nieuws/18979260/emmenaar-mag-gabon-verlaten-na-dodelijke-ramp-met-boorplatform",
-      "summary": "Eindelijk goed nieuws voor de Emmenaar die al wekenlang vastzit in Gabon: de officier van justitie heeft toegezegd dat hij het land mag verlaten. Morgen moeten de papieren daarvoor binnen zijn.",
-      "publishedAt": "2026-11-25T12:02:32.000Z"
+      "title": "Rooivoertuig vat vlam in Wezuperbrug",
+      "url": "https://www.rtvdrenthe.nl/nieuws/18981465/rooivoertuig-vat-vlam-in-wezuperbrug",
+      "summary": "Een rooivoertuig is vanavond in brand gevlogen in Wezuperbrug. Dat gebeurde rond 20.15 uur aan de Brugstraat.",
+      "publishedAt": "2026-11-25T20:04:28.000Z"
     },
     {
       "id": "bbc-1",
       "source": "BBC News",
       "lang": "en",
       "label": null,
-      "title": "Russia's own figures show it has lost nearly 500,000 people in Ukraine war",
-      "url": "https://www.bbc.co.uk/news/articles/cmx27g533zwyo?at_medium=RSS&at_campaign=rss",
-      "summary": "Leaked data reveal how the full-scale invasion of Ukraine has fundamentally changed mortality patterns in Russia.",
-      "publishedAt": "2026-11-25T12:21:49.000Z"
+      "title": "US announces new tariffs on host of countries including China",
+      "url": "https://www.bbc.co.uk/news/articles/c893r9ke5p97o?at_medium=RSS&at_campaign=rss",
+      "summary": "The new levies would hit many of America's biggest trading partners, including China and the EU.",
+      "publishedAt": "2026-11-25T16:21:34.000Z"
     },
     {
       "id": "guardian-1",
@@ -46,20 +46,20 @@
       "source": "NOS",
       "lang": "nl",
       "label": null,
-      "title": "Vrouw overleden nadat ze door man werd neergestoken op fietspad in Houten",
-      "url": "https://nos.nl/l/2640971",
-      "summary": "De 34-jarige vrouw die vanmorgen werd neergestoken door een man op een fatbike in Houten, heeft het niet overleefd. De verdachte is een 39-jarige man uit Utrecht. Ze kenden elkaar, laat de politie weten.",
-      "publishedAt": "2026-11-25T13:02:20.000Z"
+      "title": "Zeker 30 doden in Egypte bij ongeluk met vrachtwagen die na crash vlam vatte",
+      "url": "https://nos.nl/l/2641017",
+      "summary": "Bij een verkeersongeluk in Egypte zijn zeker 30 mensen omgekomen. Een vrachtwagen vol brandstof crashte, ontplofte en vloog in brand bij de hoofdstad Caïro. Dat meldt het ministerie van Volksgezondheid van het land.",
+      "publishedAt": "2026-11-25T19:38:11.000Z"
     },
     {
       "id": "rtvdrenthe-2",
       "source": "RTV Drenthe",
       "lang": "nl",
       "label": "Nieuws uit Drenthe",
-      "title": "Enthousiasme genoeg, maar het natuurijs werkt nog niet mee: 'We moeten geduld hebben'",
-      "url": "https://www.rtvdrenthe.nl/nieuws/18979152/enthousiasme-genoeg-maar-het-natuurijs-werkt-nog-niet-mee-we-moeten-geduld-hebben",
-      "summary": "De banen in Drenthe gaan vandaag nog niet open. De omstandigheden voor het natuurijs zijn nog niet ideaal.",
-      "publishedAt": "2026-11-25T09:33:16.000Z"
+      "title": "Friese paarden schitteren in Assen: 'Het zijn echt showpaarden'",
+      "url": "https://www.rtvdrenthe.nl/nieuws/18979605/friese-paarden-schitteren-in-assen-het-zijn-echt-showpaarden",
+      "summary": "Maar liefst zeventig Friese paarden staan de komende dagen in de spotlights tijdens een theaterspektakel in de Expo hal in Assen.",
+      "publishedAt": "2026-11-25T19:30:01.000Z"
     }
   ],
   "topics": [
@@ -78,10 +78,10 @@
       "source": "TechCrunch",
       "lang": "en",
       "label": "AI",
-      "title": "Amazon and Meta reportedly in talks to lift blockade on AI agent Muse",
-      "url": "https://techcrunch.com/2026/11/25/amazon-and-meta-reportedly-in-talks-to-lift-blockade-on-ai-agent-muse/",
-      "summary": "Amazon and Meta are discussing a potential deal that would end a two-month-long blockade of Muse.",
-      "publishedAt": "2026-11-25T14:10:18.000Z"
+      "title": "OpenAI says heavy ChatGPT users may hit limits sooner as it merges Chat and Work",
+      "url": "https://techcrunch.com/2026/11/25/openai-says-heavy-chatgpt-users-may-hit-limits-sooner-as-it-merges-chat-and-work/",
+      "summary": "OpenAI will introduce a single usage meter across ChatGPT as it combines the Chat and Work experiences.",
+      "publishedAt": "2026-11-25T20:03:27.000Z"
     }
   ],
   "brief": [
@@ -89,36 +89,36 @@
       "id": "binnenland-1",
       "source": "NOS",
       "label": "Binnenland",
-      "title": "Controle auto leidt tot vondst van ruim 6000 kilo vuurwerk in Rotterdam",
-      "url": "https://nos.nl/l/2640958"
+      "title": "OM eist tot 5 jaar cel voor fatale mishandeling Somalische asielzoeker in Den Haag",
+      "url": "https://nos.nl/l/2641015"
     },
     {
       "id": "binnenland-2",
       "source": "NOS",
       "label": "Binnenland",
-      "title": "Dode in vrieskist Utrecht is man van 20, waarschijnlijk geen misdrijf",
-      "url": "https://nos.nl/l/2640952"
+      "title": "Ook buiten de grote steden groeit het crackprobleem",
+      "url": "https://nos.nl/l/2641010"
     },
     {
       "id": "buitenland-3",
       "source": "NOS",
       "label": "Buitenland",
-      "title": "Catalaanse separatistenleider Puigdemont kondigt terugkeer naar Spanje aan",
-      "url": "https://nos.nl/l/2640969"
+      "title": "Amerikaanse leger laat 4 ton loodazide ontploffen, omwonenden vrezen voor giftige deeltjes",
+      "url": "https://nos.nl/l/2641012"
     },
     {
       "id": "buitenland-4",
       "source": "NOS",
       "label": "Buitenland",
-      "title": "Israëlische oppositie verdeeld over eenheidsregering met partij van Netanyahu",
-      "url": "https://nos.nl/l/2640967"
+      "title": "Twee minderjarige verdachten van fatale beschieting Schiedam aangehouden in VK",
+      "url": "https://nos.nl/l/2641001"
     },
     {
       "id": "drenthe-5",
       "source": "RTV Drenthe",
       "label": "Drenthe",
-      "title": "Drentse 1000 vandaag in Assen en Rolde",
-      "url": "https://www.rtvdrenthe.nl/nieuws/18978663/drentse-1000-vandaag-in-assen-en-rolde"
+      "title": "Bob gaat wekelijks naar de voedselbank: 'Alles is duur en ik kom gewoon niet meer rond'",
+      "url": "https://www.rtvdrenthe.nl/nieuws/18962730/bob-gaat-wekelijks-naar-de-voedselbank-alles-is-duur-en-ik-kom-gewoon-niet-meer-rond"
     }
   ]
 }
